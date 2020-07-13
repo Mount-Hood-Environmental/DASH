@@ -1,13 +1,13 @@
 Package: DASH
-Title: What the Package Does (One Line, Title Case)
+Type: Package
+Title: Drone Assisted stream Habitat (DASH) Protocol R Package
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Authors@R: as.person(c(
+    "Mike Ackerman <mike.ackerman@merck.com> [aut, cre]",
+    "Kevin See <kevin.see@merck.com> [aut]",
+    "Richie Carmichael <richard.carmichael@merck.com [aut]"
+    ))
+Description: An R package companion to the Drone Assisted Stream Habitat protocol. Provides functionality to 
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
     pick a license
 Encoding: UTF-8
