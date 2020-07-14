@@ -24,7 +24,7 @@ Because the R packages `rmarkdown` and `knitr` are used to build this vignette t
 browseVignettes("DASH")
 ```
 
-*NOTE:* As of today's date "`r format(Sys.time(), '%B %d, %Y')`", `DASH` currently includes no vignettes. Please stay tuned as they are coming...
+*NOTE:* As of today's date, `DASH` currently includes no vignettes. Please stay tuned as they are coming...
 
 ## Developers Note
 
@@ -32,7 +32,7 @@ To use `devtools` you may also have to download and install Rtools. The latest v
 
 ## Making Contributions
 
-If you are interested in making contributions to `telemetyr`, consider getting a GitHub account, fork this repository, clone to a local directory, modify, and send me a pull request. The authors can then review any changes and merge.
+If you are interested in making contributions to `DASH`, consider getting a GitHub account, fork this repository, clone to a local directory, modify, and send us a pull request. The authors can then review any changes and merge.
 
 ## Executive Summary from DASH Protocol
 This Drone Assisted Stream Habitat (DASH) protocol outlines procedures to collect accurate habitat data in an efficient and cost-effective manner that can be implemented across large spatial scales. Habitat attributes are collected primarily at the channel-unit (i.e., pool, riffle, run, rapid +, side channel) scale and secondarily at the reach (e.g., 100m - 1km) scale. Channel-unit scale habitat data can then later be summarized at larger scales if desired. By integrating high-resolution drone imagery, and when available, bathymetric light detection and ranging (LiDAR) data with minimal ground crew data collection, this protocol provides robust and accurate habitat data to inform habitat status and trends as well as fish-habitat modeling efforts. Ground crews delineate channel units, collect habitat attributes that cannot be obtained from remote sensing data, and collect high-resolution GPS information so that on-the-ground data is spatially explicit and easily compatible with remote sensing (e.g., drone, LiDAR) data. Data collected by ground crews can also be used to cross-validate remotely sensed data, when desired.
