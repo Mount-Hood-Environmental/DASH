@@ -7,7 +7,13 @@ Authors@R: as.person(c(
     "Kevin See <kevin.see@merck.com> [aut]",
     "Richie Carmichael <richard.carmichael@merck.com [aut]"
     ))
-Description: An R package companion to the Drone Assisted Stream Habitat protocol. Provides functionality to 
+Maintainer: Mike Ackerman <mike.ackerman@merck.com>
+Description: An R package companion to the Drone Assisted Stream Habitat protocol. Initial functionality provides 
+    resources to import on-the-ground collected habitat data using the DASH protocol and data collection
+    forms, perform quality control and assurance on that data, and then summarize the habitat data to an 
+    appropriate scale for pairing with fish abundance and density information for various fish-habitat models, 
+    including quantile random forest (QRF) capacity models. Additional functionality may include joining fish and
+    habitat data with stream centerlines, tools to automate processing of drone-collected imagery, etc.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
     pick a license
 Encoding: UTF-8
