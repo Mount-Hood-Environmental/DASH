@@ -1,12 +1,12 @@
-# Author: Mike Ackerman & Richie Carmichael
-#   with assists from Kevin See
-# 
+# Authors: Mike Ackerman, Kevin See, and Richie Carmichael
+#
 # Purpose: Compile the 2018 DASH data from MRA sites to make QRF capacity predictions
 #
-# Created: Original version on 10/25/2019
-# Last Modified: 04/02/2020
-
-# Notes: 
+# Created: October 25, 2019
+#   Modified: April 2, 2020
+#   Modified: July 14, 2020
+#
+# Notes: Moved from rcarmichael3/DASH to BiomarkABS/DASH on July 14, 2020
 
 #-----------------------------
 # load necessary libraries
@@ -15,25 +15,35 @@ library(sf)
 library(tidyverse)
 library(magrittr)
 
+#-------------------------
+# set NAS prefix, depending on operating system
+#-------------------------
+if(.Platform$OS.type != 'unix') {
+  nas_prefix = "S:"
+}
+if(.Platform$OS.type == 'unix') {
+  nas_prefix = "~/../../Volumes/ABS"
+}
+
 #-----------------------------
-# read in 2018 MRA data stored as shapefiles
+# read in 2018 MRA DASH data stored as shapefiles
 #-----------------------------
 # note we store our 'default' coordinate reference system and set the us crs to be the same as the rest
 # EPSG: 32612 = WGS 84/UTM zone 12N; 32611 = WGS 84/UTM zone 11N
 
 # mainstem (ms) channel units, upper lemhi (ul), lower lemhi (ll), pahsimeroi (ph), and upper salmon (us)
-ul_ms_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/UL_Poly_Fish.shp')
+ul_ms_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/upper_lemhi/UL_Poly_Fish.shp"))
 mra_crs = st_crs(ul_ms_sf)
-ll_ms_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/LL_Poly_Fish.shp')
-ph_ms_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/Pah_Poly_Fish.shp')
-us_ms_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/US_Poly_Fish.shp') %>%
+ll_ms_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/lower_lemhi/LL_Poly_Fish.shp"))
+ph_ms_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/pahsimeroi/Pah_Poly_Fish.shp"))
+us_ms_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/upper_salmon/US_Poly_Fish.shp")) %>%
   st_transform(crs = mra_crs)
 
 # side channels (sc)
-ul_sc_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/UL_Line_Fish.shp')
-ll_sc_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/LL_Line_Fish.shp')
-ph_sc_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/Pah_Line_Fish.shp') 
-us_sc_sf = st_read('data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/US_Line_Fish.shp') %>%
+ul_sc_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/upper_lemhi/UL_Line_Fish.shp"))
+ll_sc_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/lower_lemhi/LL_Line_Fish.shp"))
+ph_sc_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/pahsimeroi/Pah_Line_Fish.shp"))
+us_sc_sf = st_read(paste0(nas_prefix, "/data/habitat/DASH/channel_units/2018/upper_salmon/US_Line_Fish.shp")) %>%
   st_transform(crs = mra_crs)
 
 #-----------------------------
@@ -103,9 +113,9 @@ dash2018_raw <- dash2018_raw %>%
 #   rbind(ul_sc_sf %>%
 #           mutate(A_Vg_Cv = NA,
 #                  Length = NA))
-# #rm(ul_ms_sf, ul_sc_sf)        
-# 
-# # lower lemhi  
+# #rm(ul_ms_sf, ul_sc_sf)
+#
+# # lower lemhi
 # ll_sf = ll_ms_sf %>%
 #   mutate(Avg_wdt = NA,
 #          SHAPE_L = NA,
@@ -116,7 +126,7 @@ dash2018_raw <- dash2018_raw %>%
 #                  Reach = NA) %>%
 #           select(-Reach))
 # #rm(ll_ms_sf, ll_sc_sf)
-# 
+#
 # # pahsimeroi
 # ph_sf = ph_ms_sf %>%
 #   mutate(Avg_wdt = NA,
@@ -126,8 +136,8 @@ dash2018_raw <- dash2018_raw %>%
 #           mutate(A_Vg_Cv = NA,
 #                  Length = NA))
 # #rm(ph_ms_sf, ph_sc_sf)
-# 
-# # upper salmon  
+#
+# # upper salmon
 # us_sf = us_ms_sf %>%
 #   mutate(Avg_wdt = NA,
 #          SHAPE_L = NA,
@@ -159,7 +169,7 @@ dash2018_raw <- dash2018_raw %>%
 # # upper Lemhi unit 151 should be dropped
 # ul_sf %<>%
 #   filter(Sgmnt_N != 0)
-# 
+#
 # ph_sf <- ph_sf %>%
 #   filter(Sgmnt_N != 0) %>%
 #   rbind(ph_sf %>%
@@ -197,7 +207,7 @@ dash2018_cu = dash2018_raw %>%
          Off_Chnl_Typ = Off_C_T,
          Undrc_A = Undrc_V,
          Avg_Wdth = Avg_wdt) %>%
-  select(SiteNam, Sgmnt_ID, CU_ID, Hab_Rch, 
+  select(SiteNam, Sgmnt_ID, CU_ID, Hab_Rch,
          Fish_Rch, CU_Typ, Off_Chnl_Typ, Glbl_ID,            # site & unit info
          Length, SHAPE_A, Mx_Dpth, Avg_Wdth,                 # size
          Tot_Cov, No_Cov, Aq_Veg_Cov,                        # cover
@@ -230,7 +240,7 @@ dash2018_cu = dash2018_raw %>%
                           if_else(Off_Chnl_Typ %in% c("Ssc", "Oca"),
                                   as.character(Off_Chnl_Typ),
                                   if_else(Off_Chnl_Typ %in% c("Pool", "Riffle", "Run", "Rapid"),
-                                          "Lsc", 
+                                          "Lsc",
                                           as.character(NA))))) %>%
   mutate_at(vars(CU_Typ),
             list(as.factor)) %>%
@@ -254,9 +264,6 @@ xtabs(~ CU_Typ + is.na(Off_Chnl_Typ), dash2018_cu)
 dash2018_cu %>%
   filter(CU_Typ == 'Lsc',
          is.na(Off_Chnl_Typ))
-
-# clean up some datasets
-# rm(ul_sf, ll_sf, ph_sf, us_sf)
 
 #-----------------------------
 # calculate some hr scale metrics for the cus
@@ -296,8 +303,8 @@ dash2018_cu_plus2 = dash2018_cu %>%
               group_by(SiteNam, Hab_Rch) %>%
               summarise_at(vars(Mx_Dpth),
                            lst(n_pool = ~ sum(!is.na(.)),
-                               hr_Pool_Mx_Dpth = max, 
-                               hr_Pool_Avg_Mx_Dpth = mean, 
+                               hr_Pool_Mx_Dpth = max,
+                               hr_Pool_Avg_Mx_Dpth = mean,
                                hr_Pool_CV_Mx_Dpth = ~ sd(., na.rm = T) / mean(., na.rm = T)),
                            na.rm = T) %>%
               st_drop_geometry() %>%
@@ -312,7 +319,7 @@ dash2018_cu_plus2 = dash2018_cu %>%
                                 hr_Prc_Grv = Prc_Grv,
                                 hr_Prc_Cbb = Prc_Cbb,
                                 hr_Prc_Bld = Prc_Bld),
-                           list(~ weighted.mean(., 
+                           list(~ weighted.mean(.,
                                                 w = SHAPE_A,
                                                 na.rm = T))) %>%
               st_drop_geometry() %>%
@@ -334,14 +341,14 @@ dash2018_cu_plus2 %>%
               arrange(SiteNam, Hab_Rch, CU_ID))
 # yes they are
 
-
 # save channel unit scale data
-save(dash2018_cu, dash2018_cu_plus, file = "data/prepped/dash2018_cus.Rda")
+save(dash2018_cu, dash2018_cu_plus,
+     file = paste0(nas_prefix, "data/habitat/DASH/prepped/2018/dash2018_cus.Rda"))
 
 # filter and save shapefile of mainstem units
 # dash2018_cu_plus_ms = dash2018_cu_plus %>%
 #   filter(st_geometry_type(.) == "POLYGON")
-# 
+#
 # ...and side channels
 # dash2018_cu_plus_sc = dash2018_cu_plus %>%
 #   filter(st_geometry_type(.) == "LINESTRING")
@@ -514,8 +521,8 @@ dash2018_hr3 = dash2018_cu %>%
               group_by(SiteNam, Hab_Rch) %>%
               summarise_at(vars(Mx_Dpth),
                            lst(n_pool = ~ sum(!is.na(.)),
-                               Pool_Mx_Dpth = max, 
-                               Pool_Avg_Mx_Dpth = mean, 
+                               Pool_Mx_Dpth = max,
+                               Pool_Avg_Mx_Dpth = mean,
                                Pool_CV_Mx_Dpth = ~ sd(., na.rm = T) / mean(., na.rm = T)),
                            na.rm = T) %>%
               st_drop_geometry() %>%
@@ -530,7 +537,7 @@ dash2018_hr3 = dash2018_cu %>%
                                 Prc_Grv = Prc_Grv,
                                 Prc_Cbb = Prc_Cbb,
                                 Prc_Bld = Prc_Bld),
-                           list(~ weighted.mean(., 
+                           list(~ weighted.mean(.,
                                                 w = SHAPE_A,
                                                 na.rm = T))) %>%
               st_drop_geometry() %>%
@@ -571,14 +578,13 @@ dash2018_hr3 %>%
 #-----------------------------
 # calculate sinuosity and braidedness metrics and add to dash2018_hr
 #-----------------------------
-
 # read in the centerlines with Hab_Roll column
-ul_cl = st_read("data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/UL_Centerline_sin.shp")
-ll_cl = st_read("data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/LL_Centerline_sin.shp")
-ph_cl = st_read("data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/Pah_Centerline_sin.shp")
-us_cl <- st_read("data/raw/dash2018/ShapefilesWith_MetricsV3_reaches_RC/US_Centerline_sin.shp") %>%
+ul_cl = st_read(paste0(nas_prefix, "/data/habitat/DASH/centerlines/2018/upper_lemhi/UL_Centerline_sin.shp"))
+ll_cl = st_read(paste0(nas_prefix, "/data/habitat/DASH/centerlines/2018/lower_lemhi/LL_Centerline_sin.shp"))
+ph_cl = st_read(paste0(nas_prefix, "/data/habitat/DASH/centerlines/2018/pahsimeroi/Pah_Centerline_sin.shp"))
+us_cl = st_read(paste0(nas_prefix, "/data/habitat/DASH/centerlines/2018/upper_salmon/US_Centerline_sin.shp")) %>%
   st_transform(crs = st_crs(mra_crs))
-  
+
 # combine the above centerlines (still need to resolve the Pahsimeroi Hab_Roll 5)
 mra_cl = rbind(ul_cl,
                ll_cl,
@@ -623,8 +629,8 @@ mra_sc = ul_sc_sf %>%
 hr_sin_wet_braid = mra_cl %>%
   left_join(mra_sc,
             by = c("SiteNam", "Hab_Roll")) %>%
-  mutate_at(vars(sc_Length), 
-            list(replace_na), 
+  mutate_at(vars(sc_Length),
+            list(replace_na),
             replace = 0) %>%
   mutate(Tot_Length = Length + sc_Length) %>%
   mutate(wet_braid = Tot_Length / Length) %>%
@@ -633,22 +639,19 @@ hr_sin_wet_braid = mra_cl %>%
 
 # join to dash2018_hr
 dash2018_hr = dash2018_hr %>%
-  left_join(hr_sin_wet_braid, 
+  left_join(hr_sin_wet_braid,
             by = c("SiteNam", "Hab_Rch"))
 
 # save habitat reach scale data
-save(dash2018_hr, file = "data/prepped/dash2018_hr.Rda")
+#save(dash2018_hr,
+#     file = paste0(nas_prefix, "/data/habitat/DASH/prepped/2018/dash2018_hr.Rda"))
 # st_write(dash2018_hr, "dash2018_hr.shp")
-  
-# clean up some datasets
-#rm(ul_cl, ll_cl, ph_cl, us_cl)
 
 #-----------------------------------------------------
 # read in Morgan's data, select attributes, and join to the dash2018_hr
 #-----------------------------------------------------
-# gaa, norwest, natdist, from Salmon basin only. Richie's NAS is mapped to Z:/...Mike's is S:/
-load("Z:/habitat/full_join/SalmonBasin/salmon_full_join.Rda")
-load("S:/habitat/full_join/SalmonBasin/salmon_full_join.Rda")
+# gaa, norwest, natdist, from Salmon basin only.
+load(paste0(nas_prefix, "/data/habitat/full_join/SalmonBasin/salmon_full_join.rda"))
 
 # transform to the same crs
 salmon_full_join = salmon_full_join %>%
@@ -682,4 +685,5 @@ dash2018_hr_gaa = dash2018_hr %>%
           left = TRUE)
 
 # save habitat reach scale data
-save(dash2018_hr, dash2018_hr_gaa, file = "data/prepped/dash2018_hr.Rda")
+save(dash2018_hr, dash2018_hr_gaa,
+     file = paste0(nas_prefix, "/data/habitat/DASH/prepped/2018/dash2018_hr.Rda"))
