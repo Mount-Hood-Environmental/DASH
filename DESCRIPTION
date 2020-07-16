@@ -1,6 +1,6 @@
 Package: DASH
 Type: Package
-Title: Drone Assisted stream Habitat (DASH) Protocol R Package
+Title: Drone Assisted Stream Habitat (DASH) Protocol R Package
 Version: 0.0.0.9000
 Authors@R: as.person(c(
     "Mike Ackerman <mike.ackerman@merck.com> [aut, cre]",
