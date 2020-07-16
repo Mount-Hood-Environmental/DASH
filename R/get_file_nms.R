@@ -1,6 +1,6 @@
 #' @title Get File Names
 #'
-#' @description Create a data frame of folders and file names within `path`
+#' @description Create a data frame of folders and file names within \code{path}
 #'
 #' @author Mike Ackerman and Kevin See
 #'
