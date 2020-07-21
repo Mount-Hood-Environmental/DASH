@@ -10,6 +10,7 @@
 #' @import purrr dplyr
 #' @importFrom utils stack
 #' @importFrom tibble as_tibble
+#' @importFrom magrittr %>%
 #' @export
 #' @return a data frame of all files contained in \code{path}
 
