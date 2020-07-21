@@ -17,7 +17,13 @@
 #' @return a data frame containing data of \code{otg_type}
 
 read_otg_csv = function(path = ".",
-                        otg_type = NULL) {
+                        otg_type = c("surveyPoint_0.csv",
+                                     "CU_1.csv",
+                                     "Wood_2.csv",
+                                     "Jam_3.csv",
+                                     "Undercut_4.csv",
+                                     "Discharge_5.csv",
+                                     "Discharge_Measurements_6.csv")) {
 
   # files list of the otg_type
   file_list = get_file_nms(path) %>%
