@@ -4,13 +4,17 @@
 \alias{read_otg_csv}
 \title{Read On-The-Ground .csv Data}
 \usage{
-read_otg_csv(path = ".", otg_type = NULL)
+read_otg_csv(
+  path = ".",
+  otg_type = c("surveyPoint_0.csv", "CU_1.csv", "Wood_2.csv", "Jam_3.csv",
+    "Undercut_4.csv", "Discharge_5.csv", "DischargeMeasurements_6.csv")
+)
 }
 \arguments{
 \item{path}{a path to the directory containing the folders of interest. \code{path} should only contain
 folders (no files), and each of those folders should only contain files (no folders).}
 
-\item{otg_type}{what type of on-the-ground (otg) data would the user like to read? As of the iniitation of the
+\item{otg_type}{what type of on-the-ground (otg) data would the user like to deal with? As of the iniitation of the
 function a character vector of the file name e.g., "surveyPoint_0.csv", "CU_1.csv", etc.}
 }
 \value{
