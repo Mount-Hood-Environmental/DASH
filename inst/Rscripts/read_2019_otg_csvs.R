@@ -11,7 +11,7 @@
 #-----------------------------
 # load necessary libraries
 #-----------------------------
-library(purrr)
+#library(purrr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -26,7 +26,7 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
-path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/")
+path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/QA_QCd_csvs/")
 
 #-----------------------------
 # read in OTG data
