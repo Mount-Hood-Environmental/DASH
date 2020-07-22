@@ -59,4 +59,10 @@ discharge_df = read_otg_csv(path,
 discharge_measurements_df = read_otg_csv(path,
                                          otg_type = "DischargeMeasurements_6.csv")
 
+# saving stuff while drunk
+save(survey_df, cu_df, wood_df, jam_df,
+     undercut_df, discharge_df,
+     discharge_measurements_df, file = "S:/data/habitat/DASH/OTG/2019/lemhi/prepped/tmp.Rda")
+
+
 
