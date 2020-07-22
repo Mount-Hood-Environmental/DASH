@@ -65,7 +65,7 @@ read_otg_csv = function(path = ".",
 
                     # CHECK 4
                     if(chk == FALSE | nrow(tmp) == 0 | class(tmp)[1] == "try-error") {
-                      cat(paste("Problem reading in", otg_type, "file from", x$folder_nm, "survey. Returning NULL", "\n"))
+                      cat(paste("Problem reading in", otg_type, "file from", x$folder_nm, "survey. Returning NULL and moving on...", "\n"))
                       return(NULL)
                     }
                     if(chk == TRUE) {
