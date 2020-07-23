@@ -21,7 +21,7 @@ function a character vector of the file name e.g., "surveyPoint_0.csv", "CU_1.cs
 a data frame containing data of \code{otg_type}
 }
 \description{
-Read .csv delimited file containing on-the-ground (otg) data collected using the
+Read .csv delimited files containing on-the-ground (otg) data collected using the
 DASH protocol. This function only reads in one "type" of data at a time.
 }
 \author{

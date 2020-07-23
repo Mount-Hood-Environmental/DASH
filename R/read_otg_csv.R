@@ -1,6 +1,6 @@
 #' @title Read On-The-Ground .csv Data
 #'
-#' @description Read .csv delimited file containing on-the-ground (otg) data collected using the
+#' @description Read .csv delimited files containing on-the-ground (otg) data collected using the
 #' DASH protocol. This function only reads in one "type" of data at a time.
 #'
 #' @author Mike Ackerman and Kevin See
