@@ -3,6 +3,7 @@
 export(get_file_nms)
 export(get_otg_col_specs)
 export(read_otg_csv)
+export(read_otg_csv_wrapper)
 import(dplyr)
 import(purrr)
 import(readr)
