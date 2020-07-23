@@ -11,7 +11,6 @@
 #-----------------------------
 # load necessary libraries
 #-----------------------------
-#library(purrr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -29,40 +28,37 @@ if(.Platform$OS.type == 'unix') {
 path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/QA_QCd_csvs/")
 
 #-----------------------------
-# read in OTG data
+# read in one type of OTG data
 #-----------------------------
-# read surveyPoint data
-survey_df = read_otg_csv(path,
-                         otg_type = "surveyPoint_0.csv")
 
-# read CU data
+# read CU data; as an example
 cu_df = read_otg_csv(path,
                      otg_type = "CU_1.csv")
 
-# read Wood data
-wood_df = read_otg_csv(path,
-                       otg_type = "Wood_2.csv")
+#-----------------------------
+# loop over OTG data types using wrapper function
+#-----------------------------
+otg_data = read_otg_csv_wrapper(path = path,
+                                otg_type_list = c("surveyPoint_0.csv",
+                                                  "CU_1.csv",
+                                                  "Wood_2.csv",
+                                                  "Jam_3.csv",
+                                                  "Undercut_4.csv",
+                                                  "Discharge_5.csv",
+                                                  "DischargeMeasurements_6.csv"),
+                                otg_type_names = c("survey",
+                                                   "cu",
+                                                   "wood",
+                                                   "jam",
+                                                   "undercut",
+                                                   "discharge",
+                                                   "discharge_measurements"))
 
-# read Jam data
-jam_df = read_otg_csv(path,
-                      otg_type = "Jam_3.csv")
-
-# read Undercut data
-undercut_df = read_otg_csv(path,
-                           otg_type = "Undercut_4.csv")
-
-# read Discharge data
-discharge_df = read_otg_csv(path,
-                            otg_type = "Discharge_5.csv")
-
-# read DischargeMeasurements data
-discharge_measurements_df = read_otg_csv(path,
-                                         otg_type = "DischargeMeasurements_6.csv")
-
-# saving stuff while drunk
-save(survey_df, cu_df, wood_df, jam_df,
-     undercut_df, discharge_df,
-     discharge_measurements_df, file = "S:/data/habitat/DASH/OTG/2019/lemhi/prepped/tmp.Rda")
+#-----------------------------
+# save the otg_data list of dfs
+#-----------------------------
+save(otg_data,
+     file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019_otg.rda"))
 
 
 
