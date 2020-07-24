@@ -69,63 +69,7 @@ save(otg_data,
 path1 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/raw/")
 path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/QA_QCd_csvs/")
 
-# files in path1
-file_df1 = get_file_nms(path1) %>%
-  dplyr::select(path_nm) %>%
-  as.list() %>%
-  .[[1]]
-
-# files in path2
-file_df2 = get_file_nms(path2) %>%
-  dplyr::select(path_nm) %>%
-  as.list() %>%
-  .[[1]]
-
-# add some things to test for diff files
-file_df1 = c(file_df1, "test")
-file_df2 = c(file_df2, "foo")
-
-tst = identical(file_df1, file_df2)
-tst
-
-# files that exist in file_df1, but not in file_df2
-file_df1[!(file_df1 %in% file_df2)]
-
-# files that exist in file_df2, but not in file_df1
-file_df2[!(file_df2 %in% file_df1)]
-
-# merge
-tmp_list = list()
-
-for (f in file_df1) {
-
-  file1 = paste0(path1, f)
-  file2 = paste0(path2, f)
-  tst = tools::md5sum(file1) == tools::md5sum(file2)
-
-  if(tst == FALSE) {
-    tmp_list[[ f ]] = names(tst)
-    cat(paste("Found a difference in the", f, "files. Adding to the list.", "\n"))
-  }
-}
-
-# store files with differences
-diff_file_list = names(tmp_list)
-
-# show differences between two files
-tmp_list2 = list()
-
-for (d in diff_file_list) {
-
-  # the files to compare
-  file1 = paste0(path1, d)
-  file2 = paste0(path2, d)
-
-  # use diffr to find differences
-  diff_tmp = diffr::diffr(file1, file2, before = "file1", after = "file2")
-
-  tmp_list2[[ d ]] = diff_tmp
-
-}
-
+# use compare_folders()
+compare_results = compare_folders(path1 = path1,
+                                  path2 = path2)
 
