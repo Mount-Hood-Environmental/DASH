@@ -72,4 +72,3 @@ path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/QA_QCd_csvs/")
 # use compare_folders()
 compare_results = compare_folders(path1 = path1,
                                   path2 = path2)
-
