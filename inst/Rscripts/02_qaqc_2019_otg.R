@@ -27,3 +27,16 @@ if(.Platform$OS.type == 'unix') {
 # load the otg_data list of dfs
 #-----------------------------
 load(paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019_otg.rda"))
+
+#-----------------------------
+# QA/QC surveyPoint_0.csv
+#-----------------------------
+tmp = otg_data$survey
+
+qaqc_tbl = tibble(
+  path_name,
+  row_num,
+  col_name,
+  error_message
+)
+
