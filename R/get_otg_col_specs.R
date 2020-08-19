@@ -23,12 +23,12 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Survey Info
   if(otg_type == "surveyPoint_0.csv") {
     col_types = readr::cols(
-      ObjectID = readr::col_double(),
+      ObjectID = readr::col_integer(),
       GlobalID = readr::col_character(),
-      `Survey Time` = readr::col_time(format = "%H:%M"),
+      `Survey Time` = readr::col_time(),
       `Site Name` = readr::col_character(),
       `Survey Date` = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
-      `Survey Crew` = readr::col_character(),
+      `Survey Crew` = readr::col_double(),
       `Conductivity (ms)` = readr::col_logical(),
       CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       Creator = readr::col_character(),
@@ -42,17 +42,17 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Channel Unit Form
   if(otg_type == "CU_1.csv") {
     col_types = readr::cols(
-      ObjectID = col_double(),
+      ObjectID = col_integer(),
       GlobalID = col_character(),
       `Channel Unit Type` = col_character(),
-      `Channel Unit Number` = col_double(),
-      `Channel Segment Number` = col_double(),
+      `Channel Unit Number` = col_integer(),
+      `Channel Segment Number` = col_integer(),
       `Thalweg Exit Depth (m)` = col_double(),
-      `Channel Unit Notes` = col_logical(),
+      `Channel Unit Notes` = col_character(),
       `Overhanging Cover` = col_double(),
-      `Aquatic Vegetation` = col_logical(),
+      `Aquatic Vegetation` = col_double(),
       `Woody Debris Cover` = col_double(),
-      `Artificial Cover` = col_logical(),
+      `Artificial Cover` = col_double(),
       `Total No Cover` = col_double(),
       `Sand/Fines 2mm` = col_double(),
       `Gravel 2-64mm` = col_double(),
@@ -86,9 +86,9 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Wood Form
   if(otg_type == "Wood_2.csv") {
     col_types = readr::cols(
-      ObjectID = col_double(),
+      ObjectID = col_integer(),
       GlobalID = col_character(),
-      `Large Wood Number` = col_double(),
+      `Large Wood Number` = col_integer(),
       `Length (m)` = col_double(),
       `Diameter (m)` = col_double(),
       `Wet?` = col_character(),
@@ -105,12 +105,12 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Jam Form
   if(otg_type == "Jam_3.csv") {
     col_types = readr::cols(
-      ObjectID = col_double(),
+      ObjectID = col_integer(),
       GlobalID = col_character(),
       `Length (m)` = col_double(),
       `Width (m)` = col_double(),
       `Height (m)` = col_double(),
-      `Estimated Number of Pieces` = col_double(),
+      `Estimated Number of Pieces` = col_integer(),
       ParentGlobalID = col_character(),
       CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       Creator = col_character(),
@@ -122,9 +122,9 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Undercut Form
   if(otg_type == "Undercut_4.csv") {
     col_types = readr::cols(
-      ObjectID = col_double(),
+      ObjectID = col_integer(),
       GlobalID = col_character(),
-      `Undercut Number` = col_double(),
+      `Undercut Number` = col_integer(),
       Location = col_character(),
       `Length (m)` = col_double(),
       `Width 25% (m)` = col_double(),
@@ -141,9 +141,9 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Discharge Form
   if(otg_type == "Discharge_5.csv") {
     col_types = readr::cols(
-      ObjectID = col_double(),
+      ObjectID = col_integer(),
       GlobalID = col_character(),
-      `Discharge Location (BOS, TOS, CU #)` = col_double(),
+      `Discharge Location (BOS, TOS, CU #)` = col_character(),
       ParentGlobalID = col_character(),
       CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       Creator = col_character(),
@@ -155,7 +155,7 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Discharge Measurements Form
   if(otg_type == "DischargeMeasurements_6.csv") {
     col_types = readr::cols(
-      ObjectID = col_double(),
+      ObjectID = col_integer(),
       GlobalID = col_character(),
       `Station Width` = col_double(),
       `Station Depth` = col_double(),
