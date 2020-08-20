@@ -1,4 +1,4 @@
-#' @title Initiate Blank QA/QC Results Tibble
+#' @title Initiate Blank QC Results Tibble
 #'
 #' @description Create a blank tibble to store messages from QA/QC of on-the-ground
 #' collected data
@@ -9,7 +9,7 @@
 #' @export
 #' @return a blank tibble
 
-qaqc_tbl = function() {
+qc_tbl = function() {
 
   # create a blank tibble
   tmp = tibble::tibble(
