@@ -10,6 +10,7 @@
 #' @inheritParams check_na
 #'
 #' @import dplyr
+#' @importFrom tidyr gather
 #' @importFrom magrittr %>%
 #' @export
 #' @return a tibble with QC results
@@ -57,7 +58,44 @@ qc_survey = function(qc_df = NULL,
                  cols_to_check_nas)
   if( nrow(tmp) > 0 ) qc_tmp = rbind(qc_tmp, tmp)
 
+  #####
+  # CHECK 4:  Is the latitude (y) or longitude (x) outside of expected values?
+  cat("Checking whether lat/long fall within expected values? \n")
+
+  # set expected values
+  lon_min = -125; lon_max = -110; lat_min = 40; lat_max = 50 # rough boundaries for Pacific Northwest
+
+  # does x and y fall outside of expected values
+  xy_chk = qc_df %>%
+    dplyr::select(path_nm, GlobalID, x, y) %>%
+    # TRUE = good, FALSE = outside expected values
+    dplyr::mutate(longitude = between(x,
+                                      lon_min,
+                                      lon_max)) %>%
+    dplyr::mutate(latitude = between(y,
+                                     lat_min,
+                                     lat_max)) %>%
+    dplyr::select(-x, -y) %>%
+    tidyr::gather(key = "key",
+                  "value",
+                  longitude:latitude) %>%
+    dplyr::filter(value == FALSE) %>%
+    dplyr::mutate(
+      error_message = case_when(
+        key == "longitude" ~ paste0("The longitude (x) falls outside of the expected values between ", lon_min, " and ", lon_max),
+        key == "latitude"  ~ paste0("The latitude (y) falls ouside of the expected values between ", lat_min, " and ", lat_max)
+      )
+    ) %>%
+    dplyr::select(-key, -value)
+
+  if( nrow(xy_chk) == 0 ) cat("All longitude and latitude values fall within expected values.")
+  if( nrow(xy_chk) < 0 ) {
+    cat("Longitude and latitude values found outside of expected values. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, xy_chk)
+  }
+
   # return qc results
   return(qc_tmp)
-}
+
+} # end qc_survey()
 
