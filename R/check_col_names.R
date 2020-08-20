@@ -38,7 +38,7 @@ check_col_names = function(qc_df = NULL,
   chk = identical(exp_cols, obs_cols)
 
   # the actions
-  if(chk == TRUE) cat(paste("Columns match the expected!"))
+  if(chk == TRUE) cat(paste("Columns match the expected! \n"))
   if(chk == FALSE) cat(paste("Column names in qc_df do not match the expected column names defined in get_otg_col_specs(). Attempting to continue...", "\n"))
 
 } # end column_check()

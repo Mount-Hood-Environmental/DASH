@@ -7,6 +7,7 @@
 #'
 #' @param qc_df The survey data frame to be QC'd
 #' @inheritParams get_otg_col_specs
+#' @inheritParams check_na
 #'
 #' @import dplyr
 #' @importFrom magrittr %>%
@@ -14,7 +15,9 @@
 #' @return a tibble with QC results
 
 qc_survey = function(qc_df = NULL,
-                     otg_type = "surveyPoint_0.csv") {
+                     otg_type = "surveyPoint_0.csv",
+                     cols_to_check_nas = c("Survey Date",
+                                           "Survey Time")) {
 
   # Starting message
   cat(paste("Starting QC on otg_type =", otg_type, "data. \n"))
@@ -30,7 +33,8 @@ qc_survey = function(qc_df = NULL,
   #####
   # CHECK 2: Are there duplicate site names?
   cat(paste("Looking for duplicate site names... \n"))
-  dup_site = qc_df$`Site Name` %>%
+  dup_site = c(qc_df$`Site Name`, "Arbon_2019", "Canyon_2019") %>% # for testing
+  #dup_site = qc_df$`Site Name` %>%
     table() %>%
     data.frame() %>%
     .[.$Freq > 1, 1]
@@ -48,9 +52,12 @@ qc_survey = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 3: Are there or NAs in these columns?
+  # CHECK 3: Are there NAs in these columns?
   tmp = check_na(qc_df,
-                 cols_to_check = c("Survey Time",
-                                   "Survey Date"))
+                 cols_to_check_nas)
+  if( nrow(tmp) > 0 ) qc_tmp = rbind(qc_tmp, tmp)
+
+  # return qc results
+  return(qc_tmp)
 }
 

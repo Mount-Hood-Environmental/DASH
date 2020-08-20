@@ -8,6 +8,8 @@ check_na(qc_df = NULL, cols_to_check = NULL)
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
+
+\item{cols_to_check_nas}{columns to check for NAs in}
 }
 \value{
 \code{NULL} or a tibble from \code{qc_tbl()}

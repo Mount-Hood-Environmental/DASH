@@ -4,13 +4,19 @@
 \alias{qc_survey}
 \title{Quality Control - Survey Data}
 \usage{
-qc_survey(qc_df = NULL, otg_type = "surveyPoint_0.csv")
+qc_survey(
+  qc_df = NULL,
+  otg_type = "surveyPoint_0.csv",
+  cols_to_check_nas = c("Survey Date", "Survey Time")
+)
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
 
 \item{otg_type}{what type of on-the-ground (otg) data would the user like to deal with? As of the iniitation of the
 function a character vector of the file name e.g., "surveyPoint_0.csv", "CU_1.csv", etc.}
+
+\item{cols_to_check_nas}{columns to check for NAs in}
 }
 \value{
 a tibble with QC results

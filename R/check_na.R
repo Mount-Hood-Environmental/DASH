@@ -5,8 +5,8 @@
 #'
 #' @author Mike Ackerman
 #'
+#' @param cols_to_check_nas columns to check for NAs in
 #' @inheritParams qc_survey
-#' @inheritParams get_otg_col_specs
 #'
 #' @import dplyr
 #' @importFrom magrittr %>%
@@ -21,9 +21,6 @@ check_na = function(qc_df = NULL,
 
   # cols_to_check = c("Survey Time", "Survey Date") # for testing
 
-  # Initiate qc_tmp
-  qc_tmp = qc_tbl()
-
   # check for NA in cols_to_check
   na_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cols_to_check)) %>%
@@ -34,14 +31,13 @@ check_na = function(qc_df = NULL,
     dplyr::select(-col_name, -value)
 
   if( nrow(na_chk) == 0 ) {
-    cat("No unexpected NAs found!")
+    cat("No unexpected NAs found! \n")
     return(NULL)
   }
 
   if( nrow(na_chk) > 0 ) {
-    cat("Unexpected NAs found. Adding to QC results.")
-    qc_tmp = rbind(qc_tmp, na_chk)
-    return(qc_tmp)
+    cat("Unexpected NAs found. Adding to QC results. \n")
+    return(na_chk)
   }
 
 } # end check_na()
