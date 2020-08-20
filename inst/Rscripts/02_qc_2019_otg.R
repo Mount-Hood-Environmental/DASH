@@ -37,6 +37,7 @@ qc_surv_results = qc_survey(qc_df = otg_data$survey,
                             cols_to_check_nas = c("Survey Date",
                                                   "Survey Time"))
 
-# CHECK 4: Is the latitude (y) or longitude (x) missing?
-
+#-----------------------------
+# QA/QC CU_1.csv
+#-----------------------------
 
