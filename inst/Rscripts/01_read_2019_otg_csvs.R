@@ -1,10 +1,10 @@
 # Authors: Mike Ackerman
 #
 # Purpose: A script to import all of the 2019 on-the-ground (OTG) DASH data from
-# Survey 123. My intent is to later convert this script into a series of functions.
+# Survey 123.
 #
 # Created: July 15, 2020
-#   Last Modified:
+#   Last Modified: August 19, 2020
 #
 # Notes:
 
@@ -33,8 +33,8 @@ path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/QA_QCd_csvs/")
 #-----------------------------
 
 # read CU data; as an example
-cu_df = read_otg_csv(path,
-                     otg_type = "CU_1.csv")
+survey_df = read_otg_csv(path,
+                         otg_type = "surveyPoint_0.csv")
 
 #-----------------------------
 # loop over OTG data types using wrapper function
