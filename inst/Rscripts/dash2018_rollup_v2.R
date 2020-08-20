@@ -22,7 +22,7 @@ if(.Platform$OS.type != 'unix') {
   nas_prefix = "S:"
 }
 if(.Platform$OS.type == 'unix') {
-  nas_prefix = "~/../../Volumes/ABS"
+  nas_prefix = "~/../../Volumes/ABS/"
 }
 
 #-----------------------------
