@@ -14,8 +14,7 @@ qaqc_tbl = function() {
   # create a blank tibble
   tmp = tibble::tibble(
     path_name = character(),
-    row_num = integer(),
-    col_name = integer(),
+    GlobalID = integer(),
     error_message = character()
   )
 
