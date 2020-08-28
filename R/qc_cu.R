@@ -103,11 +103,13 @@ qc_cu = function(qc_df = NULL,
   # CHECK 6: Do cover column values sum to 100?
   cat("Do all fish cover columns sum to 100? \n")
 
+  # What columns contain fish cover data?
   cover_columns = c("Overhanging Cover",
                     "Aquatic Vegetation",
                     "Woody Debris Cover",
                     "Artificial Cover",
                     "Total No Cover")
+
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%
     replace(is.na(.), 0) %>%
@@ -124,13 +126,61 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 7: Do all slow water channel unit types have ocular estimates?
+  # CHECK 7: Do all slow water channel unit types have ocular estimates and do they sum to 100?
+  cat("Do ocular estimates for all slow water channel unit types exist and sum to 100?")
+
+  # What are the slow channel unit types?
+  slow_cus = c("Pool", "Run", "OCA")
+
+  # What columns contain substrate ocular estimates?
+  ocular_columns = c("Sand/Fines 2mm",
+                     "Gravel 2-64mm",
+                     "Cobble 64-256mm",
+                     "Boulder 256mm")
+
+  oc_chk = qc_df %>%
+    dplyr::select(path_nm, GlobalID, `Channel Unit Type`, all_of(ocular_columns)) %>%
+    dplyr::filter(`Channel Unit Type` %in% slow_cus) %>%
+    dplyr::select(-`Channel Unit Type`) %>%
+    replace(is.na(.), 0) %>%
+    dplyr::mutate(ocular_sum = rowSums(.[3:(2+length(ocular_columns))])) %>%
+    dplyr::select(-all_of(ocular_columns)) %>%
+    dplyr::filter(!ocular_sum == 100) %>%
+    dplyr::mutate(error_message = paste0("Ocular estimates sum to ", ocular_sum, ", not 100.")) %>%
+    dplyr::select(-ocular_sum)
+
+  if( nrow(oc_chk) == 0 ) cat("Ocular estimates for all slow channel units sum to 100!")
+  if( nrow(oc_chk) > 0 ) {
+    cat("The ocular estimates for", nrow(oc_chk), "slow channel units do not sum to 100. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, oc_chk)
+  }
 
   #####
-  # CHECK 8: Do substrate ocular estimate columns sum to 100?
+  # CHECK 9: Do riffles with pebble counts have all columns filled? And if so, do values
+  # fall within expected values?
+  cat("Do riffles with pebble counts have all values filled and within expected values?")
+
+  peb_chk = qc_df %>%
+    dplyr::select(path_nm, GlobalID, `Channel Unit Type`, starts_with("Pebble")) %>%
+    dplyr::filter(`Channel Unit Type` == "Riffle") %>%
+    dplyr::select(-`Channel Unit Type`) %>%
+    dplyr::mutate(na_count = rowSums(is.na(.))) %>%
+    dplyr::filter(!na_count == 11) %>%
+    dplyr::filter(!na_count == 0) %>%
+    dplyr::select(-starts_with("Pebble")) %>%
+    dplyr::mutate(error_message = paste0("Pebble size values for ", na_count, " columns within the pebble counts appear to be NA.")) %>%
+    dplyr::select(-na_count)
+
+  if( nrow(peb_chk) == 0 ) cat("Size values appear to be filled in for riffles where pebble counts occurred. \n")
+  if( nrow(peb_chk) > 0 ) {
+    cat("Some pebble size values for", nrow(peb_chk), "riffles appear to be missing where pebble counts occurred. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, peb_chk)
+  }
 
   #####
-  # CHECK 9: Do riffles have all pebble column counts filled and/or within expected values?
+  # CHECK 10: Do we need to add a check to see if pebble values fall within an expected range?
+  # expected values (mm)
+  peb_min = 0.06; peb_max = 1024
 
   ###################
   # return qc results
