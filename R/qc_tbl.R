@@ -20,4 +20,4 @@ qc_tbl = function() {
 
   return(tmp)
 
-} # end qaqc_tbl()
+} # end qc_tbl()
