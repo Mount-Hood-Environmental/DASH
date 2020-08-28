@@ -26,7 +26,7 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
-path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/QA_QCd_csvs/")
+path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
 
 #-----------------------------
 # read in one type of OTG data
@@ -66,8 +66,8 @@ save(otg_data,
 #-----------------------------
 
 # the directories to compare
-path1 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/raw/")
-path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/QA_QCd_csvs/")
+path1 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/0_raw_csvs/")
+path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
 
 # use compare_folders()
 compare_results = compare_folders(path1 = path1,
