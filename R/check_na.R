@@ -18,7 +18,7 @@ check_na = function(qc_df = NULL,
                     cols_to_check_nas = NULL) {
 
   cat("Checking for unexpected NAs in columns cols_to_check_nas: \n")
-  cat(cols_to_check_nas, sep = ", ")
+  cat(cols_to_check_nas, sep = ", "); cat("\n")
 
   # cols_to_check = c("Survey Time", "Survey Date") # for testing
 
@@ -42,4 +42,5 @@ check_na = function(qc_df = NULL,
   }
 
 } # end check_na()
+
 
