@@ -28,14 +28,15 @@ qc_survey = function(qc_df = NULL,
 
   #####
   # CHECK 1: Do the column names in qc_df match the expected column names for that otg_type?
-  check_col_names(qc_df,
-                  otg_type)
+  check_col_names(qc_df = qc_df,
+                  otg_type = otg_type)
 
   #####
   # CHECK 2: Are there duplicate site names?
   cat(paste("Looking for duplicate site names... \n"))
-  dup_site = c(qc_df$`Site Name`, "Arbon_2019", "Canyon_2019") %>% # for testing
-  #dup_site = qc_df$`Site Name` %>%
+
+  #dup_site = c(qc_df$`Site Name`, "Arbon_2019", "Canyon_2019") %>% # for testing
+  dup_site = qc_df$`Site Name` %>%
     table() %>%
     data.frame() %>%
     .[.$Freq > 1, 1]
@@ -48,7 +49,7 @@ qc_survey = function(qc_df = NULL,
       dplyr::mutate(error_message = paste0(`Site Name`, " site name is a duplicate.")) %>%
       dplyr::select(- `Site Name`)
 
-    cat("Duplicate site names found! \n")
+    cat("Duplicate site names found! Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, tmp)
   }
 
@@ -60,7 +61,7 @@ qc_survey = function(qc_df = NULL,
 
   #####
   # CHECK 4:  Is the latitude (y) or longitude (x) outside of expected values?
-  cat("Checking whether lat/long fall within expected values? \n")
+  cat("Checking whether lat/lon fall within expected values? \n")
 
   # set expected values
   lon_min = -125; lon_max = -110; lat_min = 40; lat_max = 50 # rough boundaries for Pacific Northwest
@@ -89,7 +90,7 @@ qc_survey = function(qc_df = NULL,
     dplyr::select(-key, -value)
 
   if( nrow(xy_chk) == 0 ) cat("All longitude and latitude values fall within expected values.")
-  if( nrow(xy_chk) < 0 ) {
+  if( nrow(xy_chk) > 0 ) {
     cat("Longitude and latitude values found outside of expected values. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, xy_chk)
   }
