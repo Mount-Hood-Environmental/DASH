@@ -15,17 +15,18 @@
 #' @return \code{NULL} or a tibble from \code{qc_tbl()}
 
 check_na = function(qc_df = NULL,
-                    cols_to_check = NULL) {
+                    cols_to_check_nas = NULL) {
 
-  cat("Checking for unexpected NAs in columns cols_to_check. \n")
+  cat("Checking for unexpected NAs in columns cols_to_check_nas: \n")
+  cat(cols_to_check_nas, sep = ", ")
 
   # cols_to_check = c("Survey Time", "Survey Date") # for testing
 
   # check for NA in cols_to_check
   na_chk = qc_df %>%
-    dplyr::select(path_nm, GlobalID, all_of(cols_to_check)) %>%
-    dplyr::filter_at(., vars(cols_to_check), any_vars(is.na(.))) %>%
-    tidyr::gather(key = "col_name", "value", all_of(cols_to_check)) %>%
+    dplyr::select(path_nm, GlobalID, all_of(cols_to_check_nas)) %>%
+    dplyr::filter_at(., vars(cols_to_check_nas), any_vars(is.na(.))) %>%
+    tidyr::gather(key = "col_name", "value", all_of(cols_to_check_nas)) %>%
     dplyr::filter(is.na(value)) %>%
     dplyr::mutate(error_message = paste0("Column ", col_name, " is <blank> or NA.")) %>%
     dplyr::select(-col_name, -value)
