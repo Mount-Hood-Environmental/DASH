@@ -14,12 +14,13 @@
 #' @return a tibble with QC results
 
 qc_cu = function(qc_df = NULL,
-                 otg_type = "CU_1.csv",
                  cols_to_check_nas = c("Channel Unit Type",
                                        "Channel Unit Number",
                                        "Channel Segment Number",
                                        "Maximum Depth (m)",
                                        "ParentGlobalID")) {
+
+  otg_type = "CU_1.csv"
 
   # Starting message
   cat(paste("Starting QC on otg_type =", otg_type, "data. \n"))
@@ -60,7 +61,7 @@ qc_cu = function(qc_df = NULL,
   # CHECK 4: Are all channel unit numbers within each survey unique?
   cat("Are all channel unit numbers within each survey unique? \n")
 
-  cu_chk = qc_df %>%
+  cu_num = qc_df %>%
     dplyr::select(path_nm, `Channel Unit Number`) %>%
     dplyr::group_by(path_nm) %>%
     dplyr::count(`Channel Unit Number`) %>%
@@ -69,10 +70,10 @@ qc_cu = function(qc_df = NULL,
                   error_message = paste0("Channel unit number ", `Channel Unit Number`, " appears more than once.")) %>%
     dplyr::select(-`Channel Unit Number`, -n)
 
-  if( nrow(cu_chk) == 0) cat("Yes, all channel unit numbers appear to be unique. \n")
-  if( nrow(ch_chk) > 0 ) {
+  if( nrow(cu_num) == 0) cat("Yes, all channel unit numbers appear to be unique. \n")
+  if( nrow(cu_num) > 0 ) {
     cat("Some channel units appear within a survey more than once. Adding to QC results. \n")
-    qc_tmp = rbind(qc_tmp, cu_chk)
+    qc_tmp = rbind(qc_tmp, cu_num)
   }
 
   #####
