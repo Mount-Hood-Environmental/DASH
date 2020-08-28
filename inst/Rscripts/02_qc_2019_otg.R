@@ -5,14 +5,13 @@
 # My intent is to later convert this script into a series of functions.
 #
 # Created: August 12, 2020
-#   Last Modified:
+#   Last Modified: August 28, 2020
 #
 # Notes:
 
 #-----------------------------
 # load necessary libraries
 #-----------------------------
-library(tibble)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -40,4 +39,4 @@ qc_surv_results = qc_survey(qc_df = otg_data$survey,
 #-----------------------------
 # QA/QC CU_1.csv
 #-----------------------------
-
+qc_cu_results = qc_cu()
