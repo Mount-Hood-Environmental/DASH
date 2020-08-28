@@ -14,7 +14,7 @@ qc_tbl = function() {
   # create a blank tibble
   tmp = tibble::tibble(
     path_nm = character(),
-    GlobalID = integer(),
+    GlobalID = character(),
     error_message = character()
   )
 
