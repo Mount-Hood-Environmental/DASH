@@ -13,7 +13,7 @@ qc_tbl = function() {
 
   # create a blank tibble
   tmp = tibble::tibble(
-    path_name = character(),
+    path_nm = character(),
     GlobalID = integer(),
     error_message = character()
   )
