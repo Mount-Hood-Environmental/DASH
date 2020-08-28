@@ -39,4 +39,10 @@ qc_surv_results = qc_survey(qc_df = otg_data$survey,
 #-----------------------------
 # QA/QC CU_1.csv
 #-----------------------------
-qc_cu_results = qc_cu()
+qc_cu_results = qc_cu(qc_df = otg_data$cu,
+                      otg_type = "CU_1.csv",
+                      cols_to_check_nas = c("Channel Unit Type",
+                                            "Channel Unit Number",
+                                            "Channel Segment Number",
+                                            "Maximum Depth (m)",
+                                            "ParentGlobalID"))
