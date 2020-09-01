@@ -50,9 +50,9 @@ qc_wrapper = function(survey_df = NULL,
                                           .before = 0)) %>%
     dplyr::bind_rows(qc_d2 %>%
                        tibble::add_column(source = "DischargeMeasurements",
-                                          .before = 0)) %>%
+                                          .before = 0))
 
     # return tmp
     return(tmp)
 
-} # end qc_wrapper
+} # end qc_wrapper()
