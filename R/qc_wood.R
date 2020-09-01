@@ -45,6 +45,7 @@ qc_wood = function(qc_df = NULL,
 
   #####
   # CHECK 3: any strange values in the Wet?, Ballasted? or Channel Forming? columns?
+  cat("Checking of unusual values in the Wet, Ballasted, and Channel Forming columns. \n")
   yes_no_qc = qc_df %>%
     dplyr::select(path_nm, GlobalID,
                   `Wet?`,
@@ -57,28 +58,39 @@ qc_wood = function(qc_df = NULL,
            !value %in% c("Yes", "No")) %>%
     dplyr::mutate(error_message = paste0("Column ", name, " has an unusal value.")) %>%
     dplyr::select(one_of(names(qc_tmp)))
-  if( nrow(yes_no_qc) > 0 ) qc_tmp = rbind(qc_tmp, yes_no_qc)
+
+  if( nrow(yes_no_qc) == 0 ) cat("Values in Wet, Ballasted, and Channel Forming columns look good! \n")
+  if( nrow(yes_no_qc) > 0 ) {
+    cat( nrow(yes_no_qc), "values appear strange. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, yes_no_qc)
+  }
 
   #####
   # CHECK 4: Are length and diameter possibly mixed up?
+  cat("Checking to see whether length and diameter values are possibly reversed? \n")
   len_diam_qc = qc_df %>%
     dplyr::filter(`Length (m)` <= `Diameter (m)`) %>%
     dplyr::mutate(error_message = "Length is less than or equal to the diameter of a piece of large wood") %>%
     dplyr::select(one_of(names(qc_tmp)))
-  if( nrow(len_diam_qc) > 0 ) qc_tmp = rbind(qc_tmp, len_diam_qc)
+
+  if( nrow(len_diam_qc) == 0 ) cat("Length and diameter values appear okay. \n")
+  if( nrow(len_diam_qc) > 0 ) {
+    cat("The length and diameter values for", nrow(len_diam_qc), "pieces of wood may be reversed. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, len_diam_qc)
+  }
 
   #####
   # CHECK 5:  Are the number, length, width and height values outside of expected values?
-  cat("Checking whether large wood number, length, and diamter fall within expected values? \n")
+  cat("Checking whether large wood number, length, and diameter fall within expected values? \n")
 
   # set expected values
   exp_values = tibble(name = c("Large Wood Number",
                                "Length (m)",
                                "Diameter (m)"),
                       min = c(0),
-                      max = c(Inf,
-                              100,
-                              5))
+                      max = c(1000,
+                              30,
+                              3))
 
   # do measured values fall outside of expected values
   val_chk = qc_df %>%
