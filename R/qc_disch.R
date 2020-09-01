@@ -6,7 +6,6 @@
 #' @author Kevin See
 #'
 #' @param qc_df The survey data frame to be QC'd
-#' @inheritParams get_otg_col_specs
 #' @inheritParams check_na
 #'
 #' @import dplyr
@@ -16,8 +15,9 @@
 #' @return a tibble with QC results
 
 qc_disch = function(qc_df = NULL,
-                         cols_to_check_nas = c("Discharge Location (BOS, TOS, CU #)")) {
+                    cols_to_check_nas = c("Discharge Location (BOS, TOS, CU #)")) {
 
+  # set otg_type
   otg_type = "Discharge_5.csv"
 
   # Starting message

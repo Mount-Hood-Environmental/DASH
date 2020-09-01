@@ -6,7 +6,6 @@
 #' @author Mike Ackerman
 #'
 #' @param qc_df The survey data frame to be QC'd
-#' @inheritParams get_otg_col_specs
 #' @inheritParams check_na
 #'
 #' @import dplyr
@@ -20,6 +19,7 @@ qc_cu = function(qc_df = NULL,
                                        "Maximum Depth (m)",
                                        "ParentGlobalID")) {
 
+  # set otg_type
   otg_type = "CU_1.csv"
 
   # Starting message

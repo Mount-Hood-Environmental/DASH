@@ -6,7 +6,6 @@
 #' @author Kevin See
 #'
 #' @param qc_df The survey data frame to be QC'd
-#' @inheritParams get_otg_col_specs
 #' @inheritParams check_na
 #'
 #' @import dplyr
@@ -16,11 +15,12 @@
 #' @return a tibble with QC results
 
 qc_jam = function(qc_df = NULL,
-                       cols_to_check_nas = c("Length (m)",
-                                             "Width (m)",
-                                             "Height (m)",
-                                             "Estimated Number of Pieces")) {
+                  cols_to_check_nas = c("Length (m)",
+                                        "Width (m)",
+                                        "Height (m)",
+                                        "Estimated Number of Pieces")) {
 
+  # set otg_type
   otg_type = "Jam_3.csv"
 
   # Starting message

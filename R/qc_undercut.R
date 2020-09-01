@@ -6,7 +6,6 @@
 #' @author Kevin See
 #'
 #' @param qc_df The survey data frame to be QC'd
-#' @inheritParams get_otg_col_specs
 #' @inheritParams check_na
 #'
 #' @import dplyr
@@ -23,6 +22,7 @@ qc_undercut = function(qc_df = NULL,
                                              "Width 50% (m)",
                                              "Width 75% (m)")) {
 
+  # set otg_type
   otg_type = "Undercut_4.csv"
 
   # Starting message

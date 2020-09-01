@@ -6,7 +6,6 @@
 #' @author Mike Ackerman
 #'
 #' @param qc_df The survey data frame to be QC'd
-#' @inheritParams get_otg_col_specs
 #' @inheritParams check_na
 #'
 #' @import dplyr
@@ -16,9 +15,11 @@
 #' @return a tibble with QC results
 
 qc_survey = function(qc_df = NULL,
-                     otg_type = "surveyPoint_0.csv",
                      cols_to_check_nas = c("Survey Date",
                                            "Survey Time")) {
+
+  # set otg_type
+  otg_type = "surveyPoint_0.csv"
 
   # Starting message
   cat(paste("Starting QC on otg_type =", otg_type, "data. \n"))

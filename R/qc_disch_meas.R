@@ -6,7 +6,6 @@
 #' @author Kevin See
 #'
 #' @param qc_df The survey data frame to be QC'd
-#' @inheritParams get_otg_col_specs
 #' @inheritParams check_na
 #'
 #' @import dplyr
@@ -20,6 +19,7 @@ qc_disch_meas = function(qc_df = NULL,
                                                "Station Depth",
                                                "Station Velocity")) {
 
+  # set otg_type
   otg_type = "DischargeMeasurements_6.csv"
 
   # Starting message

@@ -6,7 +6,6 @@
 #' @author Kevin See
 #'
 #' @param qc_df The survey data frame to be QC'd
-#' @inheritParams get_otg_col_specs
 #' @inheritParams check_na
 #'
 #' @import dplyr
@@ -16,13 +15,14 @@
 #' @return a tibble with QC results
 
 qc_wood = function(qc_df = NULL,
-                       cols_to_check_nas = c("Large Wood Number",
-                                             "Length (m)",
-                                             "Diameter (m)",
-                                             "Wet?",
-                                             "Channel Forming?",
-                                             "Ballasted?")) {
+                   cols_to_check_nas = c("Large Wood Number",
+                                         "Length (m)",
+                                         "Diameter (m)",
+                                         "Wet?",
+                                         "Channel Forming?",
+                                         "Ballasted?")) {
 
+  # set otg_type
   otg_type = "Wood_2.csv"
 
   # Starting message
