@@ -5,10 +5,18 @@
 #'
 #' @author Mike Ackerman
 #'
-#' @param qc_df_list
+#' @param survey_df
+#' @param cu_df
+#' @param wood_df
+#' @param jam_df
+#' @param undercut_df
+#' @param discharge_df
+#' @param discharge_df
+#' @param output_path Path or connection to write the output to
 #'
 #' @import dplyr
 #' @importFrom tibble add_column
+#' @importFrom readr write_csv
 #' @export
 #' @return a tibble with combined QC results
 
@@ -20,19 +28,22 @@ qc_wrapper = function(survey_df = NULL,
                       discharge_df = NULL,
                       disch_meas_df = NULL) {
 
-  # run qc for all cases where is not NULL
-  if( !is.null(survey_df) )     qc_s = qc_survey(survey_df)
-  if( !is.null(cu_df) )         qc_c = qc_cu(cu_df)
-  if( !is.null(wood_df) )       qc_w = qc_wood(wood_df)
-  if( !is.null(jam_df) )        qc_j = qc_jam(jam_df)
-  if( !is.null(undercut_df) )   qc_u = qc_undercut(undercut_df)
-  if( !is.null(discharge_df) )  qc_d1 = qc_disch(discharge_df)
-  if( !is.null(disch_meas_df) ) qc_d2 = qc_disch_meas(disch_meas_df)
+  # run QC for all cases where is not NULL
+  if( !is.null(survey_df) )     qc_s = qc_survey(survey_df)          else qc_s = qc_tbl()
+  if( !is.null(cu_df) )         qc_c = qc_cu(cu_df)                  else qc_c = qc_tbl()
+  if( !is.null(wood_df) )       qc_w = qc_wood(wood_df)              else qc_w = qc_tbl()
+  if( !is.null(jam_df) )        qc_j = qc_jam(jam_df)                else qc_j = qc_tbl()
+  if( !is.null(undercut_df) )   qc_u = qc_undercut(undercut_df)      else qc_u = qc_tbl()
+  if( !is.null(discharge_df) )  qc_d1 = qc_disch(discharge_df)       else qc_d1 = qc_tbl()
+  if( !is.null(disch_meas_df) ) qc_d2 = qc_disch_meas(disch_meas_df) else qc_d2 = qc_tbl()
 
   # combine results
-  tmp = qc_s %>%
-    tibble::add_column(source = "Survey",
+  tmp = qc_tbl() %>%
+    tibble::add_column(source = "Dummy",
                        .before = 0) %>%
+    dplyr::bind_rows(qc_s %>%
+                       tibble::add_column(source = "Survey",
+                                          .before = 0)) %>%
     dplyr::bind_rows(qc_c %>%
                        tibble::add_column(source = "CU",
                                           .before = 0)) %>%
