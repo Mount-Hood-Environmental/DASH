@@ -44,6 +44,7 @@ read_otg_csv = function(path = ".",
                     tmp_specs = readr::read_csv(paste0(path, x$path_nm), col_types = readr::cols()) %>%
                       readr::spec()
 
+                    #####
                     # CHECK 1: check if tmp_specs match the expected from get_otg_col_specs()
                     # chk = identical(otg_col_specs, tmp_specs)
                     # a "looser" version of identical() to allow for differing attributes
@@ -51,10 +52,12 @@ read_otg_csv = function(path = ".",
                     if(chk == FALSE) warning(paste("Column specifications in", otg_type, "file from", x$folder_nm, "survey folder do not match those defined in get_otg_col_specs().", "\n",
                                                    all.equal(otg_col_specs, tmp_specs), "\n"))
 
+                    #####
                     # CHECK 2: check if column names match
                     chk = identical(names(otg_col_specs$cols), names(tmp_specs$cols))
                     if(chk == FALSE) cat(paste("Column names in", otg_type, "file from", x$folder_nm, "survey folder do not match the expected names defined in get_otg_col_specs(). Check file format. Continuing...", "\n"))
 
+                    #####
                     # CHECK 3: check if number of columns match
                     chk = identical(length(otg_col_specs$cols), length(tmp_specs$cols))
                     if(chk == FALSE) stop(paste("Fatal Error: Number of columns in", otg_type, "file from", x$folder_nm, "survey folder is unexpected."))
@@ -63,6 +66,7 @@ read_otg_csv = function(path = ".",
                     tmp = try(suppressWarnings(readr::read_csv(paste0(path, x$path_nm),
                                                                col_types = otg_col_specs)))
 
+                    #####
                     # CHECK 4
                     if(chk == FALSE | nrow(tmp) == 0 | class(tmp)[1] == "try-error") {
                       cat(paste("Problem reading in", otg_type, "file from", x$folder_nm, "survey. Returning NULL and moving on...", "\n"))
@@ -74,6 +78,10 @@ read_otg_csv = function(path = ".",
                     }
 
                   })
+
+  # DELETE ANY ROWS WHERE "GlobalID" is NA...
+  tmp_df = tmp_df %>%
+    dplyr::filter(!is.na(GlobalID))
 
   return(tmp_df)
 
