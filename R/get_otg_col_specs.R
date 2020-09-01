@@ -23,16 +23,19 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Survey Info
   if(otg_type == "surveyPoint_0.csv") {
     col_types = readr::cols(
-      ObjectID = readr::col_integer(),
+      ObjectID = readr::col_double(),
       GlobalID = readr::col_character(),
       `Survey Time` = readr::col_time(),
       `Site Name` = readr::col_character(),
-      `Survey Date` = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
-      `Survey Crew` = readr::col_double(),
+      #`Survey Date` = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      `Survey Date` = readr::col_character(),
+      `Survey Crew` = readr::col_character(),
       `Conductivity (ms)` = readr::col_logical(),
-      CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      CreationDate = readr::col_character(),
       Creator = readr::col_character(),
-      EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      EditDate = readr::col_character(),
       Editor = readr::col_character(),
       x = readr::col_double(),
       y = readr::col_double()
@@ -76,9 +79,11 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
       `Width 4` = col_logical(),
       `Width 5` = col_logical(),
       ParentGlobalID = col_character(),
-      CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      CreationDate = readr::col_character(),
       Creator = col_character(),
-      EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      EditDate = readr::col_character(),
       Editor = col_character()
     )
   } # end CU_1.csv
@@ -95,9 +100,11 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
       `Channel Forming?` = col_character(),
       `Ballasted?` = col_character(),
       ParentGlobalID = col_character(),
-      CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      CreationDate = readr::col_character(),
       Creator = col_character(),
-      EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      EditDate = readr::col_character(),
       Editor = col_character()
     )
   } # end Wood_2.csv
@@ -112,9 +119,11 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
       `Height (m)` = col_double(),
       `Estimated Number of Pieces` = col_integer(),
       ParentGlobalID = col_character(),
-      CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      CreationDate = readr::col_character(),
       Creator = col_character(),
-      EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      EditDate = readr::col_character(),
       Editor = col_character()
     )
   } # end Jam_3.csv
@@ -131,9 +140,11 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
       `Width 50% (m)` = col_double(),
       `Width 75% (m)` = col_double(),
       ParentGlobalID = col_character(),
-      CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      CreationDate = readr::col_character(),
       Creator = col_character(),
-      EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      EditDate = readr::col_character(),
       Editor = col_character()
     )
   } # end Undercut_4.csv
@@ -145,9 +156,11 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
       GlobalID = col_character(),
       `Discharge Location (BOS, TOS, CU #)` = col_character(),
       ParentGlobalID = col_character(),
-      CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      CreationDate = readr::col_character(),
       Creator = col_character(),
-      EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      EditDate = readr::col_character(),
       Editor = col_character()
     )
   } # end Discharge_5.csv
@@ -161,9 +174,11 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
       `Station Depth` = col_double(),
       `Station Velocity` = col_double(),
       ParentGlobalID = col_character(),
-      CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      CreationDate = readr::col_character(),
       Creator = col_character(),
-      EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
+      EditDate = readr::col_character(),
       Editor = col_character()
     )
   } # end DischargeMeasurements_6.csv
