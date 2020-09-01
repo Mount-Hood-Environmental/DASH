@@ -58,7 +58,7 @@ qc_survey = function(qc_df = NULL,
   # CHECK 3: Are there NAs in these columns?
   tmp = check_na(qc_df,
                  cols_to_check_nas)
-  if( nrow(tmp) > 0 ) qc_tmp = rbind(qc_tmp, tmp)
+  if( !is.null(tmp) ) qc_tmp = rbind(qc_tmp, tmp)
 
   #####
   # CHECK 4:  Is the latitude (y) or longitude (x) outside of expected values?
