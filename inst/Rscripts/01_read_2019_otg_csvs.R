@@ -11,7 +11,6 @@
 #-----------------------------
 # load necessary libraries
 #-----------------------------
-# library(magrittr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
