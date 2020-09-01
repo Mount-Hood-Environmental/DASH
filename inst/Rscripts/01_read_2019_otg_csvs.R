@@ -11,7 +11,7 @@
 #-----------------------------
 # load necessary libraries
 #-----------------------------
-library(magrittr)
+# library(magrittr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -31,8 +31,7 @@ path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
 #-----------------------------
 # read in one type of OTG data
 #-----------------------------
-
-# read CU data; as an example
+# read survey data; as an example
 survey_df = read_otg_csv(path,
                          otg_type = "surveyPoint_0.csv")
 

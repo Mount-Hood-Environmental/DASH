@@ -128,7 +128,7 @@ qc_cu = function(qc_df = NULL,
 
   #####
   # CHECK 7: Do all slow water channel unit types have ocular estimates and do they sum to 100?
-  cat("Do ocular estimates for all slow water channel unit types exist and sum to 100?")
+  cat("Do ocular estimates for all slow water channel unit types exist and sum to 100? \n")
 
   # What are the slow channel unit types?
   slow_cus = c("Pool", "Run", "OCA")
@@ -150,7 +150,7 @@ qc_cu = function(qc_df = NULL,
     dplyr::mutate(error_message = paste0("Ocular estimates sum to ", ocular_sum, ", not 100.")) %>%
     dplyr::select(-ocular_sum)
 
-  if( nrow(oc_chk) == 0 ) cat("Ocular estimates for all slow channel units sum to 100!")
+  if( nrow(oc_chk) == 0 ) cat("Ocular estimates for all slow channel units sum to 100! \n")
   if( nrow(oc_chk) > 0 ) {
     cat("The ocular estimates for", nrow(oc_chk), "slow channel units do not sum to 100. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, oc_chk)
@@ -159,7 +159,7 @@ qc_cu = function(qc_df = NULL,
   #####
   # CHECK 9: Do riffles with pebble counts have all columns filled? And if so, do values
   # fall within expected values?
-  cat("Do riffles with pebble counts have all values filled and within expected values?")
+  cat("Do riffles with pebble counts have all values filled and within expected values? \n")
 
   peb_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, `Channel Unit Type`, starts_with("Pebble")) %>%
