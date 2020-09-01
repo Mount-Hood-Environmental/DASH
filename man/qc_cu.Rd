@@ -6,16 +6,12 @@
 \usage{
 qc_cu(
   qc_df = NULL,
-  otg_type = "CU_1.csv",
   cols_to_check_nas = c("Channel Unit Type", "Channel Unit Number",
     "Channel Segment Number", "Maximum Depth (m)", "ParentGlobalID")
 )
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
-
-\item{otg_type}{what type of on-the-ground (otg) data would the user like to deal with? As of the iniitation of the
-function a character vector of the file name e.g., "surveyPoint_0.csv", "CU_1.csv", etc.}
 
 \item{cols_to_check_nas}{columns to check for NAs in}
 }
