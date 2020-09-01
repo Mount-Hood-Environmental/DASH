@@ -1,11 +1,11 @@
-# Authors: Mike Ackerman
+# Authors: Mike Ackerman & Kevin See
 #
 # Purpose: A script to QA/QC 2019 on-the-ground (OTG) DASH data from
 # Survey 123. This is a follow-up to the script to read in the OTG data.
 # My intent is to later convert this script into a series of functions.
 #
 # Created: August 12, 2020
-#   Last Modified: August 28, 2020
+#   Last Modified: September 1, 2020
 #
 # Notes:
 
@@ -13,6 +13,8 @@
 # load necessary libraries
 #-----------------------------
 library(dplyr)
+library(readr)
+library(janitor)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -29,55 +31,20 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 load(paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019_otg.rda"))
 
-# delete some rows with all missing values
-otg_data$jam <- dplyr::filter(otg_data$jam,
-                              !is.na(ObjectID))
-
 #-----------------------------
-# QA/QC surveyPoint_0.csv
+# QC each otg_type, separately
 #-----------------------------
-qc_surv_results = qc_survey(qc_df = otg_data$survey,
-                            otg_type = "surveyPoint_0.csv",
-                            cols_to_check_nas = c("Survey Date",
-                                                  "Survey Time"))
-
-#-----------------------------
-# QA/QC CU_1.csv
-#-----------------------------
-qc_cu_results = qc_cu(qc_df = otg_data$cu,
-                      cols_to_check_nas = c("Channel Unit Type",
-                                            "Channel Unit Number",
-                                            "Channel Segment Number",
-                                            "Maximum Depth (m)",
-                                            "ParentGlobalID"))
-#-----------------------------
-# QA/QC Wood_2.csv
-#-----------------------------
-qc_wood_results = qc_wood(qc_df = otg_data$wood)
-
-#-----------------------------
-# QA/QC Jam_3.csv
-#-----------------------------
-qc_jam_results = qc_jam(qc_df = otg_data$jam)
-
-#-----------------------------
-# QA/QC Undercut_4.csv
-#-----------------------------
-qc_undercut_results = qc_undercut(qc_df = otg_data$undercut)
-
-#-----------------------------
-# QA/QC Discharge_5.csv
-#-----------------------------
-qc_disch_results = qc_disch(qc_df = otg_data$discharge)
-
-#-----------------------------
-# QA/QC DischargeMeasurements_6.csv
-#-----------------------------
+qc_surv_results = qc_survey(qc_df = otg_data$survey)         # surveyPoint_0.csv
+qc_cu_results = qc_cu(qc_df = otg_data$cu)                   # CU_1.csv
+qc_wood_results = qc_wood(qc_df = otg_data$wood)             # Wood_2.csv
+qc_jam_results = qc_jam(qc_df = otg_data$jam)                # Jam_3.csv
+qc_undercut_results = qc_undercut(qc_df = otg_data$undercut) # Undercut_4.csv
+qc_disch_results = qc_disch(qc_df = otg_data$discharge)      # Discharge_5.csv
 qc_disch_meas_results = qc_disch_meas(qc_df = otg_data$discharge_measurements)
-
+  # DischargeMeasurements_6.csv
 
 #-----------------------------
-# Combine all QA/QC results
+# Combine all separate QC results
 #-----------------------------
 qc_all = qc_surv_results %>%
   tibble::add_column(Source = "Survey",
@@ -101,7 +68,35 @@ qc_all = qc_surv_results %>%
               tibble::add_column(Source = "DischargeMeasurements",
                                  .before = 0))
 
+#-----------------------------
+# Using qc_wrapper() instead
+#-----------------------------
+# all QC options
+qc_all = qc_wrapper(survey_df = otg_data$survey,
+                    cu_df = otg_data$cu,
+                    wood_df = otg_data$wood,
+                    jam_df = otg_data$jam,
+                    undercut_df = otg_data$undercut,
+                    discharge_df = otg_data$discharge,
+                    disch_meas_df = otg_data$discharge_measurements,
+                    output_path = output_path)
 
+# just a couple, for example
+qc_all = qc_wrapper(survey_df = NULL,
+                    cu_df = NULL,
+                    wood_df = otg_data$wood,
+                    jam_df = otg_data$jam,
+                    undercut_df = NULL,
+                    discharge_df = NULL,
+                    disch_meas_df = NULL)
+
+# Write out QC results
+output_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/qc_results_DASH_2019.csv")
+readr::write_csv(qc_all, output_path)
+
+#-----------------------------
+# Examine QC results
+#-----------------------------
 # where do all the QA/QC errors come from?
 janitor::tabyl(qc_all, Source)
 
