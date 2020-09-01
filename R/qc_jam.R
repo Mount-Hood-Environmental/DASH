@@ -34,7 +34,6 @@ qc_jam = function(qc_df = NULL,
   check_col_names(qc_df = qc_df,
                   otg_type = otg_type)
 
-
   #####
   # CHECK 2: Are there NAs in these columns?
   tmp = check_na(qc_df,
@@ -52,8 +51,8 @@ qc_jam = function(qc_df = NULL,
                                "Height (m)"),
                       min = c(0),
                       max = c(1e3,
-                              100,
-                              10,
+                              50,
+                              20,
                               5))
 
   # do measured values fall outside of expected values
@@ -81,4 +80,3 @@ qc_jam = function(qc_df = NULL,
   return(qc_tmp)
 
 } # end qc_jam()
-
