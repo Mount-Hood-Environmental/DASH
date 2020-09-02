@@ -14,6 +14,7 @@
 #-----------------------------
 library(dplyr)
 library(readr)
+library(tidyverse)
 library(janitor)
 
 #-------------------------
@@ -47,25 +48,25 @@ qc_disch_meas_results = qc_disch_meas(qc_df = otg_data$discharge_measurements)
 # Combine all separate QC results
 #-----------------------------
 qc_all = qc_surv_results %>%
-  tibble::add_column(Source = "Survey",
+  tibble::add_column(source = "Survey",
                      .before = 0) %>%
   bind_rows(qc_cu_results %>%
-              tibble::add_column(Source = "CU",
+              tibble::add_column(source = "CU",
                                  .before = 0)) %>%
   bind_rows(qc_wood_results %>%
-              tibble::add_column(Source = "Wood",
+              tibble::add_column(source = "Wood",
                                  .before = 0)) %>%
   bind_rows(qc_jam_results %>%
-              tibble::add_column(Source = "Jam",
+              tibble::add_column(source = "Jam",
                                  .before = 0)) %>%
   bind_rows(qc_undercut_results %>%
-              tibble::add_column(Source = "Undercut",
+              tibble::add_column(source = "Undercut",
                                  .before = 0)) %>%
   bind_rows(qc_disch_results %>%
-              tibble::add_column(Source = "Discharge",
+              tibble::add_column(source = "Discharge",
                                  .before = 0)) %>%
   bind_rows(qc_disch_meas_results %>%
-              tibble::add_column(Source = "DischargeMeasurements",
+              tibble::add_column(source = "DischargeMeasurements",
                                  .before = 0))
 
 #-----------------------------
@@ -81,16 +82,20 @@ qc_all = qc_wrapper(survey_df = otg_data$survey,
                     disch_meas_df = otg_data$discharge_measurements)
 
 # just a couple, for example
-qc_all = qc_wrapper(survey_df = NULL,
-                    cu_df = NULL,
-                    wood_df = otg_data$wood,
-                    jam_df = otg_data$jam,
-                    undercut_df = NULL,
-                    discharge_df = NULL,
-                    disch_meas_df = NULL)
+# qc_all = qc_wrapper(survey_df = NULL,
+#                     cu_df = NULL,
+#                     wood_df = otg_data$wood,
+#                     jam_df = otg_data$jam,
+#                     undercut_df = NULL,
+#                     discharge_df = NULL,
+#                     disch_meas_df = NULL)
 
 # Write out QC results
-output_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/qc_results_DASH_2019.csv")
+Sys.time()
+output_path = paste0(nas_prefix,
+                     "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/qc_results_DASH_2019_",
+                     Sys.time(),
+                     ".csv")
 readr::write_csv(qc_all, output_path)
 
 #-----------------------------
@@ -106,46 +111,127 @@ janitor::tabyl(qc_all, source)
 qc_all %>%
   filter(source == "Survey") %>%
   left_join(otg_data$survey) %>%
-  select(source:error_message, x:y) %>%
-  View()
+  select(source:error_message, x:y)
 
 #####
 # CU
-
 # `Maximum Depth (m)` errors
 qc_all %>%
   filter(source == "CU") %>%
   filter(grepl("Column Maximum Depth", error_message)) %>%
   left_join(otg_data$cu) %>%
   select(source:error_message, `Channel Unit Type`, `Maximum Depth (m)`) %>%
-  View()
+  #View()
   janitor::tabyl(`Channel Unit Type`)
 
 # Duplicate channel units
 qc_all %>%
   filter(source == "CU") %>%
-  filter(grepl("appears more than once", error_message)) %>%
-  View()
+  filter(grepl("appears more than once", error_message)) #%>%
+  #View()
 
-# Continue Here
+# Thalweg exit depth
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Thalweg exit depth", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(source:error_message,
+         `Channel Unit Number`,
+         `Channel Segment Number`,
+         `Thalweg Exit Depth (m)`)
+
+# Cover estimates
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Cover values sum", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(source:GlobalID,
+         `Overhanging Cover`:`Total No Cover`) %>%
+  replace(is.na(.), 0) %>%
+  mutate(sum_cover = rowSums(.[4:8])) #%>%
+  #View()
+
+# Ocular substrate estimates
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Ocular estimates sum", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(source:GlobalID,
+         `Channel Unit Type`,
+         `Sand/Fines 2mm`:`Boulder 256mm`) %>%
+  replace(is.na(.), 0) %>%
+  mutate(oc_cover = rowSums(.[5:8])) #%>%
+  #View()
+
+# Pebble counts
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Pebble size values", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(path_nm:GlobalID,
+         contains("Pebble")) #%>%
+  #View()
 
 #####
 # WOOD
+qc_all %>%
+  filter(source == "Wood") %>%
+  filter(grepl("Column Large Wood Number is <blank> or NA.", error_message)) %>%
+  left_join(otg_data$wood)
+
+qc_all %>%
+  filter(source == "Wood") %>%
+  filter(grepl("Column Diameter", error_message)) %>%
+  left_join(otg_data$wood) %>%
+  select(path_nm:GlobalID,
+         ObjectID:`Ballasted?`) #%>%
+  #View()
+
+qc_all %>%
+  filter(source == "Wood") %>%
+  filter(grepl("Wet|Channel Forming|Ballasted", error_message)) %>%
+  left_join(otg_data$wood) %>%
+  select(path_nm:GlobalID,
+         `Wet?`,
+         `Channel Forming?`,
+         `Ballasted?`) %>%
+  pivot_longer(`Wet?`:`Ballasted?`) %>%
+  filter(is.na(value)) %>%
+  View()
+
+qc_all %>%
+  filter(source == "Wood") %>%
+  filter(grepl("Length is less than or equal to the diameter|falls outside of the expected", error_message)) %>%
+  left_join(otg_data$wood) %>%
+  select(path_nm:GlobalID,
+         `Length (m)`,
+         `Diameter (m)`)
 
 #####
 # JAM
-# one way to examine the QA/QC results
 qc_all %>%
   filter(source == "Jam") %>%
   left_join(otg_data$jam) %>%
   select(-(ParentGlobalID:Editor)) %>%
-  as.data.frame()
+  as.data.frame() #%>%
+  #View()
 
 #####
 # UNDERCUT
-
-#####
-# DISCHARGE
+qc_all %>%
+  filter(source == "Undercut") %>%
+  left_join(otg_data$undercut) %>%
+  select(path_nm:error_message,
+         `Undercut Number`:`Width 75% (m)`) %>%
+  as.data.frame() %>%
+  View()
 
 #####
 # DISCHARGE MEASUREMENTS
+qc_all %>%
+  filter(source == "DischargeMeasurements") %>%
+  left_join(otg_data$discharge_measurements) %>%
+  select(path_nm:error_message,
+         ObjectID:`Station Velocity`) %>%
+  as.data.frame() %>%
+  View()
