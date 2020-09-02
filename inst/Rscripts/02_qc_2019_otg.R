@@ -146,8 +146,14 @@ qc_all %>%
   left_join(otg_data$cu) %>%
   select(source:GlobalID,
          `Overhanging Cover`:`Total No Cover`) %>%
-  replace(is.na(.), 0) %>%
-  mutate(sum_cover = rowSums(.[4:8])) #%>%
+  # replace(is.na(.), 0) %>%
+  mutate(sum_cover = rowSums(.[4:8], na.rm = T)) %>%
+  rescale_percents(col_names = c("Overhanging Cover",
+                                 "Aquatic Vegetation",
+                                 "Woody Debris Cover",
+                                 'Artificial Cover',
+                                 "Total No Cover"))
+
   #View()
 
 # Ocular substrate estimates
@@ -158,8 +164,12 @@ qc_all %>%
   select(source:GlobalID,
          `Channel Unit Type`,
          `Sand/Fines 2mm`:`Boulder 256mm`) %>%
-  replace(is.na(.), 0) %>%
-  mutate(oc_cover = rowSums(.[5:8])) #%>%
+  # replace(is.na(.), 0) %>%
+  mutate(oc_cover = rowSums(.[5:8], na.rm = T)) %>%
+  rescale_percents(col_names = c("Sand/Fines 2mm",
+                                 "Gravel 2-64mm",
+                                 "Cobble 64-256mm",
+                                 "Boulder 256mm"))
   #View()
 
 # Pebble counts
