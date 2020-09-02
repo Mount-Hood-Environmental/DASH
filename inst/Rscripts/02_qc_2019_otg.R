@@ -78,8 +78,7 @@ qc_all = qc_wrapper(survey_df = otg_data$survey,
                     jam_df = otg_data$jam,
                     undercut_df = otg_data$undercut,
                     discharge_df = otg_data$discharge,
-                    disch_meas_df = otg_data$discharge_measurements,
-                    output_path = output_path)
+                    disch_meas_df = otg_data$discharge_measurements)
 
 # just a couple, for example
 qc_all = qc_wrapper(survey_df = NULL,
@@ -98,11 +97,55 @@ readr::write_csv(qc_all, output_path)
 # Examine QC results
 #-----------------------------
 # where do all the QA/QC errors come from?
-janitor::tabyl(qc_all, Source)
+janitor::tabyl(qc_all, source)
 
+#####
+# SURVEY
+
+# latitude, longitude errors
+qc_all %>%
+  filter(source == "Survey") %>%
+  left_join(otg_data$survey) %>%
+  select(source:error_message, x:y) %>%
+  View()
+
+#####
+# CU
+
+# `Maximum Depth (m)` errors
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Column Maximum Depth", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(source:error_message, `Channel Unit Type`, `Maximum Depth (m)`) %>%
+  View()
+  janitor::tabyl(`Channel Unit Type`)
+
+# Duplicate channel units
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("appears more than once", error_message)) %>%
+  View()
+
+# Continue Here
+
+#####
+# WOOD
+
+#####
+# JAM
 # one way to examine the QA/QC results
 qc_all %>%
-  filter(Source == "Jam") %>%
+  filter(source == "Jam") %>%
   left_join(otg_data$jam) %>%
   select(-(ParentGlobalID:Editor)) %>%
   as.data.frame()
+
+#####
+# UNDERCUT
+
+#####
+# DISCHARGE
+
+#####
+# DISCHARGE MEASUREMENTS
