@@ -35,39 +35,39 @@ load(paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019
 #-----------------------------
 # QC each otg_type, separately
 #-----------------------------
-qc_surv_results = qc_survey(qc_df = otg_data$survey)         # surveyPoint_0.csv
-qc_cu_results = qc_cu(qc_df = otg_data$cu)                   # CU_1.csv
-qc_wood_results = qc_wood(qc_df = otg_data$wood)             # Wood_2.csv
-qc_jam_results = qc_jam(qc_df = otg_data$jam)                # Jam_3.csv
-qc_undercut_results = qc_undercut(qc_df = otg_data$undercut) # Undercut_4.csv
-qc_disch_results = qc_disch(qc_df = otg_data$discharge)      # Discharge_5.csv
-qc_disch_meas_results = qc_disch_meas(qc_df = otg_data$discharge_measurements)
-  # DischargeMeasurements_6.csv
+# qc_surv_results = qc_survey(qc_df = otg_data$survey)         # surveyPoint_0.csv
+# qc_cu_results = qc_cu(qc_df = otg_data$cu)                   # CU_1.csv
+# qc_wood_results = qc_wood(qc_df = otg_data$wood)             # Wood_2.csv
+# qc_jam_results = qc_jam(qc_df = otg_data$jam)                # Jam_3.csv
+# qc_undercut_results = qc_undercut(qc_df = otg_data$undercut) # Undercut_4.csv
+# qc_disch_results = qc_disch(qc_df = otg_data$discharge)      # Discharge_5.csv
+# qc_disch_meas_results = qc_disch_meas(qc_df = otg_data$discharge_measurements)
+#   # DischargeMeasurements_6.csv
 
 #-----------------------------
 # Combine all separate QC results
 #-----------------------------
-qc_all = qc_surv_results %>%
-  tibble::add_column(source = "Survey",
-                     .before = 0) %>%
-  bind_rows(qc_cu_results %>%
-              tibble::add_column(source = "CU",
-                                 .before = 0)) %>%
-  bind_rows(qc_wood_results %>%
-              tibble::add_column(source = "Wood",
-                                 .before = 0)) %>%
-  bind_rows(qc_jam_results %>%
-              tibble::add_column(source = "Jam",
-                                 .before = 0)) %>%
-  bind_rows(qc_undercut_results %>%
-              tibble::add_column(source = "Undercut",
-                                 .before = 0)) %>%
-  bind_rows(qc_disch_results %>%
-              tibble::add_column(source = "Discharge",
-                                 .before = 0)) %>%
-  bind_rows(qc_disch_meas_results %>%
-              tibble::add_column(source = "DischargeMeasurements",
-                                 .before = 0))
+# qc_all = qc_surv_results %>%
+#   tibble::add_column(source = "Survey",
+#                      .before = 0) %>%
+#   bind_rows(qc_cu_results %>%
+#               tibble::add_column(source = "CU",
+#                                  .before = 0)) %>%
+#   bind_rows(qc_wood_results %>%
+#               tibble::add_column(source = "Wood",
+#                                  .before = 0)) %>%
+#   bind_rows(qc_jam_results %>%
+#               tibble::add_column(source = "Jam",
+#                                  .before = 0)) %>%
+#   bind_rows(qc_undercut_results %>%
+#               tibble::add_column(source = "Undercut",
+#                                  .before = 0)) %>%
+#   bind_rows(qc_disch_results %>%
+#               tibble::add_column(source = "Discharge",
+#                                  .before = 0)) %>%
+#   bind_rows(qc_disch_meas_results %>%
+#               tibble::add_column(source = "DischargeMeasurements",
+#                                  .before = 0))
 
 #-----------------------------
 # Using qc_wrapper() instead
@@ -91,7 +91,6 @@ qc_all = qc_wrapper(survey_df = otg_data$survey,
 #                     disch_meas_df = NULL)
 
 # Write out QC results
-Sys.time()
 output_path = paste0(nas_prefix,
                      "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/qc_results_DASH_2019_",
                      Sys.time(),
@@ -235,3 +234,50 @@ qc_all %>%
          ObjectID:`Station Velocity`) %>%
   as.data.frame() %>%
   View()
+
+######################################################################
+# At this point, I fixed many errors identified by the QC 2020-09-02 #
+######################################################################
+
+# re-import QC'd data
+path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/")
+otg_qcd_data = read_otg_csv_wrapper(path = path,
+                                    otg_type_list = c("surveyPoint_0.csv",
+                                                      "CU_1.csv",
+                                                      "Wood_2.csv",
+                                                      "Jam_3.csv",
+                                                      "Undercut_4.csv",
+                                                      "Discharge_5.csv",
+                                                      "DischargeMeasurements_6.csv"),
+                                    otg_type_names = c("survey",
+                                                       "cu",
+                                                       "wood",
+                                                       "jam",
+                                                       "undercut",
+                                                       "discharge",
+                                                       "discharge_measurements"))
+
+# save the qc'd data
+save(otg_qcd_data,
+     file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/lemhi/prepped/qcd_DASH_2019_otg.rda"))
+
+# perform QC on the qc'd data
+qc_all = qc_wrapper(survey_df = otg_qcd_data$survey,
+                    cu_df = otg_qcd_data$cu,
+                    wood_df = otg_qcd_data$wood,
+                    jam_df = otg_qcd_data$jam,
+                    undercut_df = otg_qcd_data$undercut,
+                    discharge_df = otg_qcd_data$discharge,
+                    disch_meas_df = otg_qcd_data$discharge_measurements)
+
+# Write out new, remaining QC results
+output_path = paste0(nas_prefix,
+                     "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/qc_results_DASH_2019_",
+                     Sys.Date(),
+                     ".csv")
+readr::write_csv(qc_all, output_path)
+
+
+
+
+
