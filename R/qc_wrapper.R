@@ -5,14 +5,12 @@
 #'
 #' @author Mike Ackerman
 #'
-#' @param survey_df
-#' @param cu_df
-#' @param wood_df
-#' @param jam_df
-#' @param undercut_df
-#' @param discharge_df
-#' @param discharge_df
-#' @param output_path Path or connection to write the output to
+#' @param survey_df data.frame containing the survey data
+#' @param cu_df data.frame containing the channel uni data
+#' @param wood_df data.frame containing the wood data
+#' @param jam_df data.frame containing the jam data
+#' @param discharge_df data.frame containing the discharge location data
+#' @param disch_meas_df data.frame containing the discharge measurement data
 #'
 #' @import dplyr
 #' @importFrom tibble add_column
