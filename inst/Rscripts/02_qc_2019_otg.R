@@ -287,6 +287,21 @@ output_path = paste0(nas_prefix,
                      ".csv")
 readr::write_csv(qc_all, output_path)
 
+#-----------------------------
+# compare the raw formatted data to the data where QC errors have been/will be addressed
+#-----------------------------
+
+# the directories to compare
+path1 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
+path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/")
+
+# use compare_folders()
+qc_changes = compare_folders(path1 = path1,
+                             path2 = path2)
+save(qc_changes,
+     file = paste0(nas_prefix, "data/habitat/DASH/OTG/2019/lemhi/prepped/qc_resolutions.rda"))
+
+### END SCRIPT
 
 
 

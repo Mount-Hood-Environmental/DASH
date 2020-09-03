@@ -60,7 +60,7 @@ save(otg_data,
      file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019_otg.rda"))
 
 #-----------------------------
-# testing compare two files
+# compare the raw unformatted data to the raw formatted data
 #-----------------------------
 
 # the directories to compare
