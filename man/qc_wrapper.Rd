@@ -15,7 +15,17 @@ qc_wrapper(
 )
 }
 \arguments{
-\item{qc_df_list}{}
+\item{survey_df}{data.frame containing the survey data}
+
+\item{cu_df}{data.frame containing the channel uni data}
+
+\item{wood_df}{data.frame containing the wood data}
+
+\item{jam_df}{data.frame containing the jam data}
+
+\item{discharge_df}{data.frame containing the discharge location data}
+
+\item{disch_meas_df}{data.frame containing the discharge measurement data}
 }
 \value{
 a tibble with combined QC results
