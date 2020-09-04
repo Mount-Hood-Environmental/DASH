@@ -5,7 +5,7 @@
 # My intent is to later convert this script into a series of functions.
 #
 # Created: August 12, 2020
-#   Last Modified: September 1, 2020
+#   Last Modified: September 3, 2020
 #
 # Notes:
 
@@ -248,7 +248,6 @@ qc_all %>%
 ######################################################################
 # At this point, I fixed many errors identified by the QC 2020-09-02 #
 ######################################################################
-
 # re-import QC'd data
 path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/")
 otg_qcd_data = read_otg_csv_wrapper(path = path,
@@ -267,10 +266,6 @@ otg_qcd_data = read_otg_csv_wrapper(path = path,
                                                        "discharge",
                                                        "discharge_measurements"))
 
-# save the qc'd data
-save(otg_qcd_data,
-     file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/lemhi/prepped/qcd_DASH_2019_otg.rda"))
-
 # perform QC on the qc'd data
 qc_all = qc_wrapper(survey_df = otg_qcd_data$survey,
                     cu_df = otg_qcd_data$cu,
@@ -280,12 +275,58 @@ qc_all = qc_wrapper(survey_df = otg_qcd_data$survey,
                     discharge_df = otg_qcd_data$discharge,
                     disch_meas_df = otg_qcd_data$discharge_measurements)
 
-# Write out new, remaining QC results
+# Write out existing QC results
 output_path = paste0(nas_prefix,
                      "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/qc_results_DASH_2019_",
                      Sys.Date(),
                      ".csv")
 readr::write_csv(qc_all, output_path)
+
+# columns that should sum to 100
+# fish cover columns
+cov_cols = c("Overhanging Cover",
+             "Aquatic Vegetation",
+             "Woody Debris Cover",
+             "Artificial Cover",
+             "Total No Cover")
+
+# ocular substrate columns
+oc_cols = c("Sand/Fines 2mm",
+            "Gravel 2-64mm",
+            "Cobble 64-256mm",
+            "Boulder 256mm")
+
+# re-scale cover columns
+otg_qcd_data$cu = rescale_percents(data_df = otg_qcd_data$cu,
+                                   col_names = cov_cols,
+                                   min_perc = 90,
+                                   max_perc = 110)
+
+# re-scale ocular estimate columns
+otg_qcd_data$cu = rescale_percents(data_df = otg_qcd_data$cu,
+                                   col_names = oc_cols,
+                                   min_perc = 90,
+                                   max_perc = 110)
+
+# perform the QC again after re-scaling cover and ocular estimates
+qc_all = qc_wrapper(survey_df = otg_qcd_data$survey,
+                    cu_df = otg_qcd_data$cu,
+                    wood_df = otg_qcd_data$wood,
+                    jam_df = otg_qcd_data$jam,
+                    undercut_df = otg_qcd_data$undercut,
+                    discharge_df = otg_qcd_data$discharge,
+                    disch_meas_df = otg_qcd_data$discharge_measurements)
+
+# Write out existing QC results
+output_path = paste0(nas_prefix,
+                     "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/qc_results_DASH_2019_",
+                     Sys.Date(),
+                     ".csv")
+readr::write_csv(qc_all, output_path)
+
+# save the qc'd data
+save(otg_qcd_data,
+     file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/lemhi/prepped/qcd_DASH_2019_otg.rda"))
 
 #-----------------------------
 # compare the raw formatted data to the data where QC errors have been/will be addressed
