@@ -15,8 +15,8 @@
 
 rescale_percents <- function(data_df = NULL,
                              col_names = NULL,
-                             min_perc = 80,
-                             max_perc = 120) {
+                             min_perc = 90,
+                             max_perc = 110) {
   stopifnot(!is.null(data_df),
             !is.null(col_names))
 
@@ -27,15 +27,25 @@ rescale_percents <- function(data_df = NULL,
     group_by(GlobalID) %>%
     mutate(sum_perc = sum(value, na.rm = T)) %>%
     ungroup() %>%
-    # if all values sum to 0 & every value is NA, change those values to 0
+    # if all values sum to something greater than 0 & not every value is NA, change those NA values to 0
     mutate(value = if_else(sum_perc > 0 & is.na(value),
                            0,
                            value)) %>%
-    mutate(value = if_else(!sum_perc %in% c(0, 100) & between(sum_perc, min_perc, max_perc),
+    group_by(GlobalID) %>%
+    # if it appears that all entries are on decimal scale
+    mutate(value = if_else(sum_perc < 2,
+                           value * 100,
+                           value)) %>%
+    mutate(value = if_else(sum_perc == 10,
+                           value * 10,
+                           value)) %>%
+    # redo sums
+    group_by(GlobalID) %>%
+    mutate(sum_perc = sum(value, na.rm = T)) %>%
+    ungroup() %>%
+    mutate(value = if_else(!sum_perc %in% c(0, 100) & between(sum_perc, min_perc, max_perc) & sum_perc%%10 == 0,
                            value / sum_perc * 100,
                            value)) %>%
-    mutate_at(vars(value),
-              list(janitor::round_half_up)) %>%
     pivot_wider(names_from = "name",
                 values_from = "value") %>%
     select(-sum_perc)
