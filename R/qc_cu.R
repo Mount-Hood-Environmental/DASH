@@ -114,7 +114,7 @@ qc_cu = function(qc_df = NULL,
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%
     replace(is.na(.), 0) %>%
-    dplyr::mutate(cover_sum = rowSums(.[3:(2+length(cover_columns))])) %>%
+    dplyr::mutate(cover_sum = round(rowSums(.[3:(2+length(cover_columns))]))) %>%
     dplyr::select(-all_of(cover_columns)) %>%
     dplyr::filter(!cover_sum == 100) %>%
     dplyr::mutate(error_message = paste0("Cover values sum to ", cover_sum, ", not 100.")) %>%
@@ -144,7 +144,7 @@ qc_cu = function(qc_df = NULL,
     dplyr::filter(`Channel Unit Type` %in% slow_cus) %>%
     dplyr::select(-`Channel Unit Type`) %>%
     replace(is.na(.), 0) %>%
-    dplyr::mutate(ocular_sum = rowSums(.[3:(2+length(ocular_columns))])) %>%
+    dplyr::mutate(ocular_sum = round(rowSums(.[3:(2+length(ocular_columns))]))) %>%
     dplyr::select(-all_of(ocular_columns)) %>%
     dplyr::filter(!ocular_sum == 100) %>%
     dplyr::mutate(error_message = paste0("Ocular estimates sum to ", ocular_sum, ", not 100.")) %>%
