@@ -112,7 +112,7 @@ qc_cu = function(qc_df = NULL,
                     "Total No Cover")
 
   # What is the maximum value that cover estimates can sum to?
-  cov_max = 120
+  cov_max = 130
 
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%
