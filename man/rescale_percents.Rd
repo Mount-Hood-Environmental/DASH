@@ -7,8 +7,8 @@
 rescale_percents(
   data_df = NULL,
   col_names = NULL,
-  min_perc = 80,
-  max_perc = 120
+  min_perc = 90,
+  max_perc = 110
 )
 }
 \arguments{
