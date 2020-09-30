@@ -78,7 +78,7 @@ qc_cu = function(qc_df = NULL,
 
   #####
   # CHECK 5: Are the thalweg exit depth values within a reasonable range?
-  ted_min = 0; ted_max = 3
+  ted_min = 0; ted_max = 2
   cat("Do the thalweg exit depth values fall within a reasonable range btw", ted_min, "and", ted_max, "? \n")
 
   ted_chk = qc_df %>%
