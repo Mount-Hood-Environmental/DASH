@@ -111,18 +111,21 @@ qc_cu = function(qc_df = NULL,
                     "Artificial Cover",
                     "Total No Cover")
 
+  # What is the maximum value that cover estimates can sum to?
+  cov_max = 120
+
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%
     replace(is.na(.), 0) %>%
     dplyr::mutate(cover_sum = round(rowSums(.[3:(2+length(cover_columns))]))) %>%
     dplyr::select(-all_of(cover_columns)) %>%
-    dplyr::filter(!cover_sum == 100) %>%
+    dplyr::filter(!between(cover_sum, 100, cov_max)) %>%
     dplyr::mutate(error_message = paste0("Cover values sum to ", cover_sum, ", not 100.")) %>%
     dplyr::select(-cover_sum)
 
-  if( nrow(cov_chk) == 0 ) cat("Fish cover values for all channel units sum to 100!")
+  if( nrow(cov_chk) == 0 ) cat(paste0("Fish cover values for all channel units are between 100 and ", cov_max, "!\n"))
   if( nrow(cov_chk) > 0 ) {
-    cat("The cover values for", nrow(cov_chk), "channel units do not sum to 100. Adding to QC results. \n")
+    cat(paste0("The cover values for ", nrow(cov_chk), " channel units do not fall between 100 and ", cov_max, ". Adding to QC results. \n"))
     qc_tmp = rbind(qc_tmp, cov_chk)
   }
 
