@@ -117,10 +117,11 @@ qc_cu = function(qc_df = NULL,
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%
     replace(is.na(.), 0) %>%
-    dplyr::mutate(cover_sum = round(rowSums(.[3:(2+length(cover_columns))]))) %>%
+    #dplyr::mutate(cover_sum = round(rowSums(.[3:(2+length(cover_columns))]))) %>%
+    dplyr::mutate(cover_sum = rowSums(.[3:(2+length(cover_columns))])) %>%
     dplyr::select(-all_of(cover_columns)) %>%
     dplyr::filter(!between(cover_sum, 100, cov_max)) %>%
-    dplyr::mutate(error_message = paste0("Cover values sum to ", cover_sum, ", not 100.")) %>%
+    dplyr::mutate(error_message = paste0("Cover values sum to ", cover_sum, ", not between 100 and ", cov_max, ".")) %>%
     dplyr::select(-cover_sum)
 
   if( nrow(cov_chk) == 0 ) cat(paste0("Fish cover values for all channel units are between 100 and ", cov_max, "!\n"))
