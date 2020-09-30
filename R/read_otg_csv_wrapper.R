@@ -15,7 +15,7 @@
 #' If the default \code{otg_type_names = NULL} is used, data frames will be names using
 #' the \code{otg_type_list} (i.e., the file names).
 #'
-#' @import beepr beep
+#' @importFrom beepr beep
 #' @export
 #' @return a list of data frames, each containing data from \code{otg_type_list}
 
