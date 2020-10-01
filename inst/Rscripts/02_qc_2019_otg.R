@@ -8,6 +8,7 @@
 #   Last Modified: September 3, 2020
 #
 # Notes:
+rm(list = ls())
 
 #-----------------------------
 # load necessary libraries
@@ -16,6 +17,7 @@ library(dplyr)
 library(readr)
 library(tidyverse)
 library(janitor)
+library(beepr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -82,7 +84,7 @@ qc_all = qc_wrapper(survey_df = otg_data$survey,
                     disch_meas_df = otg_data$discharge_measurements)
 
 # just a couple, for example
-# qc_all = qc_wrapper(survey_df = NULL,
+# qc_some = qc_wrapper(survey_df = NULL,
 #                     cu_df = NULL,
 #                     wood_df = otg_data$wood,
 #                     jam_df = otg_data$jam,
@@ -90,22 +92,87 @@ qc_all = qc_wrapper(survey_df = otg_data$survey,
 #                     discharge_df = NULL,
 #                     disch_meas_df = NULL)
 
-# Write out QC results
-output_path = paste0(nas_prefix,
-                     "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/qc_results_DASH_2019_",
-                     Sys.time(),
-                     ".csv")
-readr::write_csv(qc_all, output_path)
-
 #-----------------------------
 # Examine QC results
 #-----------------------------
 # where do all the QA/QC errors come from?
 janitor::tabyl(qc_all, source)
 
+# The vast majority of QC errors are in the CU data, and of those, most are related to ocular substrate estimates
+# and fish cover estimates. Let's examine those further...
+
+# Ocular substrate estimates
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Ocular estimates sum", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(source:GlobalID,
+         `Channel Unit Type`,
+         `Sand/Fines 2mm`:`Boulder 256mm`) %>%
+  mutate(oc_cover = rowSums(.[5:8], na.rm = T))
+
+# Cover estimates
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Cover values sum", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(source:GlobalID,
+         `Overhanging Cover`:`Total No Cover`) %>%
+  mutate(sum_cover = rowSums(.[4:8], na.rm = T)) %>%
+  select(path_nm, sum_cover) %>%
+  #select(sum_cover) %>%
+  table()
+
+# We've created the rescale_values() and fix_fish_cover() argument to resolve many of those...
+
+# First, ocular estimates, they should be a bit easier as they should sum to 100.
+# ocular substrate columns
+oc_cols = c("Sand/Fines 2mm",
+            "Gravel 2-64mm",
+            "Cobble 64-256mm",
+            "Boulder 256mm")
+
+# re-scale ocular estimate columns
+otg_data$cu = rescale_values(data_df = otg_data$cu,
+                             col_names = oc_cols,
+                             min_value = 80,
+                             max_value = 120,
+                             sum_to = 100)
+
+# Now, fish cover estimates...
+# fish cover columns
+cover_cols = c("Overhanging Cover",
+               "Aquatic Vegetation",
+               "Woody Debris Cover",
+               "Artificial Cover",
+               "Total No Cover")
+
+# resolve fish cover issues using fix_fish_cover()
+otg_data$cu = fix_fish_cover(cu_df = otg_data$cu,
+                             cover_cols = cover_cols)
+
+# Now, re-run the QC and write out those results
+qc_all = qc_wrapper(survey_df = otg_data$survey,
+                    cu_df = otg_data$cu,
+                    wood_df = otg_data$wood,
+                    jam_df = otg_data$jam,
+                    undercut_df = otg_data$undercut,
+                    discharge_df = otg_data$discharge,
+                    disch_meas_df = otg_data$discharge_measurements)
+
+# where do all the QA/QC errors come from?
+janitor::tabyl(qc_all, source)
+
+# Write out QC results
+output_path = paste0(nas_prefix,
+                     "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/qc_results_DASH_2019_",
+                     format(Sys.Date(), format = "%Y%m%d"),
+                     ".csv")
+readr::write_csv(qc_all, output_path)
+
+# Now, let's examine some of the remaining QC flags
 #####
 # SURVEY
-
 # latitude, longitude errors
 qc_all %>%
   filter(source == "Survey") %>%
@@ -139,23 +206,6 @@ qc_all %>%
          `Channel Segment Number`,
          `Thalweg Exit Depth (m)`)
 
-# Cover estimates
-qc_all %>%
-  filter(source == "CU") %>%
-  filter(grepl("Cover values sum", error_message)) %>%
-  left_join(otg_data$cu) %>%
-  select(source:GlobalID,
-         `Overhanging Cover`:`Total No Cover`) %>%
-  # replace(is.na(.), 0) %>%
-  mutate(sum_cover = rowSums(.[4:8], na.rm = T)) %>%
-  rescale_percents(col_names = c("Overhanging Cover",
-                                 "Aquatic Vegetation",
-                                 "Woody Debris Cover",
-                                 'Artificial Cover',
-                                 "Total No Cover"))
-
-  #View()
-
 # Ocular substrate estimates
 qc_all %>%
   filter(source == "CU") %>%
@@ -164,13 +214,19 @@ qc_all %>%
   select(source:GlobalID,
          `Channel Unit Type`,
          `Sand/Fines 2mm`:`Boulder 256mm`) %>%
-  # replace(is.na(.), 0) %>%
-  mutate(oc_cover = rowSums(.[5:8], na.rm = T)) %>%
-  rescale_percents(col_names = c("Sand/Fines 2mm",
-                                 "Gravel 2-64mm",
-                                 "Cobble 64-256mm",
-                                 "Boulder 256mm"))
-  #View()
+  mutate(oc_cover = rowSums(.[5:8], na.rm = T))
+
+# Cover estimates
+qc_all %>%
+  filter(source == "CU") %>%
+  filter(grepl("Cover values sum", error_message)) %>%
+  left_join(otg_data$cu) %>%
+  select(source:GlobalID,
+         `Overhanging Cover`:`Total No Cover`) %>%
+  mutate(sum_cover = rowSums(.[4:8], na.rm = T)) %>%
+  #select(path_nm, sum_cover) %>%
+  select(sum_cover) %>%
+  table()
 
 # Pebble counts
 qc_all %>%
@@ -205,8 +261,8 @@ qc_all %>%
          `Channel Forming?`,
          `Ballasted?`) %>%
   pivot_longer(`Wet?`:`Ballasted?`) %>%
-  filter(is.na(value)) %>%
-  View()
+  filter(is.na(value)) #%>%
+  #View()
 
 qc_all %>%
   filter(source == "Wood") %>%
@@ -232,8 +288,8 @@ qc_all %>%
   left_join(otg_data$undercut) %>%
   select(path_nm:error_message,
          `Undercut Number`:`Width 75% (m)`) %>%
-  as.data.frame() %>%
-  View()
+  as.data.frame() #%>%
+  #View()
 
 #####
 # DISCHARGE MEASUREMENTS
@@ -242,8 +298,8 @@ qc_all %>%
   left_join(otg_data$discharge_measurements) %>%
   select(path_nm:error_message,
          ObjectID:`Station Velocity`) %>%
-  as.data.frame() %>%
-  View()
+  as.data.frame() #%>%
+  #View()
 
 ######################################################################
 # At this point, I fixed many errors identified by the QC 2020-09-02 #
@@ -265,6 +321,25 @@ otg_qcd_data = read_otg_csv_wrapper(path = path,
                                                        "undercut",
                                                        "discharge",
                                                        "discharge_measurements"))
+beepr::beep(sound = "ping")
+
+# Make our fixes to ocular substrate and fish cover estimates, which are a big chunk of the issues
+otg_qcd_data$cu = rescale_values(data_df = otg_qcd_data$cu,
+                                 col_names = c("Sand/Fines 2mm",
+                                               "Gravel 2-64mm",
+                                               "Cobble 64-256mm",
+                                               "Boulder 256mm"),
+                                 min_value = 80,
+                                 max_value = 120,
+                                 sum_to = 100)
+
+otg_qcd_data$cu = fix_fish_cover(cu_df = otg_qcd_data$cu,
+                                 cover_cols = c("Overhanging Cover",
+                                                "Aquatic Vegetation",
+                                                "Woody Debris Cover",
+                                                "Artificial Cover",
+                                                "Total No Cover"))
+
 
 # perform QC on the qc'd data
 qc_all = qc_wrapper(survey_df = otg_qcd_data$survey,
@@ -275,52 +350,10 @@ qc_all = qc_wrapper(survey_df = otg_qcd_data$survey,
                     discharge_df = otg_qcd_data$discharge,
                     disch_meas_df = otg_qcd_data$discharge_measurements)
 
-# Write out existing QC results
+# Write out remaining QC results
 output_path = paste0(nas_prefix,
                      "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/qc_results_DASH_2019_",
-                     Sys.Date(),
-                     ".csv")
-readr::write_csv(qc_all, output_path)
-
-# columns that should sum to 100
-# fish cover columns
-cov_cols = c("Overhanging Cover",
-             "Aquatic Vegetation",
-             "Woody Debris Cover",
-             "Artificial Cover",
-             "Total No Cover")
-
-# ocular substrate columns
-oc_cols = c("Sand/Fines 2mm",
-            "Gravel 2-64mm",
-            "Cobble 64-256mm",
-            "Boulder 256mm")
-
-# re-scale cover columns
-otg_qcd_data$cu = rescale_percents(data_df = otg_qcd_data$cu,
-                                   col_names = cov_cols,
-                                   min_perc = 90,
-                                   max_perc = 110)
-
-# re-scale ocular estimate columns
-otg_qcd_data$cu = rescale_percents(data_df = otg_qcd_data$cu,
-                                   col_names = oc_cols,
-                                   min_perc = 90,
-                                   max_perc = 110)
-
-# perform the QC again after re-scaling cover and ocular estimates
-qc_all = qc_wrapper(survey_df = otg_qcd_data$survey,
-                    cu_df = otg_qcd_data$cu,
-                    wood_df = otg_qcd_data$wood,
-                    jam_df = otg_qcd_data$jam,
-                    undercut_df = otg_qcd_data$undercut,
-                    discharge_df = otg_qcd_data$discharge,
-                    disch_meas_df = otg_qcd_data$discharge_measurements)
-
-# Write out existing QC results
-output_path = paste0(nas_prefix,
-                     "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/qc_results_DASH_2019_",
-                     Sys.Date(),
+                     format(Sys.Date(), format = "%Y%m%d"),
                      ".csv")
 readr::write_csv(qc_all, output_path)
 
@@ -334,7 +367,7 @@ save(otg_qcd_data,
 
 # the directories to compare
 path1 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
-path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/2_qcd_csvs/")
+path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/old_2_qcd_csvs/")
 
 # use compare_folders()
 qc_changes = compare_folders(path1 = path1,
