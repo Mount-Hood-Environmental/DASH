@@ -46,16 +46,20 @@ fix_fish_cover <- function(cu_df = NULL,
     dplyr::  mutate(value = dplyr::if_else(sum_values < 2,
                                            value * 100,
                                            value)) %>%
+    # redo sums
+    dplyr::group_by(GlobalID) %>%
+    dplyr::mutate(sum_values = sum(value, na.rm = T)) %>%
+    dplyr::ungroup() %>%
     # re-scale any that sum to 90, up to 100; we're confident these are likely math errors in the field
     dplyr::group_by(GlobalID) %>%
     dplyr::mutate(value = dplyr::if_else(sum_values == 90,
                                          value / sum_values * 100,
                                          value)) %>%
-    # redo sums
+    # redo sums, again
     dplyr::group_by(GlobalID) %>%
     dplyr::mutate(sum_values = sum(value, na.rm = T)) %>%
     dplyr::ungroup() %>%
-    # and re-structure the df
+    # finally, re-structure the df
     tidyr::pivot_wider(names_from = "name",
                        values_from = "value") %>%
     dplyr::select(-sum_values)
