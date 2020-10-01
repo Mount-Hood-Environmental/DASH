@@ -48,10 +48,8 @@ qc_disch_meas = function(qc_df = NULL,
   exp_values = tibble(name = c("Station Width",
                                "Station Depth",
                                "Station Velocity"),
-                      min = c(0),
-                      max = c(50,
-                              5,
-                              10))
+                      min = c(0,0,-1),
+                      max = c(50,5,10))
 
 
   # do measured values fall outside of expected values
