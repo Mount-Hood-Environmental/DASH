@@ -4,13 +4,15 @@
 # Survey 123.
 #
 # Created: July 15, 2020
-#   Last Modified: August 19, 2020
+#   Last Modified: October 2, 2020
 #
 # Notes:
+rm(list = ls())
 
 #-----------------------------
 # load necessary libraries
 #-----------------------------
+library(beepr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -35,32 +37,33 @@ survey_df = read_otg_csv(path,
                          otg_type = "surveyPoint_0.csv")
 
 #-----------------------------
-# loop over OTG data types using wrapper function
+# loop over OTG data types using the wrapper function
 #-----------------------------
-otg_data = read_otg_csv_wrapper(path = path,
-                                otg_type_list = c("surveyPoint_0.csv",
-                                                  "CU_1.csv",
-                                                  "Wood_2.csv",
-                                                  "Jam_3.csv",
-                                                  "Undercut_4.csv",
-                                                  "Discharge_5.csv",
-                                                  "DischargeMeasurements_6.csv"),
-                                otg_type_names = c("survey",
-                                                   "cu",
-                                                   "wood",
-                                                   "jam",
-                                                   "undercut",
-                                                   "discharge",
-                                                   "discharge_measurements"))
+otg_raw = read_otg_csv_wrapper(path = path,
+                               otg_type_list = c("surveyPoint_0.csv",
+                                                 "CU_1.csv",
+                                                 "Wood_2.csv",
+                                                 "Jam_3.csv",
+                                                 "Undercut_4.csv",
+                                                 "Discharge_5.csv",
+                                                 "DischargeMeasurements_6.csv"),
+                              otg_type_names = c("survey",
+                                                 "cu",
+                                                 "wood",
+                                                 "jam",
+                                                 "undercut",
+                                                 "discharge",
+                                                 "discharge_measurements"))
+beepr::beep(3)
 
 #-----------------------------
 # save the otg_data list of dfs
 #-----------------------------
-save(otg_data,
+save(otg_raw,
      file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019_otg.rda"))
 
 #-----------------------------
-# compare the raw unformatted data to the raw formatted data
+# compare the raw *unformatted* data to the raw *formatted* data
 #-----------------------------
 
 # the directories to compare
