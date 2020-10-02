@@ -272,6 +272,7 @@ readr::write_csv(qc_raw, output_path)
 # At this point, someone very familiar with the OTG data (field technician, field coordinator)
 # should likely intervene, review the remaining QC errors that we just wrote out, attempt to resolve those,
 # and ideally make notes for those that can't be resolved, and for those than can, identify how
-# the issue was resolved.
+# the issue was resolved. Changes to any data should be made to a copy of all of the data i.e.,
+# do not modify the raw data!
 
 # END SCRIPT
