@@ -27,7 +27,10 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
-path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
+trib = "lemhi"
+#trib = "nf_salmon"
+
+path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/1_formatted_csvs/")
 
 #-----------------------------
 # read in one type of OTG data
@@ -60,15 +63,15 @@ beepr::beep(3)
 # save the otg_data list of dfs
 #-----------------------------
 save(otg_raw,
-     file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019_otg.rda"))
+     file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/", trib, "/prepped/raw_DASH_2019_otg.rda"))
 
 #-----------------------------
 # compare the raw *unformatted* data to the raw *formatted* data
 #-----------------------------
 
 # the directories to compare
-path1 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/0_raw_csvs/")
-path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
+path1 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/0_raw_csvs/")
+path2 = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/1_formatted_csvs/")
 
 # use compare_folders()
 compare_results = compare_folders(path1 = path1,

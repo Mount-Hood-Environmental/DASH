@@ -16,11 +16,6 @@ rm(list = ls())
 #-----------------------------
 library(tidyverse)
 
-#library(readr)
-#library(tidyverse)
-#library(janitor)
-#library(beepr)
-
 #-------------------------
 # set NAS prefix, depending on operating system
 #-------------------------
@@ -34,7 +29,10 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # load the otg_data list of dfs
 #-----------------------------
-load(paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/prepped/raw_DASH_2019_otg.rda"))
+trib = "lemhi"
+#trib = "nf_salmon"
+
+load(paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/prepped/raw_DASH_2019_otg.rda"))
 
 #-----------------------------
 # As an example, QC just a couple otg_types, separately
@@ -264,7 +262,7 @@ qc_raw %>%
 
 # write out remaining QC error messages
 output_path = paste0(nas_prefix,
-                     "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/qc_results_DASH_2019_",
+                     "/data/habitat/DASH/OTG/2019/", trib, "/1_formatted_csvs/qc_results_DASH_2019_",
                      format(Sys.Date(), format = "%Y%m%d"),
                      ".csv")
 readr::write_csv(qc_raw, output_path)
