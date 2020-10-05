@@ -37,7 +37,8 @@ qc_cu = function(qc_df = NULL,
   # CHECK 2: Are there NAs in these columns?
   tmp = check_na(qc_df,
                  cols_to_check_nas)
-  if( nrow(tmp) > 0 ) qc_tmp = rbind(qc_tmp, tmp)
+  #if( nrow(tmp) > 0 ) qc_tmp = rbind(qc_tmp, tmp)
+  qc_tmp = rbind(qc_tmp, tmp)
 
   #####
   # CHECK 3: Are the channel unit types all valid?
