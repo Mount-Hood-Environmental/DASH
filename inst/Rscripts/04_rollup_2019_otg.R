@@ -32,10 +32,27 @@ nfsal_otg = load(paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/nf_salmon/prepp
   get()
 
 # and merge them
-otg_qcd = purrr::map2(lemhi_otg,
-                      nfsal_otg,
-                      dplyr::full_join)
+otg = purrr::map2(lemhi_otg,
+                  nfsal_otg,
+                  dplyr::full_join)
 
 # clean up
-rm(lemhi_otg, nfsal_otg)
+rm(lemhi_otg, nfsal_otg, otg_qcd)
 
+# write joined data
+output_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/prepped/")
+save(otg,
+     file = paste0(output_path, "DASH_2019_otg.rda"))
+
+# and csvs (for now)
+write_csv(otg$survey, paste0(output_path, "survey.csv"))
+write_csv(otg$cu, paste0(output_path, "cu.csv"))
+write_csv(otg$wood, paste0(output_path, "wood.csv"))
+write_csv(otg$jam, paste0(output_path, "jam.csv"))
+write_csv(otg$undercut, paste0(output_path, "undercut.csv"))
+write_csv(otg$discharge, paste0(output_path, "discharge.csv"))
+write_csv(otg$discharge_measurements, paste0(output_path, "discharge_measurements.csv"))
+
+
+
+### END SCRIPT
