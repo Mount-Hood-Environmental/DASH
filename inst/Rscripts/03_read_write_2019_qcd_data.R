@@ -10,6 +10,13 @@
 # Notes:
 rm(list = ls())
 
+#-----------------------------
+# load necessary libraries
+#-----------------------------
+library(tidyverse)
+library(beepr)
+library(janitor)
+
 #-------------------------
 # set NAS prefix, depending on operating system
 #-------------------------
@@ -23,8 +30,8 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # Import "QC'd" data
 #-----------------------------
-trib = "lemhi"
-#trib = "nf_salmon"
+#trib = "lemhi"
+trib = "nf_salmon"
 
 path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/2_qcd_csvs/")
 otg_qcd = read_otg_csv_wrapper(path = path,
@@ -80,8 +87,11 @@ output_path = paste0(nas_prefix,
 readr::write_csv(qc_final, output_path)
 
 #-----------------------------
-# Save the QC'd data
+# Save the QC'd data, but before we do, let's clean_names()
 #-----------------------------
+# clean names
+otg_qcd = lapply(otg_qcd, clean_names)
+
 save(otg_qcd,
      file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/", trib, "/prepped/qcd_DASH_2019_otg.rda"))
 
