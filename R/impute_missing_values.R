@@ -38,7 +38,7 @@ impute_missing_values = function(data_df = NULL,
   if(method == "randomForestSRC") {
     set.seed(5)
     imputed_data = data_df %>%
-      select(one_of(col_nm_vec)) %>%
+      select(any_of(col_nm_vec)) %>%
       as.data.frame() %>%
       randomForestSRC::impute(data = .,
                               ntree = ntree,
@@ -46,16 +46,16 @@ impute_missing_values = function(data_df = NULL,
       as_tibble()
 
     data_return = data_df %>%
-      select(-one_of(names(imputed_data))) %>%
+      select(-any_of(names(imputed_data))) %>%
       bind_cols(imputed_data) %>%
-      select(one_of(names(data_df)))
+      select(any_of(names(data_df)))
   }
 
   # imputed missing data with missForest package
   if(method == 'missForest') {
     set.seed(5)
     imputed_data = data_df %>%
-      select(one_of(col_nm_vec)) %>%
+      select(any_of(col_nm_vec)) %>%
       as.data.frame() %>%
       missForest::missForest(xmis = .,
                              # variablewise = T,
@@ -66,21 +66,21 @@ impute_missing_values = function(data_df = NULL,
 
     # pull out non-imputed data, combine with imputed data
     data_return = data_df %>%
-      select(-one_of(names(imputed_data$ximp))) %>%
+      select(-any_of(names(imputed_data$ximp))) %>%
       bind_cols(imputed_data$ximp) %>%
-      select(one_of(names(data_df)))
+      select(any_of(names(data_df)))
   }
 
   # imputed missing data with Hmisc package
   if(method == 'Hmisc') {
     set.seed(5)
     areg_data = data_df %>%
-      select(one_of(col_nm_vec)) %>%
+      select(any_of(col_nm_vec)) %>%
       as.data.frame()
 
     for(i in which(sapply(areg_data, class) == 'factor')) {
       areg_data = areg_data %>%
-        mutate_at(vars(i),
+        mutate_at(vars(all_of(i)),
                   list(forcats::fct_drop))
     }
 
@@ -92,11 +92,13 @@ impute_missing_values = function(data_df = NULL,
                         ...)
 
     imputed_data = data_df %>%
-      select(one_of(col_nm_vec))
+      select(any_of(col_nm_vec))
     for(colNm in col_nm_vec) {
       if(!colNm %in% names(areg_data$imputed) |
          is.null(areg_data$imputed[[colNm]])) next
-      if(class(pull(imputed_data, colNm)) == "integer") {
+      if(class(pull(imputed_data, colNm)) == "factor") {
+        imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = levels(pull(imputed_data, colNm))[apply(areg_data$imputed[[colNm]], 1, median)]
+      } else if(class(pull(imputed_data, colNm)) == "integer") {
         imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = as.integer(round(rowMeans(areg_data$imputed[[colNm]])))
       } else {
         imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = rowMeans(areg_data$imputed[[colNm]])
@@ -105,9 +107,9 @@ impute_missing_values = function(data_df = NULL,
 
     # pull out non-imputed data, combine with imputed data
     data_return = data_df %>%
-      select(-one_of(names(imputed_data))) %>%
+      select(-any_of(names(imputed_data))) %>%
       bind_cols(imputed_data) %>%
-      select(one_of(names(data_df)))
+      select(any_of(names(data_df)))
   }
 
   # return imputed data set
