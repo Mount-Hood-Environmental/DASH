@@ -17,6 +17,7 @@
 qc_survey = function(qc_df = NULL,
                      cols_to_check_nas = c("Survey Date",
                                            "Survey Time")) {
+  stopifnot(!is.null(qc_df))
 
   # set otg_type
   otg_type = "surveyPoint_0.csv"
