@@ -7,61 +7,43 @@
 #'
 #' @param wood_df data.frame of \code{otg_type =} "Wood_2.csv" containing the individual
 #' wood data to be summarized by channel units
-#' @param fix_length_diam_nas if any of the length or diameter measurement for individual wood pieces
-#' are missing (i.e, \code{NA}), would you like to fill them in? Default is `TRUE`. In this case, the NA
-#' will be replaced using the median length or diameter from wood pieces in that channel unit.
+#' @param fix_nas if any of the length or diameter measurement for individual wood pieces are missing
+#' i.e.,`NA`, would you like to fill them in? Default is `TRUE`, in which
+#' case the `NA` values will be imputed using function \code{impute_missing_values}.
+#' @param ... other arguments to \code{impute_missing_values}
+
 #'
 #' @import dplyr
-#' @importFrom tidyr pivot_longer
-#' @importFrom tidyr pivot_wider
 #' @export
 #' @return a data.frame summarizing wood at the channel unit scale
 
 rollup_cu_wood = function(wood_df = NULL,
-                          fix_length_diam_nas = TRUE) {
+                          fix_nas = TRUE,
+                          ...) {
 
   stopifnot(!is.null(wood_df))
 
-  # store initial column names
-  cols_wood_df = names(wood_df)
+  # wood measurement columns
+  wood_cols = c('length_m',
+                'diameter_m')
 
   # fix missing length and diameter values
-  if( fix_length_diam_nas == TRUE ) {
+  # how many missing values are there?
+  n_nas = wood_df %>%
+    select(wood_cols) %>%
+    is.na() %>%
+    sum()
 
-    # na_cus = wood_df %>%
-    #   select(parent_global_id,
-    #          length_m,
-    #          diameter_m) %>%
-    #   filter(is.na(length_m) | is.na(diameter_m)) %>%
-    #   select(parent_global_id) %>%
-    #   pull()
+  if( fix_nas == TRUE & n_nas > 0) {
+    cat("Imputing some missing values\n")
 
-    fixed_l_d = wood_df %>%
-      dplyr::select(parent_global_id,
-                    global_id,
-                    length_m,
-                    diameter_m) %>%
-      tidyr::pivot_longer(cols = c(length_m,
-                                   diameter_m)) %>%
-      dplyr::group_by(parent_global_id,
-                      name) %>%
-      dplyr::mutate(median = median(value, na.rm = T)) %>%
-      dplyr::mutate(value = if_else(is.na(value),
-                                    median,
-                                    value)) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(-parent_global_id,
-                    -median) %>%
-      tidyr::pivot_wider(names_from = "name",
-                         values_from = "value")
+    fix_df = impute_missing_values(wood_df,
+                                   col_nm_vec = wood_cols,
+                                   ...)
 
-    wood_df = wood_df %>%
-      dplyr::select(-length_m,
-                    -diameter_m) %>%
-      dplyr::left_join(fixed_l_d) %>%
-      dplyr::select(one_of(cols_wood_df))
+    wood_df = fix_df
 
-  } # end if( fix_length_diam_nas = TRUE )
+  } # end if( fix_nas = TRUE )
 
   # now start data rollup
   return_df = wood_df %>%

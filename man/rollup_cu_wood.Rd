@@ -4,15 +4,17 @@
 \alias{rollup_cu_wood}
 \title{Rollup Channel Unit Wood Data}
 \usage{
-rollup_cu_wood(wood_df = NULL, fix_length_diam_nas = TRUE)
+rollup_cu_wood(wood_df = NULL, fix_nas = TRUE, ...)
 }
 \arguments{
 \item{wood_df}{data.frame of \code{otg_type =} "Wood_2.csv" containing the individual
 wood data to be summarized by channel units}
 
-\item{fix_length_diam_nas}{if any of the length or diameter measurement for individual wood pieces
-are missing (i.e, \code{NA}), would you like to fill them in? Default is \code{TRUE}. In this case, the NA
-will be replaced using the median length or diameter from wood pieces in that channel unit.}
+\item{fix_nas}{if any of the length or diameter measurement for individual wood pieces are missing
+i.e.,\code{NA}, would you like to fill them in? Default is \code{TRUE}, in which
+case the \code{NA} values will be imputed using function \code{impute_missing_values}.}
+
+\item{...}{other arguments to \code{impute_missing_values}}
 }
 \value{
 a data.frame summarizing wood at the channel unit scale

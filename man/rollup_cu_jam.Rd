@@ -4,15 +4,17 @@
 \alias{rollup_cu_jam}
 \title{Rollup Channel Unit Jam Data}
 \usage{
-rollup_cu_jam(jam_df = NULL, fix_ind_jam_nas = TRUE)
+rollup_cu_jam(jam_df = NULL, fix_nas = TRUE, ...)
 }
 \arguments{
 \item{jam_df}{data.frame of \verb{otg_type =} "Jam_3.csv containing the individual
 jam data to be summarized (rolled up) to the channel unit scale}
 
-\item{fix_ind_jam_nas}{if any of the length, width, height, or estimated number of pieces measurements
+\item{fix_nas}{if any of the length, width, height, or estimated number of pieces measurements
 for an individual jam is missing i.e.,\code{NA}, would you like to fill them in? Default is \code{TRUE}, in which
-case the \code{NA} values will be replaced using the median of that metric from the channel unit.}
+case the \code{NA} values will be imputed using function \code{impute_missing_values}.}
+
+\item{...}{other arguments to \code{impute_missing_values}}
 }
 \value{
 a data.frame summarizing jam at the channel unit scale

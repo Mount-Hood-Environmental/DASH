@@ -7,23 +7,20 @@
 #'
 #' @param jam_df data.frame of `otg_type =` "Jam_3.csv containing the individual
 #' jam data to be summarized (rolled up) to the channel unit scale
-#' @param fix_ind_jam_nas if any of the length, width, height, or estimated number of pieces measurements
+#' @param fix_nas if any of the length, width, height, or estimated number of pieces measurements
 #' for an individual jam is missing i.e.,`NA`, would you like to fill them in? Default is `TRUE`, in which
-#' case the `NA` values will be replaced using the median of that metric from the channel unit.
+#' case the `NA` values will be imputed using function \code{impute_missing_values}.
+#' @param ... other arguments to \code{impute_missing_values}
 #'
 #' @import dplyr
-#' @importFrom tidyr pivot_longer
-#' @importFrom tidyr pivot_wider
 #' @export
 #' @return a data.frame summarizing jam at the channel unit scale
 
 rollup_cu_jam = function(jam_df = NULL,
-                         fix_ind_jam_nas = TRUE) {
+                         fix_nas = TRUE,
+                         ...) {
 
   stopifnot(!is.null(jam_df))
-
-  # store initial column names
-  cols_jam_df = names(jam_df)
 
   # jam measurement columns
   jam_cols = c("length_m",
@@ -32,39 +29,29 @@ rollup_cu_jam = function(jam_df = NULL,
                "estimated_number_of_pieces")
 
   # fix missing values in individual jams
-  if( fix_ind_jam_nas == TRUE ) {
+  # how many missing values are there?
+  n_nas = jam_df %>%
+    select(jam_cols) %>%
+    is.na() %>%
+    sum()
 
-    # na_cus = jam_df %>%
-    #   select(parent_global_id,
-    #          one_of(jam_cols)) %>%
-    #   filter_at(vars(one_of(jam_cols)), any_vars(is.na(.))) %>%
-    #   select(parent_global_id) %>%
-    #   pull()
+  if( fix_nas == TRUE & n_nas > 0) {
+    cat("Imputing some missing values\n")
 
-    fix_df = jam_df %>%
-      dplyr::select(parent_global_id,
-                    global_id,
-                    one_of(jam_cols)) %>%
-      dplyr::filter(parent_global_id %in% na_cus) %>%
-      tidyr::pivot_longer(cols = one_of(jam_cols)) %>%
-      dplyr::group_by(parent_global_id,
-                      name) %>%
-      dplyr::mutate(median = median(value, na.rm = T)) %>%
-      dplyr::mutate(value = if_else(is.na(value),
-                                    median,
-                                    value)) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(-parent_global_id,
-                    -median) %>%
-      tidyr::pivot_wider(names_from = "name",
-                         values_from = "value")
+    fix_df = impute_missing_values(jam_df,
+                                   col_nm_vec = jam_cols,
+                                   ...)
 
-    jam_df = jam_df %>%
-      dplyr::select(-one_of(jam_cols)) %>%
-      dplyr::left_join(fix_df) %>%
-      dplyr::select(one_of(cols_jam_df))
+    # make the estimated number of pieces an integer again
+    if(class(fix_df$estimated_number_of_pieces) != "integer") {
+      fix_df = fix_df %>%
+        mutate_at(vars(estimated_number_of_pieces),
+                  list(~ as.integer(round(.))))
+    }
 
-  } # end if( fix_length_diam_nas = TRUE )
+    jam_df = fix_df
+
+  } # end if( fix_nas = TRUE )
 
   return_df = jam_df %>%
     dplyr::select(-(creation_date:editor)) %>%
