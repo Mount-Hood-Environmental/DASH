@@ -1,0 +1,116 @@
+#' @title Impute Missing Values
+#'
+#' @description Impute any missing values from selected columns within a data.frame
+#'
+#' @author Kevin see
+#'
+#' @param data_df data.frame with potential missing values
+#' @param col_nm_vec character vector of column names that should be either imputed and/or used to impute other columns
+#' @param method which method to use, either by creating random forests using the \code{missForest} package, or by predictive mean matching using the \code{aregImpute} function in the \code{Hmisc} package
+#' @param ntree how many trees to build if \code{method = 'missForest'} or \code{method == 'randomForestSRC'}
+#' @param nk how many knots to use in smoothing splines if using \code{method = 'Hmisc'}
+#' @param ... other arguments to be passed to either \code{missForest::missForest}, \code{Hmisc::aregImpute} or \code{randomForestSRC::impute} functions
+#'
+#' @import dplyr
+#' @importFrom Hmisc aregImpute
+#' @importFrom randomForestSRC impute
+#' @importFrom missForest missForest
+#' @importFrom forcats fct_drop
+#' @export
+#' @return a data.frame with the same dimensions as the original, but with no missing values
+
+impute_missing_values = function(data_df = NULL,
+                                 col_nm_vec = NULL,
+                                 method = c('randomForestSRC', 'missForest', 'Hmisc'),
+                                 ntree = 1000,
+                                 nk = 4,
+                                 ...) {
+  stopifnot(!is.null(data_df))
+
+  # if col_nm_vec is not provided, use all columns of data_df
+  if(is.null(col_nm_vec)) {
+    col_nm_vec = names(data_df)
+  }
+
+  method = match.arg(method)
+
+  # imputed missing data with randomForestSRC package
+  if(method == "randomForestSRC") {
+    set.seed(5)
+    imputed_data = data_df %>%
+      select(one_of(col_nm_vec)) %>%
+      as.data.frame() %>%
+      randomForestSRC::impute(data = .,
+                              ntree = ntree,
+                              ...) %>%
+      as_tibble()
+
+    data_return = data_df %>%
+      select(-one_of(names(imputed_data))) %>%
+      bind_cols(imputed_data) %>%
+      select(one_of(names(data_df)))
+  }
+
+  # imputed missing data with missForest package
+  if(method == 'missForest') {
+    set.seed(5)
+    imputed_data = data_df %>%
+      select(one_of(col_nm_vec)) %>%
+      as.data.frame() %>%
+      missForest::missForest(xmis = .,
+                             # variablewise = T,
+                             # verbose = F,
+                             ntree = ntree,
+                             ...)
+
+
+    # pull out non-imputed data, combine with imputed data
+    data_return = data_df %>%
+      select(-one_of(names(imputed_data$ximp))) %>%
+      bind_cols(imputed_data$ximp) %>%
+      select(one_of(names(data_df)))
+  }
+
+  # imputed missing data with Hmisc package
+  if(method == 'Hmisc') {
+    set.seed(5)
+    areg_data = data_df %>%
+      select(one_of(col_nm_vec)) %>%
+      as.data.frame()
+
+    for(i in which(sapply(areg_data, class) == 'factor')) {
+      areg_data = areg_data %>%
+        mutate_at(vars(i),
+                  list(forcats::fct_drop))
+    }
+
+    areg_data = areg_data %>%
+      Hmisc::aregImpute(as.formula(paste('~', paste(colnames(.), collapse = '+'))),
+                        data = .,
+                        n.impute = 20,
+                        nk = nk,
+                        ...)
+
+    imputed_data = data_df %>%
+      select(one_of(col_nm_vec))
+    for(colNm in col_nm_vec) {
+      if(!colNm %in% names(areg_data$imputed) |
+         is.null(areg_data$imputed[[colNm]])) next
+      if(class(pull(imputed_data, colNm)) == "integer") {
+        imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = as.integer(round(rowMeans(areg_data$imputed[[colNm]])))
+      } else {
+        imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = rowMeans(areg_data$imputed[[colNm]])
+      }
+    }
+
+    # pull out non-imputed data, combine with imputed data
+    data_return = data_df %>%
+      select(-one_of(names(imputed_data))) %>%
+      bind_cols(imputed_data) %>%
+      select(one_of(names(data_df)))
+  }
+
+  # return imputed data set
+  return(data_return)
+
+}
