@@ -4,7 +4,12 @@
 \alias{rollup_cu_jam}
 \title{Rollup Channel Unit Jam Data}
 \usage{
-rollup_cu_jam(jam_df = NULL, fix_nas = TRUE, ...)
+rollup_cu_jam(
+  jam_df = NULL,
+  fix_nas = TRUE,
+  impute_cols = c("length_m", "width_m", "height_m", "estimated_number_of_pieces"),
+  ...
+)
 }
 \arguments{
 \item{jam_df}{data.frame of \verb{otg_type =} "Jam_3.csv containing the individual
@@ -12,7 +17,9 @@ jam data to be summarized (rolled up) to the channel unit scale}
 
 \item{fix_nas}{if any of the length, width, height, or estimated number of pieces measurements
 for an individual jam is missing i.e.,\code{NA}, would you like to fill them in? Default is \code{TRUE}, in which
-case the \code{NA} values will be imputed using function \code{impute_missing_values}.}
+case the \code{NA} values will be imputed using function \code{impute_missing_values}}
+
+\item{impute_cols}{character vector of column names that should be imputed, if \code{fix_nas == TRUE}}
 
 \item{...}{other arguments to \code{impute_missing_values}}
 }

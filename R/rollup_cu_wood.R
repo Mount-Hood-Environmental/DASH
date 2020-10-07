@@ -9,7 +9,8 @@
 #' wood data to be summarized by channel units
 #' @param fix_nas if any of the length or diameter measurement for individual wood pieces are missing
 #' i.e.,`NA`, would you like to fill them in? Default is `TRUE`, in which
-#' case the `NA` values will be imputed using function \code{impute_missing_values}.
+#' case the `NA` values will be imputed using function \code{impute_missing_values}
+#' @param impute_cols character vector of column names that should be imputed, if \code{fix_nas == TRUE}
 #' @param ... other arguments to \code{impute_missing_values}
 
 #'
@@ -19,18 +20,16 @@
 
 rollup_cu_wood = function(wood_df = NULL,
                           fix_nas = TRUE,
+                          impute_cols = c('length_m',
+                                        'diameter_m'),
                           ...) {
 
   stopifnot(!is.null(wood_df))
 
-  # wood measurement columns
-  wood_cols = c('length_m',
-                'diameter_m')
-
   # fix missing length and diameter values
   # how many missing values are there?
   n_nas = wood_df %>%
-    select(wood_cols) %>%
+    select(impute_cols) %>%
     is.na() %>%
     sum()
 
@@ -38,7 +37,7 @@ rollup_cu_wood = function(wood_df = NULL,
     cat("Imputing some missing values\n")
 
     fix_df = impute_missing_values(wood_df,
-                                   col_nm_vec = wood_cols,
+                                   col_nm_vec = impute_cols,
                                    ...)
 
     wood_df = fix_df

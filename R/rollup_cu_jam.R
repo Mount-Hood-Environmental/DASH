@@ -9,7 +9,8 @@
 #' jam data to be summarized (rolled up) to the channel unit scale
 #' @param fix_nas if any of the length, width, height, or estimated number of pieces measurements
 #' for an individual jam is missing i.e.,`NA`, would you like to fill them in? Default is `TRUE`, in which
-#' case the `NA` values will be imputed using function \code{impute_missing_values}.
+#' case the `NA` values will be imputed using function \code{impute_missing_values}
+#' @param impute_cols character vector of column names that should be imputed, if \code{fix_nas == TRUE}
 #' @param ... other arguments to \code{impute_missing_values}
 #'
 #' @import dplyr
@@ -18,20 +19,18 @@
 
 rollup_cu_jam = function(jam_df = NULL,
                          fix_nas = TRUE,
+                         impute_cols  = c("length_m",
+                                          "width_m",
+                                          "height_m",
+                                          "estimated_number_of_pieces"),
                          ...) {
 
   stopifnot(!is.null(jam_df))
 
-  # jam measurement columns
-  jam_cols = c("length_m",
-               "width_m",
-               "height_m",
-               "estimated_number_of_pieces")
-
   # fix missing values in individual jams
   # how many missing values are there?
   n_nas = jam_df %>%
-    select(jam_cols) %>%
+    select(impute_cols) %>%
     is.na() %>%
     sum()
 
@@ -39,7 +38,7 @@ rollup_cu_jam = function(jam_df = NULL,
     cat("Imputing some missing values\n")
 
     fix_df = impute_missing_values(jam_df,
-                                   col_nm_vec = jam_cols,
+                                   col_nm_vec = impute_cols,
                                    ...)
 
     # make the estimated number of pieces an integer again
