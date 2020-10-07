@@ -60,6 +60,5 @@ rm(lemhi_otg, nfsal_otg, otg_qcd)
 cu_wood = rollup_cu_wood(wood_df = otg$wood)
 
 # JAM
+cu_jam = rollup_cu_jam(jam_df = otg$jam)
 
-
-### END SCRIPT
