@@ -54,6 +54,11 @@ rm(lemhi_otg, nfsal_otg, otg_qcd)
 # write_csv(otg$discharge_measurements, paste0(output_path, "discharge_measurements.csv"))
 
 #-----------------------------
+# clean cu data.frame
+#-----------------------------
+
+
+#-----------------------------
 # start rolling up data
 #-----------------------------
 # WOOD
