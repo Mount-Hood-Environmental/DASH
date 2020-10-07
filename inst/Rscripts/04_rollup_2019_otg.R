@@ -63,7 +63,11 @@ rm(lemhi_otg, nfsal_otg, otg_qcd)
 # start rolling up data
 #-----------------------------
 # WOOD
-cu_wood = rollup_cu_wood(wood_df = otg$wood)
+cu_wood = rollup_cu_wood(wood_df = otg$wood %>%
+                           mutate_at(vars(wet, channel_forming, ballasted),
+                                     list(as.factor)),
+                         impute_cols = c("length_m", "diameter_m", "wet"),
+                         method = "Hmisc")
 
 # JAM
 cu_jam = rollup_cu_jam(jam_df = otg$jam)
