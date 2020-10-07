@@ -12,6 +12,7 @@ rm(list = ls())
 # load necessary libraries
 #-----------------------------
 library(tidyverse)
+library(DASH)
 
 #-------------------------
 # set NAS prefix, depending on operating system
