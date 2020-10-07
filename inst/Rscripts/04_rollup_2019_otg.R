@@ -56,7 +56,10 @@ rm(lemhi_otg, nfsal_otg, otg_qcd)
 #-----------------------------
 # start rolling up data
 #-----------------------------
-wood_df = otg$wood %>%
-  dplyr::select(-(creation_date:editor))
+# WOOD
+cu_wood = rollup_cu_wood(wood_df = otg$wood)
+
+# JAM
+
 
 ### END SCRIPT
