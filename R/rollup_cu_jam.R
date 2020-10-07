@@ -27,10 +27,20 @@ rollup_cu_jam = function(jam_df = NULL,
 
   stopifnot(!is.null(jam_df))
 
+  # if any of the impute_cols are character vectors, turn them into factors
+  cols_class = jam_df %>%
+    select(any_of(impute_cols)) %>%
+    sapply(class)
+  if(sum(cols_class == "character") > 0) {
+    jam_df = jam_df %>%
+      mutate_at(vars(any_of(names(cols_class)[cols_class == "character"])),
+                list(as.factor))
+  }
+
   # fix missing values in individual jams
   # how many missing values are there?
   n_nas = jam_df %>%
-    select(impute_cols) %>%
+    select(any_of(impute_cols)) %>%
     is.na() %>%
     sum()
 

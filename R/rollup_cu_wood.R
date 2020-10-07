@@ -26,10 +26,20 @@ rollup_cu_wood = function(wood_df = NULL,
 
   stopifnot(!is.null(wood_df))
 
+  # if any of the impute_cols are character vectors, turn them into factors
+  cols_class = wood_df %>%
+    select(any_of(impute_cols)) %>%
+    sapply(class)
+  if(sum(cols_class == "character") > 0) {
+      wood_df = wood_df %>%
+        mutate_at(vars(any_of(names(cols_class)[cols_class == "character"])),
+                  list(as.factor))
+  }
+
   # fix missing length and diameter values
   # how many missing values are there?
   n_nas = wood_df %>%
-    select(impute_cols) %>%
+    select(any_of(impute_cols)) %>%
     is.na() %>%
     sum()
 
