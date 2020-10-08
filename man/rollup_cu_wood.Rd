@@ -31,5 +31,5 @@ Summarize individual wood piece data (e.g. from \code{otg_type =} "Wood_2.csv") 
 the channel unit scale
 }
 \author{
-Mike Ackerman and Richie Carmichael
+Mike Ackerman, Richie Carmichael, and Kevin See
 }
