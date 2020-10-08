@@ -25,7 +25,7 @@ case the \code{NA} values will be imputed using function `impute_missing_values(
 \item{...}{other arguments to \code{impute_missing_values()}}
 }
 \value{
-a data.frme summarizing undercut data at the channel unit scale
+a data.frame summarizing undercut data at the channel unit scale
 }
 \description{
 Summarize individual undercut data (e.g., from \verb{otg_type =} "Undercut_4.csv) at
