@@ -3,7 +3,7 @@
 #' @description Summarize individual jam data (e.g., from `otg_type =` "Jam_3.csv") at
 #' the channel unit scale
 #'
-#' @author Mike Ackerman and Richie Carmichael
+#' @author Mike Ackerman, Richie Carmichael, and Kevin See
 #'
 #' @param jam_df data.frame of `otg_type =` "Jam_3.csv containing the individual
 #' jam data to be summarized (rolled up) to the channel unit scale

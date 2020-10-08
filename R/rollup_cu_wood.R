@@ -3,7 +3,7 @@
 #' @description Summarize individual wood piece data (e.g. from \code{otg_type =} "Wood_2.csv") at
 #' the channel unit scale
 #'
-#' @author Mike Ackerman and Richie Carmichael
+#' @author Mike Ackerman, Richie Carmichael, and Kevin See
 #'
 #' @param wood_df data.frame of \code{otg_type =} "Wood_2.csv" containing the individual
 #' wood data to be summarized by channel units
