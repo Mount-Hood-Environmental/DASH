@@ -19,14 +19,13 @@ calc_discharge <- function(discharge_meas_df) {
 
   stopifnot(!is.null(discharge_meas_df))
 
-  disch_df = discharge_meas_df %>%
-    select(path_nm,
-           parent_global_id,
+  return_df = discharge_meas_df %>%
+    select(parent_global_id,
            global_id,
            station_width,
            station_depth,
            station_velocity) %>%
-    group_by(path_nm, parent_global_id) %>%
+    group_by(parent_global_id) %>%
     # determine which is the first and last station at a site
     mutate(station = 1:n()) %>%
     mutate(min_stat = min(station),
@@ -45,5 +44,5 @@ calc_discharge <- function(discharge_meas_df) {
     summarise(discharge = sum(stat_disch),
               .groups = "drop")
 
-  return(disch_df)
+  return(return_df)
 }
