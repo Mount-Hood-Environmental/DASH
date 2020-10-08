@@ -41,7 +41,7 @@ calc_discharge <- function(discharge_meas_df) {
                                 stat_width_i * station_depth * station_velocity * 0.5,
                                 stat_width_i * station_depth * station_velocity)) %>%
     # sum discharge across all stations at a site
-    summarise(discharge = sum(stat_disch),
+    summarise(discharge_cms = sum(stat_disch),
               .groups = "drop")
 
   return(return_df)
