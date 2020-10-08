@@ -21,26 +21,26 @@ calc_discharge <- function(discharge_meas_df) {
 
   disch_df = discharge_meas_df %>%
     select(path_nm,
-           ParentGlobalID,
-           GlobalID,
-           width = `Station Width`,
-           depth = `Station Depth`,
-           vel = `Station Velocity`) %>%
-    group_by(path_nm, ParentGlobalID) %>%
+           parent_global_id,
+           global_id,
+           station_width,
+           station_depth,
+           station_velocity) %>%
+    group_by(path_nm, parent_global_id) %>%
     # determine which is the first and last station at a site
     mutate(station = 1:n()) %>%
     mutate(min_stat = min(station),
            max_stat = max(station)) %>%
     # compute station width
-    mutate(stat_width = if_else(station == min_stat,
-                                (lead(width) - width) / 2,
+    mutate(stat_width_i = if_else(station == min_stat,
+                                (lead(station_width) - station_width) / 2,
                                 if_else(station == max_stat,
-                                        (width - lag(width)) / 2,
-                                        (lead(width) - lag(width)) / 2))) %>%
+                                        (station_width - lag(station_width)) / 2,
+                                        (lead(station_width) - lag(station_width)) / 2))) %>%
     # calculate discharge at each station
     mutate(stat_disch = if_else(station %in% c(min_stat, max_stat),
-                                stat_width * depth * vel * 0.5,
-                                stat_width * depth * vel)) %>%
+                                stat_width_i * station_depth * station_velocity * 0.5,
+                                stat_width_i * station_depth * station_velocity)) %>%
     # sum discharge across all stations at a site
     summarise(discharge = sum(stat_disch),
               .groups = "drop")
