@@ -4,16 +4,21 @@
 \alias{calc_discharge}
 \title{Calculate Discharge}
 \usage{
-calc_discharge(data_df)
+calc_discharge(discharge_meas_df)
 }
 \arguments{
-\item{data_df}{input data.frame}
+\item{discharge_meas_df}{input data.frame of \verb{otg_type =} "DischargeMeasurements_6.csv"
+containing the station width, depth, and velocity data to estimate discharge}
 }
 \value{
 a tibble
 }
 \description{
-Calculate the disharge from each station and sum them. Based on the calculations from CHaMP, described on MonitoringMethods.org, which states: Sum station discharge across all  stations by calculating the depth x velocity x station width for all stations except first and last.  Station discharge for first and last station is 0.5 x station width x depth x velocity. https://www.monitoringresources.org/Document/Method/Details/853
+Calculate the discharge from each station and sum them.
+Based on the calculations from CHaMP, described on MonitoringMethods.org, which
+states: Sum station discharge across all  stations by calculating the depth x velocity x station
+width for all stations except first and last.  Station discharge for first and last station
+is 0.5 x station width x depth x velocity. https://www.monitoringresources.org/Document/Method/Details/853
 }
 \author{
 Kevin See and Mike Ackerman
