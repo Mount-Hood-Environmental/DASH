@@ -15,7 +15,7 @@
 #'
 #' @import dplyr
 #' @export
-#' @return a data.frme summarizing undercut data at the channel unit scale
+#' @return a data.frame summarizing undercut data at the channel unit scale
 
 rollup_cu_undercut = function(undercut_df = NULL,
                               fix_nas = TRUE,
