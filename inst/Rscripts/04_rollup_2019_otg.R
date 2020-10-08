@@ -12,7 +12,8 @@ rm(list = ls())
 # load necessary libraries
 #-----------------------------
 library(tidyverse)
-library(DASH)
+#library(DASH)
+devtools::load_all()
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -68,3 +69,5 @@ cu_wood = rollup_cu_wood(wood_df = otg$wood)
 # JAM
 cu_jam = rollup_cu_jam(jam_df = otg$jam)
 
+# UNDERCUT
+cu_undercut = rollup_cu_undercut(undercut_df = otg$undercut)
