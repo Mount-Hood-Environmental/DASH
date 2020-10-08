@@ -3,7 +3,7 @@
 #' @description Summarize individual jam data (e.g., from `otg_type =` "Jam_3.csv") at
 #' the channel unit scale
 #'
-#' @author Mike Ackerman and Richie Carmichael
+#' @author Mike Ackerman, Richie Carmichael, and Kevin See
 #'
 #' @param jam_df data.frame of `otg_type =` "Jam_3.csv containing the individual
 #' jam data to be summarized (rolled up) to the channel unit scale
@@ -37,14 +37,15 @@ rollup_cu_jam = function(jam_df = NULL,
                 list(as.factor))
   }
 
-  # fix missing values in individual jams
   # how many missing values are there?
   n_nas = jam_df %>%
     select(any_of(impute_cols)) %>%
     is.na() %>%
     sum()
 
+  # fix missing values in individual jams
   if( fix_nas == TRUE & n_nas > 0) {
+
     cat("Imputing some missing values\n")
 
     fix_df = impute_missing_values(jam_df,
@@ -60,14 +61,15 @@ rollup_cu_jam = function(jam_df = NULL,
 
     jam_df = fix_df
 
-  } # end if( fix_nas = TRUE )
+  } # end if( fix_nas == TRUE & n_nas > 0 ) loop
 
   return_df = jam_df %>%
     dplyr::select(-(creation_date:editor)) %>%
     dplyr::mutate(area_m2 = length_m * width_m,
                   vol_m3 = length_m * width_m * height_m) %>%
     dplyr::group_by(parent_global_id) %>%
-    dplyr::summarise(jam_length_m = sum(length_m),
+    dplyr::summarise(jam_n = length(parent_global_id),
+                     jam_length_m = sum(length_m),
                      jam_width_m = sum(width_m),
                      jam_height_m = sum(height_m),
                      jam_area_m2 = sum(area_m2),
