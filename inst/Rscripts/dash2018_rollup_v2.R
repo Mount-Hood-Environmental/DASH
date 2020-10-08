@@ -77,7 +77,8 @@ dash2018_raw = dash2018_raw %>%
           mutate_at(vars(Off_C_T:sinusty),
                     list(~as.numeric(NA))) %>%
           mutate(Unt_Typ = "Lsc",
-                 Sgmnt_N = NA,
+                 # chose a number that didn't exist yet
+                 Sgmnt_N = 4,
                  Hab_Roll = replace_na(Hab_Roll, 5)) )
 
 #-----------------------------
@@ -283,7 +284,7 @@ dash2018_cu_plus = dash2018_cu %>%
          hr_Prc_Bld = weighted.mean(Prc_Bld, SHAPE_A, na.rm = T),
          hr_CU_IDs = list(ID),
          hr_Pool_A = sum(SHAPE_A[CU_Typ == "Pool"]),
-         hr_SC_A = sum(SHAPE_A[Sgmnt_ID > 1])) %>%
+         hr_SC_A = sum(SHAPE_A[as.numeric(Sgmnt_ID) > 1])) %>%
   ungroup() %>%
   mutate_at(vars(starts_with("hr_")),
             ~replace(., . %in% c("NaN", "-Inf"), NA))
@@ -296,7 +297,7 @@ dash2018_cu_plus2 = dash2018_cu %>%
                         hr_n_pool = sum(CU_Typ == 'Pool'),
                         hr_Pool_A = sum(SHAPE_A[CU_Typ == "Pool"]),
                         hr_n_SC = n_distinct(Sgmnt_ID[Sgmnt_ID > 1]),
-                        hr_SC_A = sum(SHAPE_A[Sgmnt_ID > 1])) %>%
+                        hr_SC_A = sum(SHAPE_A[as.numeric(Sgmnt_ID) > 1])) %>%
               st_drop_geometry() %>%
               as_tibble()) %>%
   left_join(dash2018_cu %>%
@@ -391,15 +392,15 @@ dash2018_hr = dash2018_cu_plus %>%
             Oca_Cnt = length(which(CU_Typ == "Oca")),
             Length = sum(Length),
             SHAPE_A = sum(SHAPE_A),
-            Wod_Cnt = sum(Wod_Cnt),
-            N_Bllst = sum(N_Bllst),
-            N_ChFrm = sum(N_ChFrm),
-            N_Wet = sum(N_Wet),
-            Wod_Vlm = sum(Wod_Vlm),
-            Jam_Vlm = sum(Jam_Vlm),
-            Undrc_C = sum(Undrc_C),
-            Undrc_L = sum(Undrc_L),
-            Undrc_A = sum(Undrc_A),
+            Wod_Cnt = sum(Wod_Cnt, na.rm = T),
+            N_Bllst = sum(N_Bllst, na.rm = T),
+            N_ChFrm = sum(N_ChFrm, na.rm = T),
+            N_Wet = sum(N_Wet, na.rm = T),
+            Wod_Vlm = sum(Wod_Vlm, na.rm = T),
+            Jam_Vlm = sum(Jam_Vlm, na.rm = T),
+            Undrc_C = sum(Undrc_C, na.rm = T),
+            Undrc_L = sum(Undrc_L, na.rm = T),
+            Undrc_A = sum(Undrc_A, na.rm = T),
             Pool_Mx_Dpth = unique(hr_Pool_Mx_Dpth),
             Pool_Avg_Mx_Dpth = unique(hr_Pool_Avg_Mx_Dpth),
             Pool_CV_Mx_Dpth = unique(hr_Pool_CV_Mx_Dpth),
@@ -437,15 +438,15 @@ dash2018_hr2 = dash2018_cu %>%
             Oca_Cnt = sum(CU_Typ == "Oca"),
             Length = sum(Length),
             SHAPE_A = sum(SHAPE_A),
-            Wod_Cnt = sum(Wod_Cnt),
-            N_Bllst = sum(N_Bllst),
-            N_ChFrm = sum(N_ChFrm),
-            N_Wet = sum(N_Wet),
-            Wod_Vlm = sum(Wod_Vlm),
-            Jam_Vlm = sum(Jam_Vlm),
-            Undrc_C = sum(Undrc_C),
-            Undrc_L = sum(Undrc_L),
-            Undrc_A = sum(Undrc_A),
+            Wod_Cnt = sum(Wod_Cnt, na.rm = T),
+            N_Bllst = sum(N_Bllst, na.rm = T),
+            N_ChFrm = sum(N_ChFrm, na.rm = T),
+            N_Wet = sum(N_Wet, na.rm = T),
+            Wod_Vlm = sum(Wod_Vlm, na.rm = T),
+            Jam_Vlm = sum(Jam_Vlm, na.rm = T),
+            Undrc_C = sum(Undrc_C, na.rm = T),
+            Undrc_L = sum(Undrc_L, na.rm = T),
+            Undrc_A = sum(Undrc_A, na.rm = T),
             Pool_Mx_Dpth = max(Mx_Dpth, na.rm = T),
             Pool_Avg_Mx_Dpth = mean(Mx_Dpth, na.rm = T),
             Pool_CV_Mx_Dpth = sd(Mx_Dpth, na.rm = T) / Pool_Avg_Mx_Dpth) %>%
@@ -509,7 +510,8 @@ dash2018_hr3 = dash2018_cu %>%
                                 Undrc_C,
                                 Undrc_L,
                                 Undrc_A),
-                           list(sum))) %>%
+                           list(sum),
+                           na.rm = T)) %>%
   left_join(dash2018_cu %>%
               group_by(SiteNam, Hab_Rch) %>%
               summarise(Pool_A = sum(SHAPE_A[CU_Typ == "Pool"]),
@@ -555,8 +557,8 @@ dash2018_hr3 = dash2018_cu %>%
             ~replace(., . %in% c("NaN", "-Inf"), NA))
 
 # are these results the same?
-# dash2018_hr2 %>%
-dash2018_hr3 %>%
+dash2018_hr2 %>%
+# dash2018_hr3 %>%
   select(one_of(names(dash2018_hr))) %>%
   st_drop_geometry() %>%
   select(-CU_IDs) %>%
@@ -569,7 +571,6 @@ dash2018_hr3 %>%
               mutate_at(vars(which(sapply(., FUN = function(x) class(x)[1]) %in% c('numeric', 'integer'))),
                         list(round),
                         digits = 5))
-
 
 
 # Others to consider?
@@ -586,12 +587,14 @@ us_cl = st_read(paste0(nas_prefix, "/data/habitat/DASH/centerlines/2018/upper_sa
   st_transform(crs = st_crs(mra_crs))
 
 # combine the above centerlines (still need to resolve the Pahsimeroi Hab_Roll 5)
-mra_cl = rbind(ul_cl,
-               ll_cl,
-               ph_cl,
-               us_cl) %>%
-  # fix the Pahsimeroi NA Hab_Roll which belongs in Hab_Roll 5
-  mutate(Hab_Roll = replace_na(Hab_Roll, 5)) %>%
+mra_cl = rbind(ul_cl %>%
+                 mutate(SiteNam = "UpperLemhi_2018"),
+               ll_cl %>%
+                 mutate(SiteNam = "LowerLemhi_2018"),
+               ph_cl %>%
+                 mutate(SiteNam = "Pahsimeroi_2018"),
+               us_cl %>%
+                 mutate(SiteNam = "UpperSalmon_2018")) %>%
   select("SiteNam", "Hab_Roll", "sinuosity") %>%
   mutate(Length = as.numeric(st_length(geometry))) %>%
   mutate(straight_line = map_dbl(geometry,
