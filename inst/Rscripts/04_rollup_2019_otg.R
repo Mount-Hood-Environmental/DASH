@@ -71,3 +71,7 @@ cu_jam = rollup_cu_jam(jam_df = otg$jam)
 
 # UNDERCUT
 cu_undercut = rollup_cu_undercut(undercut_df = otg$undercut)
+
+# DISCHARGE
+cu_discharge = rollup_cu_discharge(discharge_df = otg$discharge,
+                                   discharge_meas_df = otg$discharge_measurements)
