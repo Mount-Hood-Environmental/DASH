@@ -21,7 +21,7 @@
 rollup_cu_wood = function(wood_df = NULL,
                           fix_nas = TRUE,
                           impute_cols = c('length_m',
-                                        'diameter_m'),
+                                          'diameter_m'),
                           ...) {
 
   stopifnot(!is.null(wood_df))
@@ -36,14 +36,15 @@ rollup_cu_wood = function(wood_df = NULL,
                   list(as.factor))
   }
 
-  # fix missing length and diameter values
   # how many missing values are there?
   n_nas = wood_df %>%
     select(any_of(impute_cols)) %>%
     is.na() %>%
     sum()
 
-  if( fix_nas == TRUE & n_nas > 0) {
+  # fix missing length and diameter values
+  if( fix_nas == TRUE & n_nas > 0 ) {
+
     cat("Imputing some missing values\n")
 
     fix_df = impute_missing_values(wood_df,
@@ -52,7 +53,7 @@ rollup_cu_wood = function(wood_df = NULL,
 
     wood_df = fix_df
 
-  } # end if( fix_nas = TRUE )
+  } # end if( fix_nas == TRUE & n_nas > 0 ) loop
 
   # now start data rollup
   return_df = wood_df %>%

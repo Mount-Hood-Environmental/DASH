@@ -37,14 +37,15 @@ rollup_cu_jam = function(jam_df = NULL,
                 list(as.factor))
   }
 
-  # fix missing values in individual jams
   # how many missing values are there?
   n_nas = jam_df %>%
     select(any_of(impute_cols)) %>%
     is.na() %>%
     sum()
 
+  # fix missing values in individual jams
   if( fix_nas == TRUE & n_nas > 0) {
+
     cat("Imputing some missing values\n")
 
     fix_df = impute_missing_values(jam_df,
@@ -60,7 +61,7 @@ rollup_cu_jam = function(jam_df = NULL,
 
     jam_df = fix_df
 
-  } # end if( fix_nas = TRUE )
+  } # end if( fix_nas == TRUE & n_nas > 0 ) loop
 
   return_df = jam_df %>%
     dplyr::select(-(creation_date:editor)) %>%
