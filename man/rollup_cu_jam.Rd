@@ -24,12 +24,12 @@ case the \code{NA} values will be imputed using function \code{impute_missing_va
 \item{...}{other arguments to \code{impute_missing_values}}
 }
 \value{
-a data.frame summarizing jam at the channel unit scale
+a data.frame summarizing jam data at the channel unit scale
 }
 \description{
 Summarize individual jam data (e.g., from \verb{otg_type =} "Jam_3.csv") at
 the channel unit scale
 }
 \author{
-Mike Ackerman and Richie Carmichael
+Mike Ackerman, Richie Carmichael, and Kevin See
 }

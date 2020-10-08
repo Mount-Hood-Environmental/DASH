@@ -15,7 +15,7 @@
 #'
 #' @import dplyr
 #' @export
-#' @return a data.frame summarizing jam at the channel unit scale
+#' @return a data.frame summarizing jam data at the channel unit scale
 
 rollup_cu_jam = function(jam_df = NULL,
                          fix_nas = TRUE,
