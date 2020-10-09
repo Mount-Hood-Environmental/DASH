@@ -29,8 +29,8 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # load the otg_data list of dfs
 #-----------------------------
-trib = "lemhi"
-#trib = "nf_salmon"
+#trib = "lemhi"
+trib = "nf_salmon"
 
 load(paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/prepped/raw_DASH_2019_otg.rda"))
 

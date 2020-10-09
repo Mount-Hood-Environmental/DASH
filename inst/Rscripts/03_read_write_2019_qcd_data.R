@@ -30,8 +30,8 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # Import "QC'd" data
 #-----------------------------
-#trib = "lemhi"
-trib = "nf_salmon"
+trib = "lemhi"
+#trib = "nf_salmon"
 
 path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/2_qcd_csvs/")
 otg_qcd = read_otg_csv_wrapper(path = path,

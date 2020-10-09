@@ -27,8 +27,8 @@ if(.Platform$OS.type == 'unix') {
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
-trib = "lemhi"
-#trib = "nf_salmon"
+#trib = "lemhi"
+trib = "nf_salmon"
 
 path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/1_formatted_csvs/")
 
@@ -36,8 +36,8 @@ path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/", trib, "/1_formatted_cs
 # read in one type of OTG data
 #-----------------------------
 # read survey data; as an example
-survey_df = read_otg_csv(path,
-                         otg_type = "surveyPoint_0.csv")
+# cu_df = read_otg_csv(path,
+#                      otg_type = "CU_1.csv")
 
 #-----------------------------
 # loop over OTG data types using the wrapper function
