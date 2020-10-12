@@ -672,9 +672,10 @@ salmon_gaa_trim = salmon_full_join %>%
 # plot salmon_gaa_trim
 ggplot() +
   geom_sf(data = salmon_gaa_trim,
-          aes(fill = UniqueID)) +
+          aes(color = MeanU_v1)) +
   labs(title = "GAA Data",
-       fill = "Site ID") +
+       color = "Mean Discharge") +
+  scale_color_viridis_c() +
   theme_bw()
 
 # what is the nearest gaa to each dash2018_fr?
