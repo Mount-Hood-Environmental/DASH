@@ -42,23 +42,39 @@ otg = purrr::map2(lemhi_otg,
 rm(lemhi_otg, nfsal_otg, otg_qcd)
 
 # write joined data
-output_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/prepped/")
-save(otg,
-     file = paste0(output_path, "DASH_2019_otg.rda"))
-
-# and csvs (for now)
-write_csv(otg$survey, paste0(output_path, "survey.csv"))
-write_csv(otg$cu, paste0(output_path, "cu.csv"))
-write_csv(otg$wood, paste0(output_path, "wood.csv"))
-write_csv(otg$jam, paste0(output_path, "jam.csv"))
-write_csv(otg$undercut, paste0(output_path, "undercut.csv"))
-write_csv(otg$discharge, paste0(output_path, "discharge.csv"))
-write_csv(otg$discharge_measurements, paste0(output_path, "discharge_measurements.csv"))
+# output_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/prepped/")
+# save(otg,
+#      file = paste0(output_path, "DASH_2019_otg.rda"))
+#
+# # and csvs (for now)
+# write_csv(otg$survey, paste0(output_path, "survey.csv"))
+# write_csv(otg$cu, paste0(output_path, "cu.csv"))
+# write_csv(otg$wood, paste0(output_path, "wood.csv"))
+# write_csv(otg$jam, paste0(output_path, "jam.csv"))
+# write_csv(otg$undercut, paste0(output_path, "undercut.csv"))
+# write_csv(otg$discharge, paste0(output_path, "discharge.csv"))
+# write_csv(otg$discharge_measurements, paste0(output_path, "discharge_measurements.csv"))
 
 #-----------------------------
 # clean cu data.frame
 #-----------------------------
-cu_cu = otg$cu
+cu_survey = otg$survey
+
+cu_cu = otg$cu %>%
+  select(-object_id) %>%
+  select(-(creation_date:editor)) %>%
+  left_join(cu_survey %>%
+              select(global_id,
+                     site_name,
+                     survey_date,
+                     survey_time,
+                     survey_crew,
+                     conductivity_ms,
+                     lon = x,
+                     lat = y),
+            by = c("parent_global_id" = "global_id")) %>%
+  select(-parent_global_id) %>%
+  filter(is.na(site_name))
 
 #-----------------------------
 # start rolling up data
