@@ -58,7 +58,10 @@ rm(lemhi_otg, nfsal_otg, otg_qcd)
 #-----------------------------
 # clean cu data.frame
 #-----------------------------
+
+# need to remove everything including and after "_" and spaces in site_name, then use to create unique channel IDs
 cu_survey = otg$survey
+
 
 cu_cu = otg$cu %>%
   select(-object_id) %>%
@@ -73,8 +76,7 @@ cu_cu = otg$cu %>%
                      lon = x,
                      lat = y),
             by = c("parent_global_id" = "global_id")) %>%
-  select(-parent_global_id) %>%
-  filter(is.na(site_name))
+  select(-parent_global_id)
 
 #-----------------------------
 # start rolling up data
