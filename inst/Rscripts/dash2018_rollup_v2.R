@@ -20,8 +20,7 @@ library(magrittr)
 #-------------------------
 if(.Platform$OS.type != 'unix') {
   nas_prefix = "S:"
-}
-if(.Platform$OS.type == 'unix') {
+} else if(.Platform$OS.type == 'unix') {
   nas_prefix = "~/../../Volumes/ABS/"
 }
 
@@ -557,8 +556,8 @@ dash2018_hr3 = dash2018_cu %>%
             ~replace(., . %in% c("NaN", "-Inf"), NA))
 
 # are these results the same?
-dash2018_hr2 %>%
-# dash2018_hr3 %>%
+# dash2018_hr2 %>%
+dash2018_hr3 %>%
   select(one_of(names(dash2018_hr))) %>%
   st_drop_geometry() %>%
   select(-CU_IDs) %>%
@@ -649,6 +648,58 @@ dash2018_hr = dash2018_hr %>%
 #save(dash2018_hr,
 #     file = paste0(nas_prefix, "/data/habitat/DASH/prepped/2018/dash2018_hr.Rda"))
 # st_write(dash2018_hr, "dash2018_hr.shp")
+
+#-----------------------------------------------------
+# read in estimates of discharge at select transects
+#-----------------------------------------------------
+disch_df = read_csv(paste0(nas_prefix, "/data/habitat/DASH/discharge/2018/MRA_2018_discharge.csv")) %>%
+  arrange(Site, hab_roll) %>%
+  rename(Q = discharge,
+         Hab_Rch = hab_roll) %>%
+  mutate(SiteNam = recode(Site,
+                          "LL" = "LowerLemhi_2018",
+                          "Pah" = "Pahsimeroi_2018",
+                          "UL" = "UpperLemhi_2018",
+                          "US" = "UpperSalmon_2018")) %>%
+  select(SiteNam, Hab_Rch, Q)
+
+# for habitat reaches without a calculated discharge, use the closest upstream reach's discharge
+dash2018_hr %>%
+  mutate(across(Hab_Rch, as.factor)) %>%
+  # filter(SiteNam == "LowerLemhi_2018") %>%
+  # filter(SiteNam == "UpperLemhi_2018") %>%
+  # filter(SiteNam == "Pahsimeroi_2018") %>%
+  filter(SiteNam == "UpperSalmon_2018") %>%
+  ggplot() +
+  geom_sf(aes(fill = Hab_Rch)) +
+  theme_bw()
+
+# lower lemhi habitat reaches were labeled upstream to downstream. Others were labeled down to upstream
+
+disch_fill = dash2018_hr %>%
+  st_drop_geometry() %>%
+  as_tibble() %>%
+  select(SiteNam,
+         Hab_Rch) %>%
+  left_join(disch_df) %>%
+  filter(SiteNam != "LowerLemhi_2018") %>%
+  arrange(SiteNam,
+          Hab_Rch) %>%
+  tidyr::fill(Q, .direction = "down") %>%
+  bind_rows(dash2018_hr %>%
+              st_drop_geometry() %>%
+              as_tibble() %>%
+              select(SiteNam,
+                     Hab_Rch) %>%
+              left_join(disch_df) %>%
+              filter(SiteNam == "LowerLemhi_2018") %>%
+              arrange(SiteNam,
+                      desc(Hab_Rch)) %>%
+              tidyr::fill(Q, .direction = "down"))
+
+dash2018_hr %<>%
+  left_join(disch_fill)
+
 
 #-----------------------------------------------------
 # read in Morgan's data, select attributes, and join to the dash2018_hr
