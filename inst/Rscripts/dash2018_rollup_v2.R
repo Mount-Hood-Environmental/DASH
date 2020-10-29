@@ -5,6 +5,7 @@
 # Created: October 25, 2019
 #   Modified: April 2, 2020
 #   Modified: July 14, 2020
+#   Modified: October 28, 2020
 #
 # Notes: Moved from rcarmichael3/DASH to BiomarkABS/DASH on July 14, 2020
 
@@ -571,6 +572,20 @@ dash2018_hr3 %>%
                         list(round),
                         digits = 5))
 
+# There are a few habitat reaches with no channel units with substrate estimates.
+# Richie estimated these percentages from drone imagery
+miss_sub = read_csv(paste0(nas_prefix, 'data/habitat/DASH/OTG/2018/DASH_MissingSubstrate_2018.csv'))
+names(miss_sub) = str_remove(names(miss_sub), "^hr_")
+
+dash2018_hr %>%
+  select(-starts_with("Prc_")) %>%
+  inner_join(miss_sub) %>%
+  bind_rows(anti_join(dash2018_hr,
+                      miss_sub %>%
+                        select(SiteNam,
+                               Hab_Rch))) %>%
+  select(all_of(names(dash2018_hr))) %>%
+  arrange(SiteNam, Hab_Rch) -> dash2018_hr
 
 # Others to consider?
 #Ssc_Avg_Wdth = weighted.mean(Avg_Wdth, Length) if(Off_chnl_Typ == "Ssc")
@@ -714,7 +729,7 @@ salmon_full_join = salmon_full_join %>%
 # select attributes to join
 salmon_gaa_trim = salmon_full_join %>%
   select("UniqueID",
-         "S2_02_11.y",
+         "S2_02_11" = "S2_02_11.y",
          "NatPrin1",
          "NatPrin2",
          "DistPrin1",
