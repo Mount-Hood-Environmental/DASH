@@ -616,7 +616,7 @@ mra_cl = rbind(ul_cl %>%
                                    st_distance(st_line_sample(x, sample = 0),
                                                st_line_sample(x, sample = 1))
                                  })) %>%
-  mutate(sinuosity = straight_line / Length) %>%
+  mutate(sinuosity = Length / straight_line) %>%
   st_drop_geometry() %>%
   as_tibble()
 
