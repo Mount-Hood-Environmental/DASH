@@ -58,27 +58,47 @@ rm(lemhi_otg, nfsal_otg, otg_qcd)
 # clean cu data.frame
 #-----------------------------
 
-# need to remove everything including and after "_" and spaces in site_name, then use to create unique channel IDs
-cu_survey = otg$survey
+# prep survey info to attach to CUs
+cu_survey = otg$survey %>%
+  mutate(site_name = gsub("_.*", "", site_name)) %>%
+  mutate(site_name = gsub(" ", "", site_name)) %>%
+  select(global_id,
+         site_name,
+         survey_date,
+         survey_time,
+         survey_crew,
+         conductivity_ms,
+         site_lon = x,
+         site_lat = y)
 
-
+# join survey info to cus and do some cleaning
 cu_cu = otg$cu %>%
   select(-object_id) %>%
   select(-(creation_date:editor)) %>%
-  left_join(cu_survey %>%
-              select(global_id,
-                     site_name,
-                     survey_date,
-                     survey_time,
-                     survey_crew,
-                     conductivity_ms,
-                     lon = x,
-                     lat = y),
+  left_join(cu_survey,
             by = c("parent_global_id" = "global_id")) %>%
-  select(-parent_global_id)
+  select(-parent_global_id) %>%
+  mutate(channel_unit_number = str_pad(channel_unit_number, 3, pad = "0"),
+         channel_segment_number = str_pad(channel_segment_number, 2, pad = "0")) %>%
+  mutate(cu_id = paste(site_name,
+                       channel_segment_number,
+                       channel_unit_number,
+                       sep = "_")) %>%
+  select(global_id,
+         path_nm,
+         survey_date,
+         survey_time,
+         cu_id,
+         site_name,
+         channel_unit_number,
+         channel_segment_number,
+         channel_unit_type,
+         everything())
+
+rm(cu_survey)
 
 #-----------------------------
-# start rolling up data
+# start rolling up data to cu scale
 #-----------------------------
 # WOOD
 cu_wood = rollup_cu_wood(wood_df = otg$wood)
@@ -92,3 +112,7 @@ cu_undercut = rollup_cu_undercut(undercut_df = otg$undercut)
 # DISCHARGE
 cu_discharge = rollup_cu_discharge(discharge_df = otg$discharge,
                                    discharge_meas_df = otg$discharge_measurements)
+
+#-----------------------------
+# join everything together at cu scale
+#-----------------------------
