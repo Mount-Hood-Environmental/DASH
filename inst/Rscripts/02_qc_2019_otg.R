@@ -21,8 +21,7 @@ library(tidyverse)
 #-------------------------
 if(.Platform$OS.type != 'unix') {
   nas_prefix = "S:"
-}
-if(.Platform$OS.type == 'unix') {
+} else if(.Platform$OS.type == 'unix') {
   nas_prefix = "~/../../Volumes/ABS"
 }
 
