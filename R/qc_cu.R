@@ -93,7 +93,8 @@ qc_cu = function(qc_df = NULL,
     dplyr::filter(ted_chk == FALSE) %>%
     dplyr::mutate(error_message = paste0("Thalweg exit depth of ", `Thalweg Exit Depth (m)`,
                                          " falls outside of expected values or is NA.")) %>%
-    dplyr::select(-`Thalweg Exit Depth (m)`, -ted_chk)
+    dplyr::select(-`Thalweg Exit Depth (m)`,
+                  -ted_chk)
 
   if( nrow(ted_chk) == 0 ) cat("All thalweg exit depths seem reasonable. \n")
   if( nrow(ted_chk) > 0 ) {
@@ -102,7 +103,29 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 6: Do cover column values sum to 100?
+  # CHECK 6: Are the maximum depth values within a reasonable range?
+  md_min = 0; md_max = 3
+  cat("Do the maximum depth values fall within a reasonable range btw", md_min, "and", md_max, "? \n")
+
+  md_chk = qc_df %>%
+    dplyr::select(path_nm, GlobalID, `Maximum Depth (m)`) %>%
+    dplyr::mutate(md_chk = between(`Maximum Depth (m)`,
+                                   md_min,
+                                   md_max)) %>%
+    dplyr::filter(md_chk == FALSE) %>%
+    dplyar::mutate(error_message = paste0("Maximum depth of", `Maximum Depth (m)`,
+                                          " falls outside of expected values or is NA.")) %>%
+    dplyr::select(-`Maximum Depth (m)`,
+                  -md_chk)
+
+  if( nrow(md_chk) == 0 ) cat("All maximum depth values seem reasonable. \n")
+  if( nrow(md_chk) > 0 ) {
+    cat("Some maximum depth values either fall outside expected values or are NA. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, md_chk)
+  }
+
+  #####
+  # CHECK 7: Do cover column values sum to 100?
   cat("Do all fish cover columns sum to 100? \n")
 
   # What columns contain fish cover data?
@@ -132,7 +155,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 7: Do all slow water channel unit types have ocular estimates and do they sum to 100?
+  # CHECK 8: Do all slow water channel unit types have ocular estimates and do they sum to 100?
   cat("Do ocular estimates for all slow water channel unit types exist and sum to 100? \n")
 
   # What are the slow channel unit types?
