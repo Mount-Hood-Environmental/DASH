@@ -38,14 +38,15 @@ rollup_cu = function(cu_df = NULL,
     dplyr::select(-(creation_date:editor)) %>%
     dplyr::left_join(join_site_df,
               by = c("parent_global_id" = "global_id")) %>%
-    select(-parent_global_id) %>%
+    #select(-parent_global_id) %>%
     dplyr::mutate(channel_unit_number = str_pad(channel_unit_number, 3, pad = "0"),
                   channel_segment_number = str_pad(channel_segment_number, 2, pad = "0")) %>%
     dplyr::mutate(cu_id = paste(site_name,
                                 channel_segment_number,
                                 channel_unit_number,
                                 sep = "_")) %>%
-    dplyr::select(global_id,
+    dplyr::select(parent_global_id,
+                  global_id,
                   path_nm,
                   survey_date,
                   survey_time,

@@ -80,8 +80,50 @@ cu_undercut = rollup_cu_undercut(undercut_df = otg$undercut)
 
 # DISCHARGE
 cu_discharge = rollup_cu_discharge(discharge_df = otg$discharge,
-                                   discharge_meas_df = otg$discharge_measurements)
+                                   discharge_meas_df = otg$discharge_measurements) %>%
+  # Add the below to the rollup_cu_discharge() function?
+  left_join(otg$survey %>%
+              select(global_id,
+                     site_name),
+            by = c("parent_global_id" = "global_id")) %>%
+  mutate(cu_id = paste(site_name,
+                       "01",
+                       str_pad(discharge_location_bos_tos_cu_number, 3, pad = "0"),
+                       sep = "_")) %>%
+  select(site_name,
+         cu_id,
+         discharge_cms,
+         discharge_location_bos_tos_cu_number,
+         everything()) %>%
+  left_join(cu_cu %>%
+              select(parent_global_id,
+                     cu_id,
+                     channel_unit_number) %>%
+              group_by(parent_global_id) %>%
+              summarise(min_cu = min(channel_unit_number),
+                        max_cu = max(channel_unit_number))) %>%
+  select(cu_id,
+         discharge_cms)
+
+# Here, I need to resolve the BOS and TOS issue. How do I assign a CU number to the BOS and TOS discharge measurements?
 
 #-----------------------------
 # join everything together at cu scale
 #-----------------------------
+dash_otg_cu = list(cu_cu %>%
+                     rename(site_id = global_id),
+                   cu_wood,
+                   cu_jam,
+                   cu_undercut) %>%
+  purrr::reduce(left_join,
+                by = "parent_global_id") %>%
+  left_join(cu_discharge)
+
+#-----------------------------
+# write results
+#-----------------------------
+save(dash_otg_cu,
+     file = paste0(nas_prefix, "data/habitat/DASH/OTG/2019/prepped/DASH_2019_otg_cu.rda"))
+
+write_csv(dash_otg_cu,
+          paste0(nas_prefix, "data/habitat/DASH/OTG/2019/prepped/DASH_2019_otg_cu.csv"))
