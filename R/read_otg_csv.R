@@ -1,9 +1,7 @@
 #' @title Read On-The-Ground .csv Data
 #'
-#' @description Read .csv delimited files containing on-the-ground (otg) data collected using the
-#' DASH protocol. This function only reads in one "type" of data at a time.
-#'
-#' @author Mike Ackerman and Kevin See
+#' @description Import .csv delimited files containing on-the-ground (OTG) data collected using the
+#' DASH protocol. This function only reads in one `otg_type` of data at a time.
 #'
 #' @inheritParams get_file_nms
 #' @inheritParams get_otg_col_specs
@@ -68,11 +66,13 @@ read_otg_csv = function(path = ".",
 
                     #####
                     # CHECK 4
-                    if(chk == FALSE | nrow(tmp) == 0 | class(tmp)[1] == "try-error") {
+                    if(chk == FALSE | class(tmp)[1] == "try-error") {
                       cat(paste("Problem reading in", otg_type, "file from", x$folder_nm, "survey. Returning NULL and moving on...", "\n"))
                       return(NULL)
-                    }
-                    if(chk == TRUE) {
+                    } else if(nrow(tmp) == 0) {
+                      cat(paste("The", otg_type, "file from", x$folder_nm, "survey contains no data. Returning NULL and moving on...", "\n"))
+                      return(NULL)
+                    } else if(chk == TRUE) {
                       cat(paste("Success!", "\n"))
                       return(tmp)
                     }
