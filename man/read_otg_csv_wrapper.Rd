@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_otg_csv_wrapper.R
 \name{read_otg_csv_wrapper}
 \alias{read_otg_csv_wrapper}
-\title{Read On-The Ground .csv Data - Wrapper}
+\title{Read On-The-Ground .csv Data - Wrapper}
 \usage{
 read_otg_csv_wrapper(
   path = ".",
@@ -15,19 +15,20 @@ read_otg_csv_wrapper(
 \item{path}{a path to the directory containing the folders of interest. \code{path} should only contain
 folders (no files), and each of those folders should only contain files (no folders).}
 
-\item{otg_type_names}{an optional vector used to name each data frame of \code{otg_type_list}.
-If \code{otg_type_names} argument is specified, it MUST be the same length as \code{otg_type_list}.
-If the default \code{otg_type_names = NULL} is used, data frames will be names using
-the \code{otg_type_list} (i.e., the file names).}
+\item{otg_type_names}{an optional character vector that can be used to name each
+data frame of \code{otg_type_list}. If the \code{otg_type_names} argument is provided, it
+MUST be the same length as \code{otg_type_list}. If the default \code{otg_type_names = NULL}
+is used, data frames will be named using the \code{otg_type_list} character
+vector (i.e., the .csv file names).}
 }
 \value{
 a list of data frames, each containing data from \code{otg_type_list}
 }
 \description{
-A wrapper function for \code{read_otg_csv()}. Read .csv delimited files containing
-on-the-ground (otg) data collected using the DASH protocol. This function can loop over
-several (perhaps all) "types" of otg data at once to create a list of data frames, each
-containing data for one of the data types.
+A wrapper function for \code{read_otg_csv()}. Import .csv delimited files
+containing on-the-ground (OTG) data collected using the DASH protocol. This function
+can be performed on multiple (perhaps all) "types" of OTG data at once to create a
+list of data frames, each containing data for one of the data types.
 }
 \author{
 Mike Ackerman
