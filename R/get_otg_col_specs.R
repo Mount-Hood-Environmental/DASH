@@ -1,12 +1,13 @@
 #' @title Get/Set Column Specifications for On-The-Ground .csv Data
 #'
-#' @description Get/set column specifications for on-the-ground (otg) data
+#' @description Get/set column specifications for on-the-ground (OTG) data
 #' collected using the DASH protocol.
 #'
 #' @author Mike Ackerman
 #'
-#' @param otg_type what type of on-the-ground (otg) data would the user like to deal with? As of the iniitation of the
-#' function a character vector of the file name e.g., "surveyPoint_0.csv", "CU_1.csv", etc.
+#' @param otg_type what type of on-the-ground (OTG) data would the user like to deal with? As of
+#' the iniitation of the function a character vector of the file name e.g., "surveyPoint_0.csv",
+#' "CU_1.csv", etc.
 #'
 #' @import readr
 #' @export
@@ -184,5 +185,6 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   } # end DischargeMeasurements_6.csv
 
   return(col_types)
+
 } # end get_otg_col_specs()
 

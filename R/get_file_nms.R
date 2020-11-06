@@ -1,10 +1,10 @@
 #' @title Get File Names
 #'
-#' @description Create a data frame of folders and file names within \code{path}
+#' @description Create a data frame of folders and file names within `path`
 #'
 #' @author Mike Ackerman and Kevin See
 #'
-#' @param path a path to the directory containing the folders of interest. \code{path} should only contain
+#' @param path a path to the directory containing the folders of interest. `path` should only contain
 #' folders (no files), and each of those folders should only contain files (no folders).
 #'
 #' @import purrr dplyr
@@ -12,7 +12,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom magrittr %>%
 #' @export
-#' @return a data frame of all files contained in \code{path}
+#' @return a data frame of all files contained in `path`
 
 get_file_nms = function(path = ".") {
 
