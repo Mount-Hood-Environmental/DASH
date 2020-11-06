@@ -28,6 +28,16 @@
 compare_folders = function(path1 = ".",
                            path2 = ".") {
 
+  # You need the suggested package for this function
+  if(!requireNamespace("tools", quietly = T)) {
+    stop("Package \"pkg\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if(!requireNamespace("diffr", quietly = T)) {
+    stop("Package \"pkg\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
   # files in path1
   files1 = get_file_nms(path1) %>%
     dplyr::select(path_nm) %>%
