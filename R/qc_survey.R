@@ -91,7 +91,7 @@ qc_survey = function(qc_df = NULL,
     ) %>%
     dplyr::select(-key, -value)
 
-  if( nrow(xy_chk) == 0 ) cat("All longitude and latitude values fall within expected values.")
+  if( nrow(xy_chk) == 0 ) cat("All longitude and latitude values fall within expected values. \n")
   if( nrow(xy_chk) > 0 ) {
     cat("Longitude and latitude values found outside of expected values. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, xy_chk)
