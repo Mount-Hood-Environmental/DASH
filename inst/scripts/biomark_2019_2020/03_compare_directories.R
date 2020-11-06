@@ -56,9 +56,36 @@ for (yw in yr_wtsd) {
          tmp)
   rm(tmp)
 
-}
+} # end for loop
 
 # EXAMPLES: examine differences in files
 # exploring would be useful for looking at issues in survey123 forms
 unf_vs_for_2019lemhi$diff_files
 unf_vs_for_2019lemhi$differences$`Canyon_Survey123_2019/Undercut_4.csv`
+
+#-----------------------------
+# compare raw data to QC'd data and save "manual" changes
+#-----------------------------
+# useful for reviewing "manual" changes to the data that someone made after reviewing QC results
+for (yw in yr_wtsd) {
+
+  # set the directories to compare
+  path1 = paste0(nas_prefix,
+                 "/data/habitat/DASH/OTG/",
+                 yw,
+                 "/1_formatted_csvs/")
+  path2 = paste0(nas_prefix,
+                 "/data/habitat/DASH/OTG/",
+                 yw,
+                 "/2_qcd_csvs/")
+
+  raw_vs_qc = compare_folders(path1 = path1,
+                              path2 = path2)
+
+  save(raw_vs_qc,
+       file = paste0(nas_prefix,
+                     "data/habitat/DASH/OTG/",
+                     yw,
+                     "/2_qcd_csvs/qc_data_changes.rda"))
+
+} # end compare raw vs QC loop

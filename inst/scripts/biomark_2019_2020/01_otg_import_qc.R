@@ -37,7 +37,7 @@ yr_wtsd = c("2019/lemhi",
             "2020/secesh")
 
 #-----------------------------
-# read in OTG data; loop over year_watershed combinations
+# import raw OTG data; loop over year_watershed combinations
 #-----------------------------
 for (yw in yr_wtsd) {
 
@@ -172,12 +172,12 @@ for (yw in yr_wtsd) {
   } # end if yw = "2019/lemhi" loop
 
   # save QC results
-  qc_path = paste0(nas_prefix,
-                   "data/habitat/DASH/OTG/",
-                   yw,
-                   "/1_formatted_csvs/qc_results")
-  save(qc_results, file = paste0(qc_path, ".rds"))
-  write_csv(qc_results, paste0(qc_path,
+  qc_init_path = paste0(nas_prefix,
+                        "data/habitat/DASH/OTG/",
+                        yw,
+                        "/1_formatted_csvs/qc_results")
+  save(qc_results, file = paste0(qc_init_path, ".rds"))
+  write_csv(qc_results, paste0(qc_init_path,
                                "_",
                                format(Sys.Date(), format = "%Y%m%d"),
                                ".csv"))
@@ -190,4 +190,108 @@ for (yw in yr_wtsd) {
 # the issue was resolved. Changes to any data should be made to a copy of all of the data i.e.,
 # do not modify the raw data!
 
+#-----------------------------
+# import QC'd OTG data; loop over year_watershed combinations
+#-----------------------------
+for (yw in yr_wtsd) {
+
+  # set path for yr_wtsd, except QC'd data
+  path = paste0(nas_prefix,
+                "/data/habitat/DASH/OTG/",
+                yw,
+                "/2_qcd_csvs/")
+
+  otg_qcd = read_otg_csv_wrapper(path = path,
+                                 otg_type_list = c("surveyPoint_0.csv",
+                                                   "CU_1.csv",
+                                                   "Wood_2.csv",
+                                                   "Jam_3.csv",
+                                                   "Undercut_4.csv",
+                                                   "Discharge_5.csv",
+                                                   "DischargeMeasurements_6.csv"),
+                                 otg_type_names = c("survey",
+                                                    "cu",
+                                                    "wood",
+                                                    "jam",
+                                                    "undercut",
+                                                    "discharge",
+                                                    "discharge_measurements"))
+
+  # recall, for the lemhi 2019 data, we need to re-do our fixes to the ocular substrate
+  # and fish cover estimates
+  if( yw == "2019/lemhi" ) {
+
+    # ocular substrate fixes
+    otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
+                                col_names = c("Sand/Fines 2mm",
+                                              "Gravel 2-64mm",
+                                              "Cobble 64-256mm",
+                                              "Boulder 256mm"),
+                                min_value = 90,
+                                max_value = 110,
+                                sum_to = 100)
+
+    # fish cover fixes
+    otg_qcd$cu = fix_fish_cover(cu_df = otg_qcd$cu,
+                                cover_cols = c("Overhanging Cover",
+                                               "Aquatic Vegetation",
+                                               "Woody Debris Cover",
+                                               "Artificial Cover",
+                                               "Total No Cover"))
+
+  } # end if yw = "2019/lemhi" loop
+
+  save(otg_qcd,
+       file = paste0(nas_prefix,
+                     "data/habitat/DASH/OTG/",
+                     yw,
+                     "/prepped/otg_qcd.rda"))
+
+  # after last loop, sound an alarm
+  if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
+
+} # end import QC'd data and save loop
+
+#-----------------------------
+# "Final" data QC
+#-----------------------------
+for (yw in yr_wtsd) {
+
+  # load QC'd data
+  load(paste0(nas_prefix,
+              "/data/habitat/DASH/OTG/",
+              yw,
+              "/prepped/otg_qcd.rda"))
+
+  # perform QC on the qc'd data
+  qc_final = qc_wrapper(survey_df = otg_qcd$survey,
+                        cu_df = otg_qcd$cu,
+                        wood_df = otg_qcd$wood,
+                        jam_df = otg_qcd$jam,
+                        undercut_df = otg_qcd$undercut,
+                        discharge_df = otg_qcd$discharge,
+                        disch_meas_df = otg_qcd$discharge_measurements)
+
+  qc_final_path = paste0(nas_prefix,
+                         "data/habitat/DASH/OTG/",
+                         yw,
+                         "/2_qcd_csvs/qc_final")
+  save(qc_final, file = paste0(qc_final_path, ".rds"))
+  write_csv(qc_final, paste0(qc_final_path,
+                             "_",
+                             format(Sys.Date(), format = "%Y%m%d"),
+                             ".csv"))
+
+} # end qc final data loop
+
 #######################################################################################
+#-----------------------------
+# Save the QC'd data, but before we do, let's clean_names()
+#-----------------------------
+# clean names
+otg_qcd = lapply(otg_qcd, clean_names)
+
+save(otg_qcd,
+     file = paste0(nas_prefix,"/data/habitat/DASH/OTG/2019/", trib, "/prepped/qcd_DASH_2019_otg.rda"))
+
+### END SCRIPT
