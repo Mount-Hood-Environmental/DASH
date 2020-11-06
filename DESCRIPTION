@@ -1,6 +1,6 @@
 Package: DASH
 Type: Package
-Title: Drone Assisted Stream Habitat (DASH) Protocol R Package
+Title: DASH: Drone Assisted Stream Habitat
 Version: 0.0.0.9000
 Authors@R: as.person(c(
     "Mike Ackerman <mike.ackerman@merck.com> [aut, cre]",
@@ -22,4 +22,16 @@ RoxygenNote: 7.1.1
 Imports: 
     dplyr,
     purrr,
-    readr
+    readr,
+    magrittr,
+    tidyr,
+    utils,
+    tibble,
+    compare
+Suggests: 
+    tools,
+    diffr,
+    Hmisc,
+    randomForestSRC,
+    missForest,
+    forcats
