@@ -113,7 +113,7 @@ qc_cu = function(qc_df = NULL,
                                    md_min,
                                    md_max)) %>%
     dplyr::filter(md_chk == FALSE) %>%
-    dplyar::mutate(error_message = paste0("Maximum depth of", `Maximum Depth (m)`,
+    dplyr::mutate(error_message = paste0("Maximum depth of", `Maximum Depth (m)`,
                                           " falls outside of expected values or is NA.")) %>%
     dplyr::select(-`Maximum Depth (m)`,
                   -md_chk)
