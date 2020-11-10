@@ -88,10 +88,10 @@ qc_undercut = function(qc_df = NULL,
                                             min,
                                             max)) %>%
     dplyr::filter(!in_range) %>%
-    dplyr::mutate(error_message = paste0("The measurement ", name, " falls outside of the expected values between ", min, " and ", max)) %>%
+    dplyr::mutate(error_message = paste0("The ", name, " measurement ", value, " is outside of the expected values of ", min, " and ", max)) %>%
     dplyr::select(one_of(names(qc_tmp)))
 
-  if( nrow(val_chk) == 0 ) cat("All undercut measurement values fall within expected values.")
+  if( nrow(val_chk) == 0 ) cat("All undercut measurement values fall within expected values. \n")
   if( nrow(val_chk) > 0 ) {
     cat("Undercut measurement values found outside of expected values. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, val_chk)
