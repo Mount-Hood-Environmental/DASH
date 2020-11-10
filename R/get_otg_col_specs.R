@@ -6,12 +6,12 @@
 #' @author Mike Ackerman
 #'
 #' @param otg_type what type of on-the-ground (OTG) data would the user like to deal with? As of
-#' the iniitation of the function a character vector of the file name e.g., "surveyPoint_0.csv",
+#' the initiation of the function a character vector of the file name e.g., "surveyPoint_0.csv",
 #' "CU_1.csv", etc.
 #'
 #' @import readr
 #' @export
-#' @return an object of class "col_spec"
+#' @return an object of class `col_spec`
 
 get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
                                           "CU_1.csv",
@@ -24,14 +24,14 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Survey Info
   if(otg_type == "surveyPoint_0.csv") {
     col_types = readr::cols(
-      ObjectID = readr::col_double(),
+      ObjectID = readr::col_integer(),
       GlobalID = readr::col_character(),
       `Survey Time` = readr::col_time(),
       `Site Name` = readr::col_character(),
       #`Survey Date` = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       `Survey Date` = readr::col_character(),
       `Survey Crew` = readr::col_character(),
-      `Conductivity (ms)` = readr::col_logical(),
+      `Conductivity (ms)` = readr::col_double(),
       #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       CreationDate = readr::col_character(),
       Creator = readr::col_character(),
@@ -46,141 +46,141 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
   # Channel Unit Form
   if(otg_type == "CU_1.csv") {
     col_types = readr::cols(
-      ObjectID = col_integer(),
-      GlobalID = col_character(),
-      `Channel Unit Type` = col_character(),
-      `Channel Unit Number` = col_integer(),
-      `Channel Segment Number` = col_integer(),
-      `Thalweg Exit Depth (m)` = col_double(),
-      `Channel Unit Notes` = col_character(),
-      `Overhanging Cover` = col_double(),
-      `Aquatic Vegetation` = col_double(),
-      `Woody Debris Cover` = col_double(),
-      `Artificial Cover` = col_double(),
-      `Total No Cover` = col_double(),
-      `Sand/Fines 2mm` = col_double(),
-      `Gravel 2-64mm` = col_double(),
-      `Cobble 64-256mm` = col_double(),
-      `Boulder 256mm` = col_double(),
-      `Pebble 1 (mm)` = col_double(),
-      `Pebble 2 (mm)` = col_double(),
-      `Pebble 3 (mm)` = col_double(),
-      `Pebble 4 (mm)` = col_double(),
-      `Pebble 5 (mm)` = col_double(),
-      `Pebble 6 (mm)` = col_double(),
-      `Pebble 7 (mm)` = col_double(),
-      `Pebble 8 (mm)` = col_double(),
-      `Pebble 9 (mm)` = col_double(),
-      `Pebble 10 (mm)` = col_double(),
-      `Pebble 11 (mm)` = col_double(),
-      `Maximum Depth (m)` = col_double(),
-      `Width 1` = col_double(),
-      `Width 2` = col_double(),
-      `Width 3` = col_double(),
-      `Width 4` = col_double(),
-      `Width 5` = col_double(),
-      ParentGlobalID = col_character(),
+      ObjectID = readr::col_integer(),
+      GlobalID = readr::col_character(),
+      `Channel Unit Type` = readr::col_character(),
+      `Channel Unit Number` = readr::col_integer(),
+      `Channel Segment Number` = readr::col_integer(),
+      `Thalweg Exit Depth (m)` = readr::col_double(),
+      `Channel Unit Notes` = readr::col_character(),
+      `Overhanging Cover` = readr::col_double(),
+      `Aquatic Vegetation` = readr::col_double(),
+      `Woody Debris Cover` = readr::col_double(),
+      `Artificial Cover` = readr::col_double(),
+      `Total No Cover` = readr::col_double(),
+      `Sand/Fines 2mm` = readr::col_double(),
+      `Gravel 2-64mm` = readr::col_double(),
+      `Cobble 64-256mm` = readr::col_double(),
+      `Boulder 256mm` = readr::col_double(),
+      `Pebble 1 (mm)` = readr::col_double(),
+      `Pebble 2 (mm)` = readr::col_double(),
+      `Pebble 3 (mm)` = readr::col_double(),
+      `Pebble 4 (mm)` = readr::col_double(),
+      `Pebble 5 (mm)` = readr::col_double(),
+      `Pebble 6 (mm)` = readr::col_double(),
+      `Pebble 7 (mm)` = readr::col_double(),
+      `Pebble 8 (mm)` = readr::col_double(),
+      `Pebble 9 (mm)` = readr::col_double(),
+      `Pebble 10 (mm)` = readr::col_double(),
+      `Pebble 11 (mm)` = readr::col_double(),
+      `Maximum Depth (m)` = readr::col_double(),
+      `Width 1` = readr::col_double(),
+      `Width 2` = readr::col_double(),
+      `Width 3` = readr::col_double(),
+      `Width 4` = readr::col_double(),
+      `Width 5` = readr::col_double(),
+      ParentGlobalID = readr::col_character(),
       #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       CreationDate = readr::col_character(),
-      Creator = col_character(),
+      Creator = readr::col_character(),
       #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       EditDate = readr::col_character(),
-      Editor = col_character()
+      Editor = readr::col_character()
     )
   } # end CU_1.csv
 
   # Wood Form
   if(otg_type == "Wood_2.csv") {
     col_types = readr::cols(
-      ObjectID = col_integer(),
-      GlobalID = col_character(),
-      `Large Wood Number` = col_integer(),
-      `Length (m)` = col_double(),
-      `Diameter (m)` = col_double(),
-      `Wet?` = col_character(),
-      `Channel Forming?` = col_character(),
-      `Ballasted?` = col_character(),
-      ParentGlobalID = col_character(),
+      ObjectID = readr::col_integer(),
+      GlobalID = readr::col_character(),
+      `Large Wood Number` = readr::col_integer(),
+      `Length (m)` = readr::col_double(),
+      `Diameter (m)` = readr::col_double(),
+      `Wet?` = readr::col_character(),
+      `Channel Forming?` = readr::col_character(),
+      `Ballasted?` = readr::col_character(),
+      ParentGlobalID = readr::col_character(),
       #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       CreationDate = readr::col_character(),
-      Creator = col_character(),
+      Creator = readr::col_character(),
       #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       EditDate = readr::col_character(),
-      Editor = col_character()
+      Editor = readr::col_character()
     )
   } # end Wood_2.csv
 
   # Jam Form
   if(otg_type == "Jam_3.csv") {
     col_types = readr::cols(
-      ObjectID = col_integer(),
-      GlobalID = col_character(),
-      `Length (m)` = col_double(),
-      `Width (m)` = col_double(),
-      `Height (m)` = col_double(),
-      `Estimated Number of Pieces` = col_integer(),
-      ParentGlobalID = col_character(),
+      ObjectID = readr::col_integer(),
+      GlobalID = readr::col_character(),
+      `Length (m)` = readr::col_double(),
+      `Width (m)` = readr::col_double(),
+      `Height (m)` = readr::col_double(),
+      `Estimated Number of Pieces` = readr::col_integer(),
+      ParentGlobalID = readr::col_character(),
       #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       CreationDate = readr::col_character(),
-      Creator = col_character(),
+      Creator = readr::col_character(),
       #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       EditDate = readr::col_character(),
-      Editor = col_character()
+      Editor = readr::col_character()
     )
   } # end Jam_3.csv
 
   # Undercut Form
   if(otg_type == "Undercut_4.csv") {
     col_types = readr::cols(
-      ObjectID = col_integer(),
-      GlobalID = col_character(),
-      `Undercut Number` = col_integer(),
-      Location = col_character(),
-      `Length (m)` = col_double(),
-      `Width 25% (m)` = col_double(),
-      `Width 50% (m)` = col_double(),
-      `Width 75% (m)` = col_double(),
-      ParentGlobalID = col_character(),
+      ObjectID = readr::col_integer(),
+      GlobalID = readr::col_character(),
+      `Undercut Number` = readr::col_integer(),
+      Location = readr::col_character(),
+      `Length (m)` = readr::col_double(),
+      `Width 25% (m)` = readr::col_double(),
+      `Width 50% (m)` = readr::col_double(),
+      `Width 75% (m)` = readr::col_double(),
+      ParentGlobalID = readr::col_character(),
       #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       CreationDate = readr::col_character(),
-      Creator = col_character(),
+      Creator = readr::col_character(),
       #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       EditDate = readr::col_character(),
-      Editor = col_character()
+      Editor = readr::col_character()
     )
   } # end Undercut_4.csv
 
   # Discharge Form
   if(otg_type == "Discharge_5.csv") {
     col_types = readr::cols(
-      ObjectID = col_integer(),
-      GlobalID = col_character(),
-      `Discharge Location (BOS, TOS, CU #)` = col_character(),
-      ParentGlobalID = col_character(),
+      ObjectID = readr::col_integer(),
+      GlobalID = readr::col_character(),
+      `Discharge Location (BOS, TOS, CU #)` = readr::col_character(),
+      ParentGlobalID = readr::col_character(),
       #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       CreationDate = readr::col_character(),
-      Creator = col_character(),
+      Creator = readr::col_character(),
       #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       EditDate = readr::col_character(),
-      Editor = col_character()
+      Editor = readr::col_character()
     )
   } # end Discharge_5.csv
 
   # Discharge Measurements Form
   if(otg_type == "DischargeMeasurements_6.csv") {
     col_types = readr::cols(
-      ObjectID = col_integer(),
-      GlobalID = col_character(),
-      `Station Width` = col_double(),
-      `Station Depth` = col_double(),
-      `Station Velocity` = col_double(),
-      ParentGlobalID = col_character(),
+      ObjectID = readr::col_integer(),
+      GlobalID = readr::col_character(),
+      `Station Width` = readr::col_double(),
+      `Station Depth` = readr::col_double(),
+      `Station Velocity` = readr::col_double(),
+      ParentGlobalID = readr::col_character(),
       #CreationDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       CreationDate = readr::col_character(),
-      Creator = col_character(),
+      Creator = readr::col_character(),
       #EditDate = readr::col_datetime(format = "%m/%d/%Y %H:%M"),
       EditDate = readr::col_character(),
-      Editor = col_character()
+      Editor = readr::col_character()
     )
   } # end DischargeMeasurements_6.csv
 
