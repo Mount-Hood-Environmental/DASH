@@ -1,7 +1,7 @@
 #' @title QC - Check Column Names
 #'
 #' @description Compare columns of a tibble or data frame to the expected
-#' columns defined in \code{get_otg_col_specs}.
+#' columns defined in `get_otg_col_specs()`
 #'
 #' @author Mike Ackerman
 #'
@@ -24,7 +24,7 @@ check_col_names = function(qc_df = NULL,
   otg_type = match.arg(otg_type)
 
   # starting message
-  cat(paste("Comparing columns in qc_df to expected columns defined in get_otg_col_specs(). \n"))
+  cat(paste("Comparing columns to expected columns defined in get_otg_col_specs(). \n"))
 
   # expected columns
   exp_cols = get_otg_col_specs(otg_type = otg_type) %>%
@@ -39,7 +39,7 @@ check_col_names = function(qc_df = NULL,
 
   # the actions
   if(chk == TRUE) cat(paste("Columns match the expected! \n"))
-  if(chk == FALSE) cat(paste("Column names in qc_df do not match the expected column names defined in get_otg_col_specs(). Attempting to continue...", "\n"))
+  if(chk == FALSE) cat(paste("Column names do not match the expected defined in get_otg_col_specs(). Attempting to continue...", "\n"))
 
 } # end column_check()
 
