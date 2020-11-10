@@ -126,7 +126,10 @@ qc_cu = function(qc_df = NULL,
 
   #####
   # CHECK 7: Do cover column values sum to 100?
-  cat("Do all fish cover columns sum to 100? \n")
+  # What is the maximum value that cover estimates can sum to?
+  cov_max = 130
+
+  cat("Do all fish cover columns sum btw 100 and", cov_max, "? \n")
 
   # What columns contain fish cover data?
   cover_columns = c("Overhanging Cover",
@@ -134,9 +137,6 @@ qc_cu = function(qc_df = NULL,
                     "Woody Debris Cover",
                     "Artificial Cover",
                     "Total No Cover")
-
-  # What is the maximum value that cover estimates can sum to?
-  cov_max = 130
 
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%

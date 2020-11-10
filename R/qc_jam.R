@@ -70,7 +70,7 @@ qc_jam = function(qc_df = NULL,
     dplyr::mutate(error_message = paste0("The measurement ", name, " falls outside of the expected values between ", min, " and ", max)) %>%
     dplyr::select(one_of(names(qc_tmp)))
 
-  if( nrow(val_chk) == 0 ) cat("All jam measurement values fall within expected values.")
+  if( nrow(val_chk) == 0 ) cat("All jam measurement values fall within expected values. \n")
   if( nrow(val_chk) > 0 ) {
     cat("Jam measurement values found outside of expected values. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, val_chk)

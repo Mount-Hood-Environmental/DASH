@@ -24,7 +24,7 @@ check_col_names = function(qc_df = NULL,
   otg_type = match.arg(otg_type)
 
   # starting message
-  cat(paste("Comparing columns to expected columns defined in get_otg_col_specs(). \n"))
+  cat(paste("Comparing columns to expected defined in get_otg_col_specs(). \n"))
 
   # expected columns
   exp_cols = get_otg_col_specs(otg_type = otg_type) %>%

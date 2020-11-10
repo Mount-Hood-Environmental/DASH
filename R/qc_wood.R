@@ -45,7 +45,7 @@ qc_wood = function(qc_df = NULL,
 
   #####
   # CHECK 3: any strange values in the Wet?, Ballasted? or Channel Forming? columns?
-  cat("Checking of unusual values in the Wet, Ballasted, and Channel Forming columns. \n")
+  cat("Checking for unusual values in the Wet, Ballasted, and Channel Forming columns. \n")
   yes_no_qc = qc_df %>%
     dplyr::select(path_nm, GlobalID,
                   `Wet?`,
@@ -67,7 +67,7 @@ qc_wood = function(qc_df = NULL,
 
   #####
   # CHECK 4: Are length and diameter possibly mixed up?
-  cat("Checking to see whether length and diameter values are possibly reversed? \n")
+  cat("Checking to see whether length and diameter values are possibly reversed. \n")
   len_diam_qc = qc_df %>%
     dplyr::filter(`Length (m)` <= `Diameter (m)`) %>%
     dplyr::mutate(error_message = "Length is less than or equal to the diameter of a piece of large wood") %>%
@@ -107,7 +107,7 @@ qc_wood = function(qc_df = NULL,
     dplyr::mutate(error_message = paste0("The measurement ", name, " falls outside of the expected values between ", min, " and ", max)) %>%
     dplyr::select(one_of(names(qc_tmp)))
 
-  if( nrow(val_chk) == 0 ) cat("All wood measurement values fall within expected values.")
+  if( nrow(val_chk) == 0 ) cat("All wood measurement values fall within expected values. \n")
   if( nrow(val_chk) > 0 ) {
     cat("Wood values found outside of expected values. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, val_chk)

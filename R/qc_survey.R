@@ -23,7 +23,7 @@ qc_survey = function(qc_df = NULL,
   otg_type = "surveyPoint_0.csv"
 
   # Starting message
-  cat(paste("Starting QC on otg_type =", otg_type, "data. \n"))
+  cat(paste("Starting QC on otg_type =", otg_type, ". \n"))
 
   # Initiate qc_tmp
   qc_tmp = qc_tbl()
@@ -63,7 +63,7 @@ qc_survey = function(qc_df = NULL,
 
   #####
   # CHECK 4:  Is the latitude (y) or longitude (x) outside of expected values?
-  cat("Checking whether lat/lon fall within expected values? \n")
+  cat("Checking whether lat/lon fall within expected values. \n")
 
   # set expected values
   lon_min = -125; lon_max = -110; lat_min = 40; lat_max = 50 # rough boundaries for Pacific Northwest
@@ -91,7 +91,7 @@ qc_survey = function(qc_df = NULL,
     ) %>%
     dplyr::select(-key, -value)
 
-  if( nrow(xy_chk) == 0 ) cat("All longitude and latitude values fall within expected values. \n")
+  if( nrow(xy_chk) == 0 ) cat("All lat/lon fall within expected values. \n")
   if( nrow(xy_chk) > 0 ) {
     cat("Longitude and latitude values found outside of expected values. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, xy_chk)
