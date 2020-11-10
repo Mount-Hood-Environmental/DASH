@@ -12,7 +12,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tidyr gather
 #' @export
-#' @return \code{NULL} or a tibble from \code{qc_tbl()}
+#' @return `NULL` or a tibble from `qc_tbl()`
 
 check_na = function(qc_df = NULL,
                     cols_to_check_nas = NULL) {
