@@ -1,7 +1,7 @@
 #' @title Quality Control - Jams
 #'
 #' @description Quality control jam data (e.g., from Jam_3.csv files) imported
-#' using \code{read_otg_csv()} or \code{read_otg_csv_wrapper()}.
+#' using `read_otg_csv()` or `read_otg_csv_wrapper()`.
 #'
 #' @author Kevin See
 #'

@@ -1,7 +1,7 @@
 #' @title Quality Control - Channel Unit Data
 #'
 #' @description Quality control channel unit data (e.g., from CU_1.csv files) imported
-#' using \code{read_otg_csv()} or \code{read_otg_csv_wrapper()}.
+#' using `read_otg_csv()` or `read_otg_csv_wrapper()`.
 #'
 #' @author Mike Ackerman
 #'

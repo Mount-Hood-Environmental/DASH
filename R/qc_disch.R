@@ -1,7 +1,7 @@
 #' @title Quality Control - Discharge
 #'
 #' @description Quality control discharge data (e.g., from Discharge_5.csv files) imported
-#' using \code{read_otg_csv()} or \code{read_otg_csv_wrapper()}.
+#' using `read_otg_csv()` or `read_otg_csv_wrapper()`.
 #'
 #' @author Kevin See
 #'
