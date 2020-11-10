@@ -11,7 +11,7 @@ fix_fish_cover(
 )
 }
 \arguments{
-\item{cu_df}{data.frame of \code{otg_type =} "CU_1.csv" data that should contain
+\item{cu_df}{data.frame of \verb{otg_type =} "CU_1.csv" data that should contain
 the \code{cover_cols} to be fixed.}
 
 \item{cover_cols}{character vector of fish cover column names}

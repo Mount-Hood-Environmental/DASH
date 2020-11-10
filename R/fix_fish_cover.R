@@ -4,11 +4,11 @@
 #' re-scaling estimates entered as proportions into percentages and re-scaling any estimates that
 #' sum to 90 (likely due to a math error in the field) instead to 100. Any remaining issues (e.g.,
 #' values sum outside the "expected" 100 - 130 or estimates are a combination of proportions and
-#' percentages) should be identified by the \code{qc_cu()} function.
+#' percentages) should be identified by the `qc_cu()` function.
 #'
 #' @author Mike Ackerman and Kevin See
 #'
-#' @param cu_df data.frame of \code{otg_type =} "CU_1.csv" data that should contain
+#' @param cu_df data.frame of `otg_type =` "CU_1.csv" data that should contain
 #' the \code{cover_cols} to be fixed.
 #' @param cover_cols character vector of fish cover column names
 #'

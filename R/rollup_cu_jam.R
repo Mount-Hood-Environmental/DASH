@@ -9,9 +9,9 @@
 #' jam data to be summarized (rolled up) to the channel unit scale
 #' @param fix_nas if any of the length, width, height, or estimated number of pieces measurements
 #' for an individual jam is missing i.e.,`NA`, would you like to fill them in? Default is `TRUE`, in which
-#' case the `NA` values will be imputed using function \code{impute_missing_values}
-#' @param impute_cols character vector of column names that should be imputed, if \code{fix_nas == TRUE}
-#' @param ... other arguments to \code{impute_missing_values}
+#' case the `NA` values will be imputed using function `impute_missing_values()`
+#' @param impute_cols character vector of column names that should be imputed, if `fix_nas == TRUE`
+#' @param ... other arguments to `impute_missing_values()`
 #'
 #' @import dplyr
 #' @export

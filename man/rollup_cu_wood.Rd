@@ -12,16 +12,16 @@ rollup_cu_wood(
 )
 }
 \arguments{
-\item{wood_df}{data.frame of \code{otg_type =} "Wood_2.csv" containing the individual
+\item{wood_df}{data.frame of \verb{otg_type =} "Wood_2.csv" containing the individual
 wood data to be summarized by channel units}
 
 \item{fix_nas}{if any of the length or diameter measurement for individual wood pieces are missing
 i.e.,\code{NA}, would you like to fill them in? Default is \code{TRUE}, in which
-case the \code{NA} values will be imputed using function \code{impute_missing_values}}
+case the \code{NA} values will be imputed using function \code{impute_missing_values()}}
 
 \item{impute_cols}{character vector of column names that should be imputed, if \code{fix_nas == TRUE}}
 
-\item{...}{other arguments to \code{impute_missing_values}}
+\item{...}{other arguments to \code{impute_missing_values()}}
 }
 \value{
 a data.frame summarizing wood at the channel unit scale

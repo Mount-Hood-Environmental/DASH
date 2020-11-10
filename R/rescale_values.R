@@ -5,10 +5,10 @@
 #' @author Kevin See and Mike Ackerman
 #'
 #' @param data_df input data.frame
-#' @param col_names character vector of columns that should sum to \code{sum_to}
+#' @param col_names character vector of columns that should sum to `sum_to`
 #' @param sum_to the value that the columns should sum to
-#' @param min_perc minimum sum of columns that should be re-scaled to \code{sum_to}
-#' @param max_perc maximum sum of columns that should be re-scaled to \code{sum_to}
+#' @param min_perc minimum sum of columns that should be re-scaled to `sum_to`
+#' @param max_perc maximum sum of columns that should be re-scaled to `sum_to`
 #'
 #' @import dplyr
 #' @export

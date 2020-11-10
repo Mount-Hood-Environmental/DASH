@@ -6,10 +6,10 @@
 #'
 #' @param data_df data.frame with potential missing values
 #' @param col_nm_vec character vector of column names that should be either imputed and/or used to impute other columns
-#' @param method which method to use, either by creating random forests using the \code{missForest} package, or by predictive mean matching using the \code{aregImpute} function in the \code{Hmisc} package
-#' @param ntree how many trees to build if \code{method = 'missForest'} or \code{method == 'randomForestSRC'}
-#' @param nk how many knots to use in smoothing splines if using \code{method = 'Hmisc'}
-#' @param ... other arguments to be passed to either \code{missForest::missForest}, \code{Hmisc::aregImpute} or \code{randomForestSRC::impute} functions
+#' @param method which method to use, either by creating random forests using the `missForest` package, or by predictive mean matching using the `aregImpute()` function in the `Hmisc` package
+#' @param ntree how many trees to build if `missForest` or `randomForestSRC`
+#' @param nk how many knots to use in smoothing splines if using `method = 'Hmisc'`
+#' @param ... other arguments to be passed to either `missForest::missForest()`, `Hmisc::aregImpute()`, or `randomForestSRC::impute()` functions
 #'
 #' @import dplyr
 #' @importFrom Hmisc aregImpute

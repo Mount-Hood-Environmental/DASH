@@ -18,13 +18,13 @@ impute_missing_values(
 
 \item{col_nm_vec}{character vector of column names that should be either imputed and/or used to impute other columns}
 
-\item{method}{which method to use, either by creating random forests using the \code{missForest} package, or by predictive mean matching using the \code{aregImpute} function in the \code{Hmisc} package}
+\item{method}{which method to use, either by creating random forests using the \code{missForest} package, or by predictive mean matching using the \code{aregImpute()} function in the \code{Hmisc} package}
 
-\item{ntree}{how many trees to build if \code{method = 'missForest'} or \code{method == 'randomForestSRC'}}
+\item{ntree}{how many trees to build if \code{missForest} or \code{randomForestSRC}}
 
 \item{nk}{how many knots to use in smoothing splines if using \code{method = 'Hmisc'}}
 
-\item{...}{other arguments to be passed to either \code{missForest::missForest}, \code{Hmisc::aregImpute} or \code{randomForestSRC::impute} functions}
+\item{...}{other arguments to be passed to either \code{missForest::missForest()}, \code{Hmisc::aregImpute()}, or \code{randomForestSRC::impute()} functions}
 }
 \value{
 a data.frame with the same dimensions as the original, but with no missing values
