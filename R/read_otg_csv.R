@@ -36,7 +36,7 @@ read_otg_csv = function(path = ".",
     purrr::map_df(.id = "path_nm",
                   .f = function(x) {
 
-                    cat(paste("Attempting to read", otg_type, "file from", x$folder_nm, "survey folder.", "\n"))
+                    cat(paste("Importing", otg_type, "file from", x$folder_nm, "survey folder.", "\n"))
 
                     # get column specifications from file
                     tmp_specs = readr::read_csv(paste0(path, x$path_nm), col_types = readr::cols()) %>%
@@ -70,7 +70,7 @@ read_otg_csv = function(path = ".",
                       cat(paste("Problem reading in", otg_type, "file from", x$folder_nm, "survey. Returning NULL and moving on...", "\n"))
                       return(NULL)
                     } else if(nrow(tmp) == 0) {
-                      cat(paste("The", otg_type, "file from", x$folder_nm, "survey contains no data. Returning NULL and moving on...", "\n"))
+                      cat(paste("The", otg_type, "file from", x$folder_nm, "survey contains zero records. Returning NULL and moving on...", "\n"))
                       return(NULL)
                     } else if(chk == TRUE) {
                       cat(paste("Success!", "\n"))
