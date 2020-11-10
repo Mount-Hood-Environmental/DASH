@@ -71,25 +71,24 @@ qc_survey = function(qc_df = NULL,
   # does x and y fall outside of expected values
   xy_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, x, y) %>%
+    dplyr::rename(longitude = x,
+                  latitude = y) %>%
+    tidyr::pivot_longer(cols = longitude:latitude) %>%
     # TRUE = good, FALSE = outside expected values
-    dplyr::mutate(longitude = between(x,
-                                      lon_min,
-                                      lon_max)) %>%
-    dplyr::mutate(latitude = between(y,
-                                     lat_min,
-                                     lat_max)) %>%
-    dplyr::select(-x, -y) %>%
-    tidyr::gather(key = "key",
-                  "value",
-                  longitude:latitude) %>%
-    dplyr::filter(value == FALSE) %>%
     dplyr::mutate(
-      error_message = case_when(
-        key == "longitude" ~ paste0("The longitude (x) falls outside of the expected values between ", lon_min, " and ", lon_max),
-        key == "latitude"  ~ paste0("The latitude (y) falls ouside of the expected values between ", lat_min, " and ", lat_max)
+      chk = case_when(
+        name == "longitude" ~ between(value, lon_min, lon_max),
+        name == "latitude"  ~ between(value, lat_min, lat_max)
       )
     ) %>%
-    dplyr::select(-key, -value)
+    dplyr::filter(chk == FALSE) %>%
+    dplyr::mutate(
+      error_message = case_when(
+        name == "longitude" ~ paste0("The longitude (x) ", value, " falls outside the expected values ", lon_min, " and ", lon_max),
+        name == "latitude"  ~ paste0("The latitude (y) ", value, " falls ouside the expected values ", lat_min, " and ", lat_max)
+      )
+    ) %>%
+    dplyr::select(-name, -value, -chk)
 
   if( nrow(xy_chk) == 0 ) cat("All lat/lon fall within expected values. \n")
   if( nrow(xy_chk) > 0 ) {
