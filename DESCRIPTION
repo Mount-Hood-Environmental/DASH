@@ -36,4 +36,7 @@ Suggests:
     Hmisc (>= 4.4-1),
     randomForestSRC (>= 2.9.3),
     missForest (>= 1.4),
-    forcats (>= 0.5.0)
+    forcats (>= 0.5.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
