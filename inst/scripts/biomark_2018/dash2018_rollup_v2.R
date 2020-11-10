@@ -390,7 +390,10 @@ dash2018_hr = dash2018_cu_plus %>%
             Lsc_Cnt = length(which(CU_Typ == "Lsc")),
             Ssc_Cnt = length(which(CU_Typ == "Ssc")),
             Oca_Cnt = length(which(CU_Typ == "Oca")),
-            Length = sum(Length),
+            # sum the length of all units
+            Total_Length = sum(Length),
+            # sum the length only for units on the main channel
+            Length = sum(Length[Sgmnt_ID == "01"]),
             SHAPE_A = sum(SHAPE_A),
             Wod_Cnt = sum(Wod_Cnt, na.rm = T),
             N_Bllst = sum(N_Bllst, na.rm = T),
@@ -413,8 +416,8 @@ dash2018_hr = dash2018_cu_plus %>%
             Prc_Cbb = unique(hr_Prc_Cbb),
             Prc_Bld = unique(hr_Prc_Bld),
             Pool_A = unique(hr_Pool_A),
-            SC_A = unique(hr_SC_A)) %>%
-  ungroup() %>%
+            SC_A = unique(hr_SC_A),
+            .groups = "drop") %>%
   mutate(FstNT_Cnt = Run_Cnt,
          FstTurb_Cnt = Riffle_Cnt + Rapid_Cnt,
          Slowwater_Pct = (Pool_A / SHAPE_A) * 100,
@@ -436,7 +439,10 @@ dash2018_hr2 = dash2018_cu %>%
             Lsc_Cnt = sum(CU_Typ == "Lsc"),
             Ssc_Cnt = sum(CU_Typ == "Ssc"),
             Oca_Cnt = sum(CU_Typ == "Oca"),
-            Length = sum(Length),
+            # sum the length of all units
+            Total_Length = sum(Length),
+            # sum the length only for units on the main channel
+            Length = sum(Length[Sgmnt_ID == "01"]),
             SHAPE_A = sum(SHAPE_A),
             Wod_Cnt = sum(Wod_Cnt, na.rm = T),
             N_Bllst = sum(N_Bllst, na.rm = T),
@@ -610,13 +616,13 @@ mra_cl = rbind(ul_cl %>%
                us_cl %>%
                  mutate(SiteNam = "UpperSalmon_2018")) %>%
   select("SiteNam", "Hab_Roll", "sinuosity") %>%
-  mutate(Length = as.numeric(st_length(geometry))) %>%
+  mutate(cl_Length = as.numeric(st_length(geometry))) %>%
   mutate(straight_line = map_dbl(geometry,
                                  .f = function(x) {
                                    st_distance(st_line_sample(x, sample = 0),
                                                st_line_sample(x, sample = 1))
                                  })) %>%
-  mutate(sinuosity = Length / straight_line) %>%
+  mutate(sinuosity = cl_Length / straight_line) %>%
   st_drop_geometry() %>%
   as_tibble()
 
@@ -649,8 +655,8 @@ hr_sin_wet_braid = mra_cl %>%
   mutate_at(vars(sc_Length),
             list(replace_na),
             replace = 0) %>%
-  mutate(Tot_Length = Length + sc_Length) %>%
-  mutate(wet_braid = Tot_Length / Length) %>%
+  mutate(Tot_Length = cl_Length + sc_Length) %>%
+  mutate(wet_braid = Tot_Length / cl_Length) %>%
   mutate(wet_braid_sin = Tot_Length / straight_line) %>%
   rename(Hab_Rch = Hab_Roll)
 
