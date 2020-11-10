@@ -67,7 +67,7 @@ read_otg_csv = function(path = ".",
                                                                col_types = otg_col_specs)))
 
                     # change the format of Survey Date from character to date/time
-                    if(otg_type == "surveyPoint_0.csv") {
+                    if(otg_type == "surveyPoint_0.csv" & nrow(tmp) > 0) {
                       tmp = tmp %>%
                         mutate(`Survey Date` = stringr::str_split(`Survey Date`, " ", simplify = T)[,1],
                                `Survey Date` = lubridate::mdy(`Survey Date`),
@@ -75,7 +75,7 @@ read_otg_csv = function(path = ".",
                     }
 
                     # extract the date portion for CreationDate and EditDate
-                    if(sum(c("CreationDate", "EditDate") %in% names(tmp)) > 0) {
+                    if(nrow(tmp) > 0 & sum(c("CreationDate", "EditDate") %in% names(tmp)) > 0) {
                       tmp = tmp %>%
                         mutate(across(any_of(c("CreationDate", "EditDate")),
                                       ~ stringr::str_split(., " ", simplify = T)[,1])) %>%
