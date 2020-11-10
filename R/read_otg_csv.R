@@ -10,6 +10,8 @@
 #' @importFrom readr read_csv
 #' @importFrom magrittr %>%
 #' @importFrom compare compare
+#' @importFrom stringr str_split
+#' @importFrom lubirdate mdy
 #' @export
 #' @return a data frame containing data of \code{otg_type}
 
@@ -63,6 +65,23 @@ read_otg_csv = function(path = ".",
                     # read in the single .csv file of otg_type
                     tmp = try(suppressWarnings(readr::read_csv(paste0(path, x$path_nm),
                                                                col_types = otg_col_specs)))
+
+                    # change the format of Survey Date from character to date/time
+                    if(otg_type == "surveyPoint_0.csv") {
+                      tmp = tmp %>%
+                        mutate(`Survey Date` = stringr::str_split(`Survey Date`, " ", simplify = T)[,1],
+                               `Survey Date` = lubridate::mdy(`Survey Date`),
+                               `Survey Date` = lubridate::ymd_hms(paste(`Survey Date`, `Survey Time`)))
+                    }
+
+                    # extract the date portion for CreationDate and EditDate
+                    if(sum(c("CreationDate", "EditDate") %in% names(tmp)) > 0) {
+                      tmp = tmp %>%
+                        mutate(across(any_of(c("CreationDate", "EditDate")),
+                                      ~ stringr::str_split(., " ", simplify = T)[,1])) %>%
+                        mutate(across(any_of(c("CreationDate", "EditDate")),
+                                      lubridate::mdy))
+                    }
 
                     #####
                     # CHECK 4
