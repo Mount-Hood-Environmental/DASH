@@ -50,7 +50,7 @@ qc_undercut = function(qc_df = NULL,
                             "Left_Bank"),
 
            !is.na(Location)) %>%
-    mutate(error_message = "Strange value in Location column") %>%
+    mutate(error_message = paste0("Strange value, ", Location, ", in Location column")) %>%
     select(one_of(names(qc_tmp)))
   if( !is.null(loc_qc) ) qc_tmp = rbind(qc_tmp, loc_qc)
 
