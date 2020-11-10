@@ -289,7 +289,7 @@ for (yw in yr_wtsd) {
 } # end qc final data loop
 
 #-----------------------------
-# Load, join, clean, and rollup data and the channel unit scale
+# Load, join, clean, and rollup data at the channel unit scale
 #-----------------------------
 otg_path = paste0(nas_prefix,
                   "/data/habitat/DASH/OTG/")
