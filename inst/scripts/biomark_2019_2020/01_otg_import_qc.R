@@ -220,7 +220,10 @@ for (yw in yr_wtsd) {
 
   # recall, for the lemhi 2019 data, we need to re-do our fixes to the ocular substrate
   # and fish cover estimates
-  if( yw == "2019/lemhi" ) {
+
+  # I've also identified a handful of the same errors in the nf_salmon 2019 &
+  # secesh 2020 data. So I'll expand this loop here to include those.
+  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/secesh" ) {
 
     # ocular substrate fixes
     otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
