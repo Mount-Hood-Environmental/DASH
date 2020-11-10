@@ -1,6 +1,6 @@
 #' @title Quality Control - Wrapper Function
 #'
-#' @description A wrapper function to perform quality control for all on-the-ground (otg)
+#' @description A wrapper function to perform quality control for all on-the-ground (OTG)
 #' data "types" collected using the DASH protocol.
 #'
 #' @author Mike Ackerman
@@ -11,6 +11,12 @@
 #' @param jam_df data.frame containing the jam data
 #' @param discharge_df data.frame containing the discharge location data
 #' @param disch_meas_df data.frame containing the discharge measurement data
+#' @param redirect_output would you like to redirect the output messages
+#' from `qc_wrapper()` to a file instead of the R terminal? Default = `TRUE`.
+#' If set to `FALSE`, messages will simply be written to console.
+#' @param redirect_output_path a path and file name (e.g., .txt or .csv) to
+#' write the `qc_wrapper` output messages to. Default will write
+#' "qc_wrapper_output.txt" to the current working directory.
 #'
 #' @import dplyr
 #' @importFrom tibble add_column
@@ -24,7 +30,11 @@ qc_wrapper = function(survey_df = NULL,
                       jam_df = NULL,
                       undercut_df = NULL,
                       discharge_df = NULL,
-                      disch_meas_df = NULL) {
+                      disch_meas_df = NULL,
+                      redirect_output = TRUE,
+                      redirect_output_path = "qc_wrapper_output.txt") {
+
+  if( redirect_output == T ) { sink(redirect_output_path) }
 
   # run QC for all cases where is not NULL
   if( !is.null(survey_df) )     qc_s = qc_survey(survey_df)          else qc_s = qc_tbl()
@@ -61,7 +71,9 @@ qc_wrapper = function(survey_df = NULL,
                        tibble::add_column(source = "DischargeMeasurements",
                                           .before = 0))
 
-    # return tmp
-    return(tmp)
+  if( redirect_output == T ) { sink() }
+
+  # return tmp
+  return(tmp)
 
 } # end qc_wrapper()
