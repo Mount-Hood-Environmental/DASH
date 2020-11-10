@@ -10,6 +10,8 @@
 #' @importFrom readr read_csv
 #' @importFrom magrittr %>%
 #' @importFrom compare compare
+#' @importFrom stringr str_split
+#' @importFrom lubirdate mdy
 #' @export
 #' @return a data frame containing data of \code{otg_type}
 
@@ -63,6 +65,13 @@ read_otg_csv = function(path = ".",
                     # read in the single .csv file of otg_type
                     tmp = try(suppressWarnings(readr::read_csv(paste0(path, x$path_nm),
                                                                col_types = otg_col_specs)))
+
+                    if(otg_type == "surveyPoint_0.csv") {
+                      tmp = tmp %>%
+                        mutate(`Survey Date` = stringr::str_split(`Survey Date`, " ", simplify = T)[,1],
+                               `Survey Date` = lubridate::mdy(`Survey Date`),
+                               `Survey Date` = lubridate::ymd_hms(paste(`Survey Date`, `Survey Time`)))
+                    }
 
                     #####
                     # CHECK 4
