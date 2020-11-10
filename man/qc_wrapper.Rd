@@ -11,7 +11,9 @@ qc_wrapper(
   jam_df = NULL,
   undercut_df = NULL,
   discharge_df = NULL,
-  disch_meas_df = NULL
+  disch_meas_df = NULL,
+  redirect_output = TRUE,
+  redirect_output_path = "qc_wrapper_output.txt"
 )
 }
 \arguments{
@@ -26,12 +28,20 @@ qc_wrapper(
 \item{discharge_df}{data.frame containing the discharge location data}
 
 \item{disch_meas_df}{data.frame containing the discharge measurement data}
+
+\item{redirect_output}{would you like to redirect the output messages
+from \code{qc_wrapper()} to a file instead of the R terminal? Default = \code{TRUE}.
+If set to \code{FALSE}, messages will simply be written to console.}
+
+\item{redirect_output_path}{a path and file name (e.g., .txt or .csv) to
+write the \code{qc_wrapper} output messages to. Default will write
+"qc_wrapper_output.txt" to the current working directory.}
 }
 \value{
 a tibble with combined QC results
 }
 \description{
-A wrapper function to perform quality control for all on-the-ground (otg)
+A wrapper function to perform quality control for all on-the-ground (OTG)
 data "types" collected using the DASH protocol.
 }
 \author{

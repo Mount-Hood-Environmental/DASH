@@ -13,15 +13,16 @@ check_col_names(
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
 
-\item{otg_type}{what type of on-the-ground (otg) data would the user like to deal with? As of the iniitation of the
-function a character vector of the file name e.g., "surveyPoint_0.csv", "CU_1.csv", etc.}
+\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
+the initiation of the function a character vector of the file name e.g., "surveyPoint_0.csv",
+"CU_1.csv", etc.}
 }
 \value{
 a message
 }
 \description{
 Compare columns of a tibble or data frame to the expected
-columns defined in \code{get_otg_col_specs}.
+columns defined in \code{get_otg_col_specs()}
 }
 \author{
 Mike Ackerman

@@ -14,16 +14,14 @@ read_otg_csv(
 \item{path}{a path to the directory containing the folders of interest. \code{path} should only contain
 folders (no files), and each of those folders should only contain files (no folders).}
 
-\item{otg_type}{what type of on-the-ground (otg) data would the user like to deal with? As of the iniitation of the
-function a character vector of the file name e.g., "surveyPoint_0.csv", "CU_1.csv", etc.}
+\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
+the initiation of the function a character vector of the file name e.g., "surveyPoint_0.csv",
+"CU_1.csv", etc.}
 }
 \value{
 a data frame containing data of \code{otg_type}
 }
 \description{
-Read .csv delimited files containing on-the-ground (otg) data collected using the
-DASH protocol. This function only reads in one "type" of data at a time.
-}
-\author{
-Mike Ackerman and Kevin See
+Import .csv delimited files containing on-the-ground (OTG) data collected using the
+DASH protocol. This function only reads in one \code{otg_type} of data at a time.
 }

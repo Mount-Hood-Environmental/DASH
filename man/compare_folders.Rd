@@ -21,7 +21,7 @@ fill out return when ready
 Compare two folders, each presumably containing the same files, except with
 one folder containing files that have been modified or "fixed" by the user. For the \code{DASH}
 R package, the function can be useful for comparing a folder containing raw untouched
-on-the-ground (otg) data from Survey123 with a folder containing the same files except modified
+on-the-ground (OTG) data from Survey123 with a folder containing the same files except modified
 by the user, presumably in an attempt to remedy errors identified during data import or
 QA/QC. Both \code{path1} and \code{path2} should only contain folders (no files) each representing
 a survey, and each of those folders should only contain files (no folders) containin the otg
