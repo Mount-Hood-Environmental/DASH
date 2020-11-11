@@ -48,7 +48,7 @@ read_otg_csv = function(path = ".",
                     # CHECK 1: check if tmp_specs match the expected from get_otg_col_specs()
                     # chk = identical(otg_col_specs, tmp_specs)
                     # a "looser" version of identical() to allow for differing attributes
-                    chk = compare(otg_col_specs, tmp_specs, allowAll = T)[[1]]
+                    chk = compare::compare(otg_col_specs, tmp_specs, allowAll = T)[[1]]
                     if(chk == FALSE) warning(paste("Column specifications in", otg_type, "file from", x$folder_nm, "survey folder do not match those defined in get_otg_col_specs().", "\n",
                                                    all.equal(otg_col_specs, tmp_specs), "\n"))
 
