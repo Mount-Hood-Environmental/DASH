@@ -11,7 +11,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom compare compare
 #' @importFrom stringr str_split
-#' @importFrom lubirdate mdy
+#' @importFrom lubridate mdy
 #' @export
 #' @return a data frame containing data of \code{otg_type}
 
