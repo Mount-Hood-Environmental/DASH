@@ -28,3 +28,19 @@ library(DASH)
 ```
 
 # Introduction
+
+This vignette describes how to import and QC on-the-ground (OTG) habitat data collected using the DASH protocol and Survey123 data collection forms. All of the functionality described here is available as part of the `DASH` R package available [here](https://github.com/BiomarkABS/DASH).
+
+# Data Import
+
+# Initial QC
+
+# Resolving Errors
+
+# "Final" QC
+
+# Data Wrangling and Export
+
+#### END IMPORT AND QC VIGNETTE
+
+<!-- *Holy Guacamole! That deserves a beer!* -->
