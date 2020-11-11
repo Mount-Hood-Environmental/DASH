@@ -21,6 +21,12 @@ knitr::opts_chunk$set(
 
 ```
 
+# Introduction
+
+Welcome to the [DASH](https://github.com/BiomarkABS/DASH) R package! This vignette, which logically follows as the first of multiple vignettes in the package, describes how to import and quality control (QC) on-the-ground (OTG hereafter) collected habitat data  using the DASH protocol. The initial data collection forms to record the OTG data were generated using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) and we focus on importing data from those forms. After data import, we describe how functions included in the DASH R package can then be used to perform QC on the data to identify potential errors, perhaps that occurred in the field. Finally, we describe initial data cleaning and joining (i.e., joining channel unit scale information with wood, undercut, etc. information collected for that unit) in preparation of attaching the OTG collected data to stream centerline data to make it spatial. Later, our spatial OTG data can then be connected to drone-generation orthomosaics. 
+
+Let's start by describing the data import procedure; we'll then go into data QC and how to resolve some of the identified errors. Begin by loading the necessary libraries (R packages) needed for this vignette and analysis:
+
 ```{r setup}
 # load necessary libraries
 library(DASH)
@@ -31,11 +37,9 @@ library(magrittr)
 
 ```
 
-# Introduction
-
-This vignette describes how to import and QC on-the-ground (OTG) habitat data collected using the DASH protocol and Survey123 data collection forms. All of the functionality described here is available as part of the `DASH` R package available [here](https://github.com/BiomarkABS/DASH).
-
 # Data Import
+
+Start data import text here...
 
 ```{r otg-path}
 # to your desktop
