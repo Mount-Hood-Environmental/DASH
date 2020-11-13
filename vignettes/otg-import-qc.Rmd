@@ -1,6 +1,8 @@
 ---
 title: "Import and QC of OTG Data"
-author: Mike Ackerman
+author: 
+- name: Mike Ackerman
+  email: mike.ackerman@merck.com
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -39,24 +41,40 @@ library(magrittr)
 
 # Data Import
 
-Start data import text here...
+Each DASH OTG survey conducted using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) data collection forms and for a site typically consists of 7 comma-delimited (.csv) files:
+
+* **surveyPoint_0.csv**: Information related to the site and survey including site name, survey date/time and crew, and location (lat/long).
+* **CU_1.csv**: Data collected for individual channel units. Valid channel units (should) include the following: Riffle, Run, Pool, Rapid+, OCA (off-channel area), and SSC (small side channel).
+* **Wood_2.csv**: Data for large wood measured within channel units including count, size, etc.
+* **Jam_3.csv**: Data for wood jams within channel units.
+* **Undercut_4.csv**: Data for undercuts within channel units.
+* **Discharge_5.csv**: Data indicating the location where discharge was measured at a site.
+* **DischargeMeasurements_6.csv**: The width, depth, and velocity measurements for each station where discharge is to be estimated.
+
+Each of the .csv files can be joined or related to each other using the **GlobalID** and **ParentGlobalID** columns in each. For example, the **ParentGlobalID** in **CU_1.csv** can be used to related it back to a **GlobalID** in **surveyPoint_0.csv**, whereas the **GlobalID** in **CU_1.csv** is a unique identifier for each channel unit. Similarly, the **ParentGlobalID** in **Wood_2.csv** can be used to join it back to a **GlobalID** in **CU_1.csv**. Note that the **surveyPoint_0.csv** file does not contain a **ParentGlobalID** column as it does not have a "parent" (it is the parent).
+
+To start, let's set `otg_path` a path to the directory containing the ArcGIS Survey123 folder of interest. `otg_path` should only contain folders (no files), and each of those folders should only contain the above files (and no folders).
 
 ```{r otg-path}
-# to your desktop
+# As an example, if the Survey123 site folders were in a "1_formatted_csvs" folder on your Desktop
 otg_path = "C:/Users/username/Desktop/1_formatted_csvs/"
 
-# e.g., Biomark NAS
-# set NAS prefix, depending on your operating system
+# For internal Biomark folks, set nas_prefix based on your operating system and then set otg_path to the NAS
 if(.Platform$OS.type != 'unix') {
   nas_prefix = "S:"
 } else if(.Platform$OS.type == 'unix') {
   nas_prefix = "~/../../Volumes/ABS"
 }
 
-# path to otg data
 otg_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
 
 ```
+
+## read_otg_csv(): Reading in One Type of OTG Data at a Time
+
+The [DASH](https://github.com/BiomarkABS/DASH) R package includes a function `read_otg_csv()` which can be used to import one type (`otg_type`) of OTG data at a time. `otg_type` includes two arguments, `path` and `otg_type`. Here, we provide examples of how `read_otg_csv()` can be used to import channel unit (cu) or wood data to create two objects, `otg_raw_cu` and `otg_raw_wood`, respectively. In our case, we'll set `path = otg_path` which we created above, and `otg_type` is set using the name of the files containing the OTG data of interest.
+
+`read_otg_csv()` performs some QC during the data import process. First, `read_otg_csv()` ensures that the column names and specifications in the file being imported matches the expected, which is defined in `get_otg_col_specs()`. If the column names or specifications do not match the expected, `read_otg_csv()` will provide a warning indicating so, but will attempt to proceed. The function also performs one additional QC ensuring that the file being imported contains the expected number of columns and will provide a "fatal error" if not and stop the import process. Throughout the process, you will see which file is being imported and whether the import was successful or not. Finally, `read_otg_csv()` will provide a message if no records are found in a file, which can be totally fine, for example, if a site contained no woody debris, jams, undercuts, etc. In this case, `read_otg_csv()` will just provide a friendly message and proceed.
 
 ```{r read-otg-csv, eval = F}
 # read in just one type of OTG data at a time
@@ -68,34 +86,73 @@ otg_raw_wood = read_otg_csv(path = otg_path,
 
 ```
 
+During your initial data import process, you may identify files that aren't formatted correctly for import and `read_otg_csv()` will, rightly so, "choke" during import and indicate so. For example, a .csv file may have inadvertently been saved or exported as tab-delimited, or personnel may have unknowingly added or removed a column. In this case, we suggest storing all of the Survey123 site folders in two separate directories. I have been storing two versions, saved separately in folders "0_raw_csvs" and "1_formatted_csvs". Here, I keep the "raw" untouched data in "0_raw_csvs" which I **never** change. The "1_formatted_csvs" folder is where I make formatting changes that I've identified during the import process. It's typically good practice to always store the rawest form of your data that is never changed after data collection for archiving sake; hence, why we are importing data from a "1_formatted_csvs" folder.
+
+Please note that at any time you may access the help menu and documentation for the package or functions using the following:
+
+```{r help-menu, eval = F}
+# for the package
+help(package = "DASH")
+
+# for a function
+?read_otg_csv
+
+```
+
+## read_otg_csv_wrapper(): Read in All OTG Data At Once
+
+It would be a bit tedious to import each of our 7 OTG data types (`otg_type`), separately, and later somehow join them together. To remedy this, we've included the function `read_otg_csv_wrapper()` in the [DASH](https://github.com/BiomarkABS/DASH) R package, which can be used to import some or all of the OTG data types at once. The result is a list of tibbles (i.e., simple data frames) each containing data for an `otg_type`. Rather than having the argument `otg_type`, `read_otg_csv_wrapper()` has the argument `otg_type_list` where the user can provide a vector of OTG data types to import.
+
+Let's instead use `read_otg_csv_wrapper()` to import just our channel unit and wood data, similar to above, except now creating a list of tibbles, rather than two separate objects.
+
+```{r read-otg-csv-wrapper-some, eval = F}
+# read in some (channel unit and wood) data types at once using read_otg_csv_wrapper()
+otg_raw = read_otg_csv_wrapper(path = otg_path,
+                               otg_type_list = c("CU_1.csv",
+                                                 "Wood_2.csv"))
+
+```
+
+Better yet, let's read in all OTG data types at once, which, by the way, is the default setting for `read_otg_csv_wrapper()`. Note that the function includes an argument `otg_type_names` which can be used to rename each of the tibbles during import, which is much tidier than using the file names to name each tibble (as we did above without `otg_type_names`). If `otg_type_names` is provided by the user, it **must** be the same length as `otg_type_list`.
+
 ```{r read-otg-csv-wrapper, eval = F}
 # "loop over" all data types using read_otg_csv_wrapper()
 otg_raw = read_otg_csv_wrapper(path = otg_path,
                                otg_type_list = c("surveyPoint_0.csv",
-                                                   "CU_1.csv",
-                                                   "Wood_2.csv",
-                                                   "Jam_3.csv",
-                                                   "Undercut_4.csv",
-                                                   "Discharge_5.csv",
-                                                   "DischargeMeasurements_6.csv"),
-                                 otg_type_names = c("survey",
-                                                    "cu",
-                                                    "wood",
-                                                    "jam",
-                                                    "undercut",
-                                                    "discharge",
-                                                    "discharge_measurements"))
+                                                 "CU_1.csv",
+                                                 "Wood_2.csv",
+                                                 "Jam_3.csv",
+                                                 "Undercut_4.csv",
+                                                 "Discharge_5.csv",
+                                                 "DischargeMeasurements_6.csv"),
+                               otg_type_names = c("survey",
+                                                  "cu",
+                                                  "wood",
+                                                  "jam",
+                                                  "undercut",
+                                                  "discharge",
+                                                  "discharge_measurements"))
 
 ```
+
+Congratulations! You now (hopefully) have successfully imported your [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) OTG data using the `read_otg_csv()` or `read_otg_csv_wrapper()` (preferred) functions. Either that, or you're muttering obscenities under your breath, in which case you're welcome to either submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the DASH website or contact the author at the e-mail address provided above.
+
+We've included an example "raw" OTG dataset with the package called `otg_raw` which was imported using `read_otg_csv_wrapper()`. `otg_raw` includes data for just `r nrow(otg_raw$survey)` sites. Let's explore `otg_raw` a bit; you can use `$` to extract elements of a list.
 
 ```{r view-raw-otg}
-head(otg_raw$cu)
+# a summary of the cu data (just the first 10 columns; exclude [,1:10] to see all)
+summary(otg_raw$cu[,1:10])
+
+# look at first 5 records of wood data using head()
+head(otg_raw$wood)
 
 ```
+
+Excellent, now let's save our data to an (imaginary) directory for later use. Next, we'll perform quality control (QC) on our OTG data.
 
 ```{r save-raw-otg, eval = F}
 save(otg_raw,
-     file = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/prepped/otg_raw.rda"))
+     file = paste0(nas_prefix, "/data/habitat/DASH/OTG/prepped/otg_raw.rda"))
 
 ```
 
