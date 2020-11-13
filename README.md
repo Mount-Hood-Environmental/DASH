@@ -24,7 +24,15 @@ Because the R packages `rmarkdown` and `knitr` are used to build this vignette t
 browseVignettes("DASH")
 ```
 
-*NOTE:* As of today's date, `DASH` currently includes no vignettes. Please stay tuned as they are coming...
+Alternatively, vignettes can be viewed in the Help menu using, for example:
+
+```
+vignette("otg-import-qc", package = "DASH")
+```
+
+`DASH` currently includes the following vignettes:
+
+**otg-import-qc**: Described how to import and QC on-the-ground (OTG) DASH habitat data collected using the DASH protocol and [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) data collection forms. Also describes how to resolve some errors identified during the QC process and some "data cleaning" to generate a summary of channel-unit scale data that can be joined to stream centerlines.
 
 ## Developers Note
 
