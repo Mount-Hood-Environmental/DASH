@@ -3,6 +3,7 @@ title: "Import and QC of OTG Data"
 author: 
 - name: Mike Ackerman
   email: mike.ackerman@merck.com
+- name: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -160,9 +161,9 @@ save(otg_raw,
 
 It's now time to perform QC on the imported raw data to identify errors that may have occurred in the field during data collection. The goal is to identify as many potential errors in the data as possible (but perhaps not all!) using functions provided by the [DASH](https://github.com/BiomarkABS/DASH) R package; and save or export a list of those potential errors. The identified errors can then be reviewed by field personnel or someone closely familiar with the data and remedied where possible.
 
-Please note that during the QC process or while working with the data, you may very well identify potential errors in the data **not** identified by functions provided here. In this case, please feel free to submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the GitHub repo website and we will try to add the functionality to "flag" or identify those issues. We are always looking to improve the QC process.
+Please note that during the QC process or while working with the data, you may very well identify potential errors in the data **not** identified by functions provided here. In this case, please feel free to submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the GitHub repo website and we will try to add the functionality to "flag" or identify those potential issues. We are always looking to improve the QC process.
 
-Let's start by loading the `otg_raw` object that we saved previously using the `load()` function:
+Let's start by loading the `otg_raw` object that we previously saved, using the `load()` function:
 
 ```{r fake-load-raw-otg, eval = F}
 load(paste0(nas_prefix,
@@ -170,13 +171,52 @@ load(paste0(nas_prefix,
 
 ```
 
-```{r init-qc, eval = F}
-# QC one data type at a time
-init_qc_cu = qc_cu(qc_df = otg_raw$cu)
+Recognize that you don't need to load `otg_raw` if it's already in your environment. But it is good practice to save some of your data objects at particular "checkpoints" during analysis (e.g., after finishing the data import process). `load()` is then useful in case you had to step away for awhile (i.e., close your script, analysis, project) and come back later.
 
+To QC the OTG data, DASH includes 7 QC functions as follows (including a description of the QC checks that each performs), each corresponding to an `otg_type`:
+
+* `qc_survey()`: For `otg_type = "surveyPoint_0.csv` data.
+    * Are there duplicate sites?
+    * Do the latitude and longitude values fall within an expected range?
+* `qc_cu()`: For `otg_type = "CU_1.csv"` data.
+    * Are all channel unit types valid?
+    * Are all channel unit numbers within each survey unique?
+    * Are the thalweg exit depth and maximum depth values all within an expected range?
+    * Does the sum of the fish cover values fall within an expected range?
+    * Do the ocular substrate estimates for all slow water channel units sum to 100?
+    * Do the riffles with pebble counts have all columns filled in, and if so, do values fall within an expected range?
+* `qc_wood()`: For `otg_type = "Wood_2.csv"` data.
+    * Are there any strange values in the **Wet?**, **Channel Forming?**, or **Ballasted?** columns?
+    * Are the length and diameter measurements for any pieces of wood possibly reversed?
+    * Are there any number, length, or diameter values that fall outside expected values?
+* `qc_jam()`: For `otg_type = "Jam_3.csv"` data.
+    * Do any of the number of pieces, length, width, or height values fall outside an expected range?
+* `qc_undercut()`: For `otg_type = "Undercut_5.csv"` data.
+    * Are there any strange entries in the **Location** column?
+    * Are there any undercut number, length, or width values that fall outside expected values?
+* `qc_disch()`: For `otg_type = "Discharge_5.csv"` data.
+    * Are any channel units not numeric?
+    * Are any channel units negative?
+* `qc_disch_meas()`: For `otg_type = "DischargeMeasurements_6.csv"` data.
+    * Do any of the width, depth, or velocity measurements fall outside of expected values?
+
+In addition to the above, each QC function also 1) identifies whether the column names in `qc_df` match the expected defined in `get_otg_cols_specs()`, and 2) checks whether there are any `NA` or <blanks> in important columns defined using the `cols_to_check_nas` argument (where applicable).
+
+We can QC a single `otg_type` at a time using any number of the above QC functions. As an example, let's use `qc_cu()` and `qc_wood()` to QC the `otg_type = "CU_1.csv"` and `otg_type = "Wood_2.csv` data, respectively. The output from all of the QC functions has the same format and so can be easily joined, which we also demonstrate. Many of the QC functions include an argument `cols_to_check_nas` which can be used to define columns where you want to flag `NA`s or <blank> values, which can be useful for columns where you expect every record to have a value. Each QC function with the `cols_to_check_nas` argument has a default which we be used if the user does not define the argument.
+
+```{r init-qc, eval = F}
+# QC just the channel unit data using "qc_cu()", define cols_to_check_nas
+init_qc_cu = qc_cu(qc_df = otg_raw$cu,
+                   cols_to_check_nas = c("Channel Unit Type",
+                                       "Channel Unit Number",
+                                       "Channel Segment Number",
+                                       "Maximum Depth (m)",
+                                       "ParentGlobalID"))
+
+# QC just the wood data using "qc_wood()", use default cols_to_check_nas
 init_qc_wood = qc_wood(qc_df = otg_raw$wood)
 
-# join qc results together
+# for example, bind the above results together
 init_qc_some = init_qc_cu %>%
   add_column(source = "CU",
              .before = 0) %>%
@@ -186,7 +226,9 @@ init_qc_some = init_qc_cu %>%
 
 ```
 
-```{r init-qc-all}
+For the sake of convenience, we also include a `qc_wrapper()` function that "loops over" some or all of the 7 QC functions, similar to the `read_otg_csv_wrapper()` function we used earlier during data import. In addition, `qc_wrapper()` also combines the results from each of the QC's to a single data.frame.
+
+```{r init-qc-all, eval = F}
 # same as above
 init_qc_some = qc_wrapper(cu_df = otg_raw$cu,
                           wood_df = otg_raw$wood,
@@ -201,6 +243,13 @@ init_qc = qc_wrapper(survey_df = otg_raw$survey,
                      discharge_df = otg_raw$discharge,
                      disch_meas_df = otg_raw$discharge_measurements,
                      redirect_output = FALSE)
+
+```
+
+```{r save-qc, eval = F}
+# write QC results to .csv
+write_csv(init_qc,
+          paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/init_qc.csv"))
 
 ```
 
@@ -254,13 +303,6 @@ init_qc %>%
   select(path_nm:error_message,
          `Undercut Number`:`Width 75% (m)`)
   
-```
-
-```{r save-qc, eval = F}
-# write QC results to .csv
-write_csv(init_qc,
-          paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/init_qc.csv"))
-
 ```
 
 # Resolving Errors
