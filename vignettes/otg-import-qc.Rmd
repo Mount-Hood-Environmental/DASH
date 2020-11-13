@@ -158,9 +158,15 @@ save(otg_raw,
 
 # Initial QC
 
+It's now time to perform QC on the imported raw data to identify errors that may have occurred in the field during data collection. The goal is to identify as many potential errors in the data as possible (but perhaps not all!) using functions provided by the [DASH](https://github.com/BiomarkABS/DASH) R package; and save or export a list of those potential errors. The identified errors can then be reviewed by field personnel or someone closely familiar with the data and remedied where possible.
+
+Please note that during the QC process or while working with the data, you may very well identify potential errors in the data **not** identified by functions provided here. In this case, please feel free to submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the GitHub repo website and we will try to add the functionality to "flag" or identify those issues. We are always looking to improve the QC process.
+
+Let's start by loading the `otg_raw` object that we saved previously using the `load()` function:
+
 ```{r fake-load-raw-otg, eval = F}
 load(paste0(nas_prefix,
-            "/data/habitat/DASH/OTG/2019/lemhi/prepped/otg_raw.rda"))
+            "/data/habitat/DASH/OTG/prepped/otg_raw.rda"))
 
 ```
 
