@@ -80,7 +80,7 @@ qc_wood = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 5:  Are the number, length, width and height values outside of expected values?
+  # CHECK 5:  Are the number, length, or diameter values outside of expected values?
   cat("Checking whether large wood number, length, and diameter fall within expected values? \n")
 
   # set expected values
