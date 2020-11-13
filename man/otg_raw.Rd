@@ -27,37 +27,124 @@
 \item \strong{cu} A tibble with 146 rows and 39 columns
 \describe{
 \item{path_nm}{relative path to the source file}
-\item{tmp}{description text}
+\item{ObjectID}{description text}
+\item{GlobalID}{description text}
+\item{Channel Unit Type}{description text}
+\item{Channel Unit Number}{description text}
+\item{Channel Segment Number}{description text}
+\item{Thalweg Exit Depth (m)}{description text}
+\item{Channel Unit Notes}{description text}
+\item{Overhanging Cover}{description text}
+\item{Aquatic Vegetation}{description text}
+\item{Woody Debris Cover}{description text}
+\item{Artificial Cover}{description text}
+\item{Total No Cover}{description text}
+\item{Sand/Fines 2mm}{description text}
+\item{Gravel 2-64mm}{description text}
+\item{Cobble 64-256mm}{description text}
+\item{Boulder 256mm}{description text}
+\item{Pebble 1 (mm)}{description text}
+\item{Pebble 2 (mm)}{description text}
+\item{Pebble 3 (mm)}{description text}
+\item{Pebble 4 (mm)}{description text}
+\item{Pebble 5 (mm)}{description text}
+\item{Pebble 6 (mm)}{description text}
+\item{Pebble 7 (mm)}{description text}
+\item{Pebble 8 (mm)}{description text}
+\item{Pebble 9 (mm)}{description text}
+\item{Pebble 10 (mm)}{description text}
+\item{Pebble 11 (mm)}{description text}
+\item{Maximum Depth (m)}{description text}
+\item{Width 1}{description text}
+\item{Width 2}{description text}
+\item{Width 3}{description text}
+\item{Width 4}{description text}
+\item{Width 5}{description text}
+\item{ParentGlobalID}{description text}
+\item{CreationDate}{description text}
+\item{Creator}{description text}
+\item{EditDate}{description text}
+\item{Editor}{description text}
 }
 
 \item \strong{wood} A tibble with 84 rows and 14 columns
 \describe{
 \item{path_nm}{relative path to the source file}
-\item{tmp}{description text}
+\item{ObjectID}{description text}
+\item{GlobalID}{description text}
+\item{Large Wood Number}{description text}
+\item{Length (m)}{description text}
+\item{Diameter (m)}{description text}
+\item{Wet?}{description text}
+\item{Channel Forming?}{description text}
+\item{Ballasted?}{description text}
+\item{ParentGlobalID}{description text}
+\item{CreationDate}{description text}
+\item{Creator}{description text}
+\item{EditDate}{description text}
+\item{Editor}{description text}
 }
 
 \item \strong{jam} A tibble with 12 rows and 12 columns
 \describe{
 \item{path_nm}{relative path to the source file}
-\item{tmp}{description text}
+\item{ObjectID}{description text}
+\item{GlobalID}{description text}
+\item{Length (m)}{description text}
+\item{Width (m)}{description text}
+\item{Height (m)}{description text}
+\item{Estimated Number of Pieces}{description text}
+\item{ParentGlobalID}{description text}
+\item{CreationDate}{description text}
+\item{Creator}{description text}
+\item{EditDate}{description text}
+\item{Editor}{description text}
 }
 
 \item \strong{undercut} A tibble with 99 rows and 14 columns
 \describe{
 \item{path_nm}{relative path to the source file}
-\item{tmp}{description text}
+\item{ObjectID}{description text}
+\item{GlobalID}{description text}
+\item{Undercut Number}{description text}
+\item{Location}{description text}
+\item{Length (m)}{description text}
+\item{Width 25\% (m)}{description text}
+\item{Width 50\% (m)}{description text}
+\item{Width 75\% (m)}{description text}
+\item{ParentGlobalID}{description text}
+\item{CreationDate}{description text}
+\item{Creator}{description text}
+\item{EditDate}{description text}
+\item{Editor}{description text}
 }
 
 \item \strong{discharge} A tibble with 5 rows and 9 columns
 \describe{
 \item{path_nm}{relative path to the source file}
-\item{tmp}{description text}
+\item{ObjectID}{description text}
+\item{GlobalID}{description text}
+\item{Discharge Location (BOS, TOS, CU #)}{description text}
+\item{ParentGlobalID}{description text}
+\item{CreationDate}{description text}
+\item{Creator}{description text}
+\item{EditDate}{description text}
+\item{Editor}{description text}
 }
 
 \item \strong{discharge_measurements} A tibble with 93 rows and 11 columns
 \describe{
 \item{path_nm}{relative path to the source file}
-\item{tmp}{description text}
+\item{ObjectID}{description text}
+\item{GlobalID}{description text}
+\item{Station Width}{description text}
+\item{Station Depth}{description text}
+\item{Station Velocity}{description text}
+\item{ParentGlobalID}{description text}
+\item{CreationDate}{description text}
+\item{Creator}{description text}
+\item{EditDate}{description text}
+\item{Editor}{description text}
 }
 }
 }
