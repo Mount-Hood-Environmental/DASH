@@ -60,3 +60,16 @@
 #'   }
 #' }
 "otg_raw"
+
+#' Data: A tibble of initial QC results
+#'
+#' A tibble of initial QC results for the example dataset `otg_raw`
+#'
+#' @format A tibble with 44 rows and 4 variables:
+#' \describe{
+#'   \item{source}{the `otg_type` where the potential error was identified}
+#'   \item{path_nm}{the path name to the file where the potential error was identified}
+#'   \item{GlobalID}{the **GlobalID** indicating the row where the potential error was identified}
+#'   \item{error_message}{a message indicating the nature of the potential error}
+#' }
+"init_qc"
