@@ -1,7 +1,7 @@
 Package: DASH
 Type: Package
 Title: DASH: Drone Assisted Stream Habitat
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Mike", "Ackerman", role = c("cre", "aut"), email = "mike.ackerman@merck.com"),
     person("Kevin", "See", role = "aut", email = "kevin.see@merck.com"),
@@ -37,8 +37,8 @@ Suggests:
     randomForestSRC (>= 2.9.3),
     missForest (>= 1.4),
     forcats (>= 0.5.0),
-    knitr,
-    rmarkdown
+    knitr (>= 1.30),
+    rmarkdown (>= 2.3)
 VignetteBuilder: knitr
 Depends: 
     R (>= 2.10)
