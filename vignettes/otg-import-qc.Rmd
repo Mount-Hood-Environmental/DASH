@@ -72,7 +72,7 @@ otg_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/1_formatted_csvs/")
 
 ```
 
-## read_otg_csv(): Reading in One Type of OTG Data at a Time
+## `read_otg_csv()`: Reading in One Type of OTG Data at a Time
 
 The [DASH](https://github.com/BiomarkABS/DASH) R package includes a function `read_otg_csv()` which can be used to import one type (`otg_type`) of OTG data at a time. `otg_type` includes two arguments, `path` and `otg_type`. Here, we provide examples of how `read_otg_csv()` can be used to import channel unit (cu) or wood data to create two objects, `otg_raw_cu` and `otg_raw_wood`, respectively. In our case, we'll set `path = otg_path` which we created above, and `otg_type` is set using the name of the files containing the OTG data of interest.
 
@@ -101,7 +101,7 @@ help(package = "DASH")
 
 ```
 
-## read_otg_csv_wrapper(): Read in All OTG Data At Once
+## `read_otg_csv_wrapper()`: Read in All OTG Data At Once
 
 It would be a bit tedious to import each of our 7 OTG data types (`otg_type`), separately, and later somehow join them together. To remedy this, we've included the function `read_otg_csv_wrapper()` in the [DASH](https://github.com/BiomarkABS/DASH) R package, which can be used to import some or all of the OTG data types at once. The result is a list of tibbles (i.e., simple data frames) each containing data for an `otg_type`. Rather than having the argument `otg_type`, `read_otg_csv_wrapper()` has the argument `otg_type_list` where the user can provide a vector of OTG data types to import.
 
@@ -203,6 +203,8 @@ To QC the OTG data, DASH includes 7 QC functions as follows (including a descrip
 
 In addition to the above, each QC function also 1) identifies whether the column names in `qc_df` match the expected defined in `get_otg_cols_specs()`, and 2) checks whether there are any `NA` or <blanks> in important columns defined using the `cols_to_check_nas` argument (where applicable).
 
+## QC One `otg_type` at a Time
+
 We can QC a single `otg_type` at a time using any number of the above QC functions. As an example, let's use `qc_cu()` and `qc_wood()` to QC the `otg_type = "CU_1.csv"` and `otg_type = "Wood_2.csv` data, respectively. The output from all of the QC functions has the same format and so can be easily joined, which we also demonstrate. Many of the QC functions include an argument `cols_to_check_nas` which can be used to define columns where you want to flag `NA`s or <blank> values, which can be useful for columns where you expect every record to have a value. Each QC function with the `cols_to_check_nas` argument has a default which we be used if the user does not define the argument.
 
 ```{r init-qc, eval = F}
@@ -226,6 +228,8 @@ init_qc_some = init_qc_cu %>%
                          .before = 0))
 
 ```
+
+## `qc_wrapper()`: QC All OTG Data At Once
 
 For the sake of convenience, we also include a `qc_wrapper()` function that "loops over" some or all of the 7 QC functions, similar to the `read_otg_csv_wrapper()` function we used earlier during data import. In addition, `qc_wrapper()` also combines the results from each of the QC's to a single data.frame.
 
@@ -270,16 +274,21 @@ Nice work! You just completed an initial QC on your OTG data and exported the re
 
 # Examine QC Results
 
+Of course, a user could examine the initial QC results `init_qc` by opening and reviewing the .csv file written above. However, you might also find it useful to explore the QC results a little further using R. The following section is completely optional, but provides some examples and guidance about how `init_qc` could be examined in R.
+
 ```{r examine-qc}
+# use janitor::tabyl() to examine the "source" of the errors
 tabyl(init_qc,
       source)
 
+# simply print out the results
 init_qc %>%
   print()
 
 ```
 
 ```{r max-depth-errors}
+# examine channel unit errors where the error_message contains "Column Maximum Depth"
 init_qc %>%
   filter(source == "CU") %>%
   filter(grepl("Column Maximum Depth", error_message)) %>%
@@ -289,6 +298,7 @@ init_qc %>%
 ```
 
 ```{r ocular-ests-errors}
+# ocular estimate errors where sum_ocular does not equal 100
 init_qc %>%
   filter(source == "CU") %>%
   filter(grepl("Ocular estimates", error_message)) %>%
@@ -301,6 +311,7 @@ init_qc %>%
 ```
 
 ```{r fish-cover-errors}
+# the sum of fish cover values fall outside the expected range
 init_qc %>%
   filter(source == "CU") %>%
   filter(grepl("Cover values", error_message)) %>%
@@ -312,6 +323,7 @@ init_qc %>%
 ```
 
 ```{r undercut-errors}
+# undercut errors; note many of these are flagged bc of a strange "Location" value "Island" which perhaps should be an acceptable value
 init_qc %>%
   filter(source == "Undercut") %>%
   left_join(otg_raw$undercut) %>%
