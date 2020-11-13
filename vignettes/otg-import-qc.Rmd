@@ -67,7 +67,8 @@ if(.Platform$OS.type != 'unix') {
   nas_prefix = "~/../../Volumes/ABS"
 }
 
-otg_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/")
+# a theoretical path on the NAS
+otg_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/1_formatted_csvs/")
 
 ```
 
@@ -228,8 +229,10 @@ init_qc_some = init_qc_cu %>%
 
 For the sake of convenience, we also include a `qc_wrapper()` function that "loops over" some or all of the 7 QC functions, similar to the `read_otg_csv_wrapper()` function we used earlier during data import. In addition, `qc_wrapper()` also combines the results from each of the QC's to a single data.frame.
 
+Similar to above, let's just QC the `otg_type = "CU_1.csv"` and `otg_type = "Wood_2.csv"` data, except using the `qc_wrapper()` function. We also demonstrate how to use `qc_wrapper()` to QC every `otg_type` at once and saving it to an object `init_qc`. The `qc_wrapper()` function will provide a series of messages while performing the QC providing periodic updates; the function includes the argument `redirect_output`, which if set to `FALSE` will write those messages to the console. However, if `redirect_output = TRUE`, those messages can be written to a file using the additional argument `redirect_output_path`.
+
 ```{r init-qc-all, eval = F}
-# same as above
+# QC just channel unit and wood data
 init_qc_some = qc_wrapper(cu_df = otg_raw$cu,
                           wood_df = otg_raw$wood,
                           redirect_output = FALSE)
@@ -246,12 +249,24 @@ init_qc = qc_wrapper(survey_df = otg_raw$survey,
 
 ```
 
+At this point, it would be a good idea to write your initial QC results to a .csv file. I'd suggest writing the file to
+the "/1_formatted_csvs/" directory containing the data that was QC'd. If you want to get fancy, you can also append today's date to the name of the file so that someone knows the date that the last QC was performed.
+
 ```{r save-qc, eval = F}
 # write QC results to .csv
 write_csv(init_qc,
-          paste0(nas_prefix, "/data/habitat/DASH/OTG/2019/lemhi/1_formatted_csvs/init_qc.csv"))
+          paste0(nas_prefix, "/data/habitat/DASH/OTG/1_formatted_csvs/init_qc.csv"))
+
+# append today's date
+write_csv(init_qc,
+          paste0(nas_prefix,
+                 "/data/habitat/DASH/OTG/1_formatted_csvs/init_qc_",
+                 format(Sys.Date(), format = "%Y%m%d"),
+                 ".csv"))
 
 ```
+
+Nice work! You just completed an initial QC on your OTG data and exported the results to a file. Either that, or you're again muttering obscenities at the authors, at which point you're welcome to contact them at the above provided e-mail addresses or submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the repo website. Let's move onto examining those QC results, and in some cases, resolving them.
 
 # Examine QC Results
 
