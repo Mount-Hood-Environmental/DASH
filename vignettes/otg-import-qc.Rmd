@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Welcome to the [DASH](https://github.com/BiomarkABS/DASH) R package! This vignette, which logically follows as the first of multiple vignettes in the package, describes how to import and quality control (QC) on-the-ground (OTG hereafter) collected habitat data  using the DASH protocol. The initial data collection forms to record the OTG data were generated using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) and we focus on importing data from those forms. After data import, we describe how functions included in the DASH R package can then be used to perform QC on the data to identify potential errors, perhaps that occurred in the field. Finally, we describe initial data cleaning and joining (i.e., joining channel unit scale information with wood, undercut, etc. information collected for that unit) in preparation of attaching the OTG collected data to stream centerline data to make it spatial. Later, our spatial OTG data can then be connected to drone-generation orthomosaics. 
+Welcome to the [DASH](https://github.com/BiomarkABS/DASH) R package! This vignette, which logically follows as the first of multiple vignettes in the package, describes how to import and quality control (QC) on-the-ground (OTG hereafter) collected habitat data  using the DASH protocol. The initial data collection forms to record the OTG data were generated using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) and we focus on importing data from those forms. After data import, we describe how functions included in the DASH R package can then be used to perform QC on the data to identify potential errors, perhaps that occurred in the field. Finally, we describe initial data cleaning and joining (i.e., joining channel unit scale information with wood, undercut, etc. information collected for that unit) in preparation of attaching the OTG collected data to stream centerline data to make it spatial. Later, our spatial OTG data can then be connected to drone-generated orthomosaics. 
 
 Let's start by describing the data import procedure; we'll then go into data QC and how to resolve some of the identified errors. Begin by loading the necessary libraries (R packages) needed for this vignette and analysis:
 
@@ -276,6 +276,8 @@ Nice work! You just completed an initial QC on your OTG data and exported the re
 
 Of course, a user could examine the initial QC results `init_qc` by opening and reviewing the .csv file written above. However, you might also find it useful to explore the QC results a little further using R. The following section is completely optional, but provides some examples and guidance about how `init_qc` could be examined in R.
 
+**At this point in the workflow, it is probably best that someone very familiar with the OTG data (e.g., field technician, field coordinator) should intervene, review the QC results, and attempt to resolve them. Ideally, notes should also be taken about those QC errors that can't be resolved, and for those that can be resolved, identify how the issue was resolved. Similar to above, it is best practice to not modify the "raw" data (i.e., don't make changes to the data in the "/1_formatted_csvs/" directory). Instead, it is a good idea to make another copy of the data (I use "/2_qcd_csvs/") and resolve any identified issues in that data. In this case, someone could then fairly easily identify any changes that were made to the data during the QC process.** In addition, by documenting changes that have been made to the data, we can identify common errors and perhaps add data validation during the data collection process to prevent those errors in the future.
+
 ```{r examine-qc}
 # use janitor::tabyl() to examine the "source" of the errors
 tabyl(init_qc,
@@ -296,6 +298,8 @@ init_qc %>%
   select(source:error_message, `Channel Unit Type`, `Maximum Depth (m)`)
   
 ```
+
+During our initial review of DASH data, we commonly identified the following two "types" of errors: 1) the sum of ocular substrate estimates don't sum to 100 due to a math error in the field and/or 2) the sum of fish cover estimates do not fall within an expected range (note: the sum of fish cover estimates **can** sum to greater than 100). We've included two functions within the package `rescale_values()` and `fix_fish_cover()` that can be used to resolve a large number of the identified errors, respectively. We cover those functions in the following [section][Re-import QC'd Data and Resolve Common Errors].
 
 ```{r ocular-ests-errors}
 # ocular estimate errors where sum_ocular does not equal 100
@@ -332,12 +336,106 @@ init_qc %>%
   
 ```
 
-# Resolving Errors
+# Re-import QC'd Data and Resolve Common Errors
+
+```{r re-import-qcd-otg, eval = F}
+# As an example, if the Survey123 site folders were in a "2_qcd_csvs" folder on your Desktop
+otg_path = "C:/Users/username/Desktop/2_qcd_csvs/"
+
+# For internal Biomark folks, set nas_prefix based on your operating system and then set otg_path to the NAS
+if(.Platform$OS.type != 'unix') {
+  nas_prefix = "S:"
+} else if(.Platform$OS.type == 'unix') {
+  nas_prefix = "~/../../Volumes/ABS"
+}
+
+# a theoretical path on the NAS
+otg_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2_qcd_csvs/")
+
+# "loop over" all data types using read_otg_csv_wrapper()
+otg_qcd = read_otg_csv_wrapper(path = otg_path,
+                               otg_type_list = c("surveyPoint_0.csv",
+                                                 "CU_1.csv",
+                                                 "Wood_2.csv",
+                                                 "Jam_3.csv",
+                                                 "Undercut_4.csv",
+                                                 "Discharge_5.csv",
+                                                 "DischargeMeasurements_6.csv"),
+                               otg_type_names = c("survey",
+                                                  "cu",
+                                                  "wood",
+                                                  "jam",
+                                                  "undercut",
+                                                  "discharge",
+                                                  "discharge_measurements"))
+
+```
+
+```{r fix-oc-ests, eval = F}
+# ocular substrate fixes
+otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
+                            col_names = c("Sand/Fines 2mm",
+                                          "Gravel 2-64mm",
+                                          "Cobble 64-256mm",
+                                          "Boulder 256mm"),
+                            min_value = 90,
+                            max_value = 110,
+                            sum_to = 100)
+
+```
+
+```{r fix-fish-cover, eval = F}
+# fish cover fixes
+otg_qcd$cu = fix_fish_cover(cu_df = otg_qcd$cu,
+                            cover_cols = c("Overhanging Cover",
+                                           "Aquatic Vegetation",
+                                           "Woody Debris Cover",
+                                           "Artificial Cover",
+                                           "Total No Cover"))
+
+```
+
+```{r save-qcd-otg, eval = F}
+save(otg,
+     file = paste0(nas_prefix, "/data/habitat/DASH/OTG/prepped/otg.rda"))
+
+```
 
 # "Final" QC
+
+```{r fake-load-qcd-otg, eval = F}
+load(paste0(nas_prefix,
+            "/data/habitat/DASH/OTG/prepped/otg.rda"))
+
+```
+
+```{r final-qc, eval = F}
+qc_final = qc_wrapper(survey_df = otg$survey,
+                      cu_df = otg$cu,
+                      wood_df = otg$wood,
+                      jam_df = otg$jam,
+                      undercut_df = otg$undercut,
+                      discharge_df = otg$discharge,
+                      disch_meas_df = otg$discharge_measurements)
+
+```
+
+```{r save-final-qc, eval = F}
+# write QC results to .csv
+write_csv(qc_final,
+          paste0(nas_prefix, "/data/habitat/DASH/OTG/2_qcd_csvs/final_qc.csv"))
+
+# append today's date
+write_csv(init_qc,
+          paste0(nas_prefix,
+                 "/data/habitat/DASH/OTG/2_qcd_csvs/final_qc_",
+                 format(Sys.Date(), format = "%Y%m%d"),
+                 ".csv"))
+
+```
 
 # Data Wrangling and Export
 
 #### END IMPORT AND QC VIGNETTE
 
-<!-- *Holy Guacamole! That deserves a beer!* -->
+*Holy Guacamole! That deserves a beer!*
