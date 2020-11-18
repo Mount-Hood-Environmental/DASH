@@ -321,6 +321,7 @@ for(i in 1:length(otg_list)) {
 
 # clean up
 rm(otg_path,
+   otg_qcd_files,
    otg_list)
 
 #-----------------------------
