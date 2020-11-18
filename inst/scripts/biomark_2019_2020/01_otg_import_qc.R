@@ -313,9 +313,9 @@ for(i in 1:length(otg_list)) {
   if(i == 1) {
     otg = otg_list[[1]]
   } else {
-    otg = purrr::map2(otg,
-                      otg_list[[i]],
-                      dplyr::full_join)
+    otg = suppressMessages(purrr::map2(otg,
+                                       otg_list[[i]],
+                                       dplyr::full_join))
   }
 }
 
