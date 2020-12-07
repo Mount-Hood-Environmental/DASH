@@ -3,10 +3,21 @@
 #' @description Quality control channel unit data (e.g., from CU_1.csv files) imported
 #' using `read_otg_csv()` or `read_otg_csv_wrapper()`.
 #'
-#' @author Mike Ackerman
+#' @author Mike Ackerman and Kevin See
 #'
 #' @param qc_df The survey data frame to be QC'd
 #' @inheritParams check_na
+#' @param valid_cus character vector of valid channel unit types
+#' @param ted_min minimum acceptable value for thalweg exit depth
+#' @param ted_max maximum acceptable value for thalweg exit depth
+#' @param md_min minimum acceptable value for max channel unit depth
+#' @param md_max maximum acceptable value for max channel unit depth
+#' @param cover_columns character vector of column names for fish cover estimates
+#' @param cov_max maximum value that cover estimates can sum to
+#' @param slow_cus character vector of slow channel unit types that should have occular substrate estimates
+#' @param ocular_columns character vector of column names for ocular substrate estimates
+#' @param peb_min minimum acceptable size for pebble size (mm)
+#' @param peb_max maximum acceptable size for pebble size (mm)
 #'
 #' @import dplyr
 #' @export
@@ -17,7 +28,25 @@ qc_cu = function(qc_df = NULL,
                                        "Channel Unit Number",
                                        "Channel Segment Number",
                                        "Maximum Depth (m)",
-                                       "ParentGlobalID")) {
+                                       "ParentGlobalID"),
+                 valid_cus = c("Pool", "Run", "Riffle", "OCA", "Rapid+", "SSC"),
+                 ted_min = 0,
+                 ted_max = 2,
+                 md_min = 0,
+                 md_max = 3,
+                 cover_columns = c("Overhanging Cover",
+                                   "Aquatic Vegetation",
+                                   "Woody Debris Cover",
+                                   "Artificial Cover",
+                                   "Total No Cover"),
+                 cov_max = 130,
+                 slow_cus = c("Pool", "Run", "OCA"),
+                 ocular_columns = c("Sand/Fines 2mm",
+                                    "Gravel 2-64mm",
+                                    "Cobble 64-256mm",
+                                    "Boulder 256mm"),
+                 peb_min = 0.06,
+                 peb_max = 1024) {
 
   # set otg_type
   otg_type = "CU_1.csv"
@@ -44,7 +73,6 @@ qc_cu = function(qc_df = NULL,
   # CHECK 3: Are the channel unit types all valid?
   cat("Checking whether all channel unit types are valid. \n")
 
-  valid_cus = c("Pool", "Run", "Riffle", "OCA", "Rapid+", "SSC")
   cu_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, `Channel Unit Type`) %>%
     #rbind("bad_cu") %>% # for testing
@@ -79,11 +107,12 @@ qc_cu = function(qc_df = NULL,
 
   #####
   # CHECK 5: Are the thalweg exit depth values within a reasonable range?
-  ted_min = 0; ted_max = 2
   cat("Do the thalweg exit depth values fall within a reasonable range btw", ted_min, "and", ted_max, "? \n")
 
   ted_chk = qc_df %>%
-    dplyr::select(path_nm, GlobalID, `Channel Unit Type`, `Thalweg Exit Depth (m)`) %>%
+    dplyr::select(path_nm, GlobalID,
+                  `Channel Unit Type`,
+                  `Thalweg Exit Depth (m)`) %>%
     dplyr::filter(!`Channel Unit Type` == "OCA") %>%
     dplyr::select(-`Channel Unit Type`) %>%
     # TRUE = good, FALSE = outside expected values or NA
@@ -104,7 +133,6 @@ qc_cu = function(qc_df = NULL,
 
   #####
   # CHECK 6: Are the maximum depth values within a reasonable range?
-  md_min = 0; md_max = 3
   cat("Do the maximum depth values fall within a reasonable range btw", md_min, "and", md_max, "? \n")
 
   md_chk = qc_df %>%
@@ -127,16 +155,7 @@ qc_cu = function(qc_df = NULL,
   #####
   # CHECK 7: Do cover column values sum to 100?
   # What is the maximum value that cover estimates can sum to?
-  cov_max = 130
-
   cat("Do all fish cover columns sum btw 100 and", cov_max, "? \n")
-
-  # What columns contain fish cover data?
-  cover_columns = c("Overhanging Cover",
-                    "Aquatic Vegetation",
-                    "Woody Debris Cover",
-                    "Artificial Cover",
-                    "Total No Cover")
 
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%
@@ -157,15 +176,6 @@ qc_cu = function(qc_df = NULL,
   #####
   # CHECK 8: Do all slow water channel unit types have ocular estimates and do they sum to 100?
   cat("Do ocular estimates for all slow water channel unit types exist and sum to 100? \n")
-
-  # What are the slow channel unit types?
-  slow_cus = c("Pool", "Run", "OCA")
-
-  # What columns contain substrate ocular estimates?
-  ocular_columns = c("Sand/Fines 2mm",
-                     "Gravel 2-64mm",
-                     "Cobble 64-256mm",
-                     "Boulder 256mm")
 
   oc_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, `Channel Unit Type`, all_of(ocular_columns)) %>%
@@ -208,8 +218,32 @@ qc_cu = function(qc_df = NULL,
 
   #####
   # CHECK 10: Do we need to add a check to see if pebble values fall within an expected range?
-  # expected values (mm)
-  peb_min = 0.06; peb_max = 1024
+  cat("Do the pebble size values fall within a reasonable range btw", peb_min, "and", peb_max, "? \n")
+
+  peb_sz_chk = qc_df %>%
+    dplyr::filter(`Channel Unit Type` == "Riffle") %>%
+    dplyr::select(path_nm, GlobalID, starts_with("Pebble")) %>%
+    tidyr::pivot_longer(cols = starts_with("Pebble"),
+                        names_to = "measurement",
+                        values_to = "value") %>%
+    dplyr::filter(!is.na(value)) %>%
+    dplyr::mutate(peb_chk = between(value,
+                                   peb_min,
+                                   peb_max)) %>%
+    dplyr::filter(peb_chk == FALSE) %>%
+    dplyr::mutate(error_message = paste0("Pebble size of ", str_remove(measurement, " \\(mm\\)$"),
+                                         "is ", value,
+                                         " which does not fall between ", peb_min, " and ", peb_max, ".")) %>%
+    dplyr::select(-measurement,
+                  -value,
+                  -peb_chk)
+
+  if( nrow(peb_sz_chk) == 0 ) cat("All pebble size values seem reasonable. \n")
+  if( nrow(peb_sz_chk) > 0 ) {
+    cat("Some pebble size values fall outside expected values. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, peb_sz_chk)
+  }
+
 
   ###################
   # return qc results
