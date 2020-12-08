@@ -4,7 +4,10 @@
 \alias{qc_tbl}
 \title{Initiate Blank QC Results Tibble}
 \usage{
-qc_tbl()
+qc_tbl(data_id = "GlobalID")
+}
+\arguments{
+\item{id}{name of identifying column}
 }
 \value{
 a blank tibble
