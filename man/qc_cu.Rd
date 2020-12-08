@@ -7,13 +7,48 @@
 qc_cu(
   qc_df = NULL,
   cols_to_check_nas = c("Channel Unit Type", "Channel Unit Number",
-    "Channel Segment Number", "Maximum Depth (m)", "ParentGlobalID")
+    "Channel Segment Number", "Maximum Depth (m)", "ParentGlobalID"),
+  valid_cus = c("Pool", "Run", "Riffle", "OCA", "Rapid+", "SSC"),
+  ted_min = 0,
+  ted_max = 2,
+  md_min = 0,
+  md_max = 3,
+  cover_columns = c("Overhanging Cover", "Aquatic Vegetation", "Woody Debris Cover",
+    "Artificial Cover", "Total No Cover"),
+  cov_max = 130,
+  slow_cus = c("Pool", "Run", "OCA"),
+  ocular_columns = c("Sand/Fines 2mm", "Gravel 2-64mm", "Cobble 64-256mm",
+    "Boulder 256mm"),
+  peb_min = 0.06,
+  peb_max = 1024
 )
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
 
 \item{cols_to_check_nas}{columns to check for NAs in}
+
+\item{valid_cus}{character vector of valid channel unit types}
+
+\item{ted_min}{minimum acceptable value for thalweg exit depth}
+
+\item{ted_max}{maximum acceptable value for thalweg exit depth}
+
+\item{md_min}{minimum acceptable value for max channel unit depth}
+
+\item{md_max}{maximum acceptable value for max channel unit depth}
+
+\item{cover_columns}{character vector of column names for fish cover estimates}
+
+\item{cov_max}{maximum value that cover estimates can sum to}
+
+\item{slow_cus}{character vector of slow channel unit types that should have occular substrate estimates}
+
+\item{ocular_columns}{character vector of column names for ocular substrate estimates}
+
+\item{peb_min}{minimum acceptable size for pebble size (mm)}
+
+\item{peb_max}{maximum acceptable size for pebble size (mm)}
 }
 \value{
 a tibble with QC results
@@ -23,5 +58,5 @@ Quality control channel unit data (e.g., from CU_1.csv files) imported
 using \code{read_otg_csv()} or \code{read_otg_csv_wrapper()}.
 }
 \author{
-Mike Ackerman
+Mike Ackerman and Kevin See
 }

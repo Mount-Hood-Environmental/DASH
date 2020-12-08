@@ -6,7 +6,7 @@
 #' on-the-ground (OTG) data from Survey123 with a folder containing the same files except modified
 #' by the user, presumably in an attempt to remedy errors identified during data import or
 #' QA/QC. Both `path1` and `path2` should only contain folders (no files) each representing
-#' a survey, and each of those folders should only contain files (no folders) containin the otg
+#' a survey, and each of those folders should only contain files (no folders) containing the otg
 #' data.
 #'
 #' @author Mike Ackerman

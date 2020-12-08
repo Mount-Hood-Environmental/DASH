@@ -150,8 +150,9 @@ for (yw in yr_wtsd) {
       select(source:GlobalID,
              `Overhanging Cover`:`Total No Cover`) %>%
       mutate(sum_cover = rowSums(.[4:8], na.rm = T)) %>%
-      select(path_nm, sum_cover) %>%
-      table()
+      # select(path_nm, sum_cover) %>%
+      # table()
+      tabyl(sum_cover)
 
     # lots of issues w/ fish cover ests, resolve some...
     otg_raw$cu = fix_fish_cover(cu_df = otg_raw$cu,
@@ -300,36 +301,38 @@ otg_qcd_files = list.files(path = otg_path,
                            recursive = T) %>%
   paste0(otg_path, .)
 
-# load the otg_qcd files
-lem_otg_qcd = load(otg_qcd_files[1]) %>%
-  get() %>%
-  lapply(clean_names)
-nfs_otg_qcd = load(otg_qcd_files[2]) %>%
-  get() %>%
-  lapply(clean_names)
-sec_otg_qcd = load(otg_qcd_files[3]) %>%
-  get() %>%
-  lapply(clean_names)
+# load all files, and join them together
+otg_list = as.list(otg_qcd_files) %>%
+  map(.f = function(x) {
+    load(x) %>%
+      get() %>%
+      map(clean_names)
+  })
 
-# join using map2
-otg = purrr::map2(lem_otg_qcd,
-                  nfs_otg_qcd,
-                  dplyr::full_join) %>%
-  purrr::map2(sec_otg_qcd,
-              dplyr::full_join)
+for(i in 1:length(otg_list)) {
+  if(i == 1) {
+    otg = otg_list[[1]]
+  } else {
+    otg = suppressMessages(purrr::map2(otg,
+                                       otg_list[[i]],
+                                       dplyr::full_join))
+  }
+}
 
 # clean up
-rm(lem_otg_qcd,
-   nfs_otg_qcd,
-   sec_otg_qcd)
+rm(otg_path,
+   otg_qcd_files,
+   otg_list)
 
 #-----------------------------
 # clean cu data and join site info to it
 #-----------------------------
 # clean survey names
 otg$survey = otg$survey %>%
-  mutate(site_name = gsub("_.*", "", site_name)) %>%
-  mutate(site_name = gsub(" ", "", site_name))
+  mutate(across(site_name,
+                ~ str_replace(., "_.*", "")),
+         across(site_name,
+                ~str_remove(., " ")))
 
 # CU
 cu_cu = rollup_cu(cu_df = otg$cu,
