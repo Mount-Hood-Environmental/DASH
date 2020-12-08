@@ -20,8 +20,7 @@ qc_centerline <- function(cl_sf = NULL,
                                                 "Site_ID",
                                                 "StreamName",
                                                 "CU_Type",
-                                                "Seg_Number",
-                                                "Reach_Num")) {
+                                                "Seg_Number")) {
 
   stopifnot(!is.null(cl_sf))
 
