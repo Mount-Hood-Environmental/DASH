@@ -7,6 +7,7 @@
 #' @param data_df data.frame with potential missing values
 #' @param col_nm_vec character vector of column names that should be either imputed and/or used to impute other columns
 #' @param method which method to use, either by creating random forests using the `missForest` package, or by predictive mean matching using the `aregImpute()` function in the `Hmisc` package
+#' @param my_seed seed for random number generator, to make results reproducible
 #' @param ntree how many trees to build if `missForest` or `randomForestSRC`
 #' @param nk how many knots to use in smoothing splines if using `method = 'Hmisc'`
 #' @param ... other arguments to be passed to either `missForest::missForest()`, `Hmisc::aregImpute()`, or `randomForestSRC::impute()` functions
@@ -22,6 +23,7 @@
 impute_missing_values = function(data_df = NULL,
                                  col_nm_vec = NULL,
                                  method = c('randomForestSRC', 'missForest', 'Hmisc'),
+                                 my_seed = 5,
                                  ntree = 1000,
                                  nk = 4,
                                  ...) {
@@ -36,7 +38,7 @@ impute_missing_values = function(data_df = NULL,
 
   # imputed missing data with randomForestSRC package
   if(method == "randomForestSRC") {
-    set.seed(5)
+    set.seed(my_seed)
     imputed_data = data_df %>%
       select(any_of(col_nm_vec)) %>%
       as.data.frame() %>%
@@ -53,7 +55,7 @@ impute_missing_values = function(data_df = NULL,
 
   # imputed missing data with missForest package
   if(method == 'missForest') {
-    set.seed(5)
+    set.seed(my_seed)
     imputed_data = data_df %>%
       select(any_of(col_nm_vec)) %>%
       as.data.frame() %>%
@@ -73,7 +75,7 @@ impute_missing_values = function(data_df = NULL,
 
   # imputed missing data with Hmisc package
   if(method == 'Hmisc') {
-    set.seed(5)
+    set.seed(my_seed)
     areg_data = data_df %>%
       select(any_of(col_nm_vec)) %>%
       as.data.frame()

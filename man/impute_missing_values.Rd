@@ -8,6 +8,7 @@ impute_missing_values(
   data_df = NULL,
   col_nm_vec = NULL,
   method = c("randomForestSRC", "missForest", "Hmisc"),
+  my_seed = 5,
   ntree = 1000,
   nk = 4,
   ...
@@ -19,6 +20,8 @@ impute_missing_values(
 \item{col_nm_vec}{character vector of column names that should be either imputed and/or used to impute other columns}
 
 \item{method}{which method to use, either by creating random forests using the \code{missForest} package, or by predictive mean matching using the \code{aregImpute()} function in the \code{Hmisc} package}
+
+\item{my_seed}{seed for random number generator, to make results reproducible}
 
 \item{ntree}{how many trees to build if \code{missForest} or \code{randomForestSRC}}
 
