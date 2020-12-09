@@ -187,7 +187,7 @@ for (yw in yr_wtsd) {
 } # end QC loop
 
 # At this point, someone very familiar with the OTG data (preferably a field technician or field coordinator,
-# secondarily a project leader) should likely intervene, review the remaining QC errors the we just wrote
+# secondarily a project leader) should likely intervene, review the remaining QC errors that we just wrote
 # to file, and attempt to resolve those, and ideally, make notes for those QC errors that can't be resolved.
 # In addition, for the QC errors that are resolved, it is useful to provide notes on how they are resolved. Notes
 # on how errors were or were not resolved can be useful towards improving data validation (e.g., during field
@@ -201,7 +201,7 @@ for (yw in yr_wtsd) {
 
 # The next suggested step is to copy/paste all of the Survey123 data to a new directory for each year x watershed
 # combination; we used "/2_qcd_csvs/". And then, only data in the "/2_qcd_csvs/" directories should be modified while
-# reviewing the QC results. Doing so preserved the integrity of the raw data in "/1_formatted_csvs/", which is good
+# reviewing the QC results. Doing so preserves the integrity of the raw data in "/1_formatted_csvs/", which is good
 # general practice. However, it is fine to add notes in the "qc_results_YYYYMMDD.csv" about how errors were or were
 # not resolved (those qc results can always be replicated in the future using this script).
 
