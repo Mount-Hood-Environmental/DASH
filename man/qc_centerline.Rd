@@ -6,9 +6,8 @@
 \usage{
 qc_centerline(
   cl_sf = NULL,
-  data_id = "file_row_id",
-  cols_to_check_nas = c("CU_Number", "Site_ID", "StreamName", "CU_Type", "Seg_Number",
-    "Reach_Num")
+  data_id = "object_id",
+  cols_to_check_nas = c("CU_Number", "Site_ID", "StreamName", "CU_Type", "Seg_Number")
 )
 }
 \arguments{

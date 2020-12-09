@@ -15,7 +15,7 @@
 #' @return a tibble with QC results
 
 qc_centerline <- function(cl_sf = NULL,
-                          data_id = "file_row_id",
+                          data_id = "object_id",
                           cols_to_check_nas = c("CU_Number",
                                                 "Site_ID",
                                                 "StreamName",
@@ -67,6 +67,29 @@ qc_centerline <- function(cl_sf = NULL,
   if( nrow(cu_0) > 0 ) {
     cat( nrow(cu_0), "channel units labeled 0. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, cu_0)
+  }
+
+  #####
+  # CHECK 3: Are there any duplicated channel units?
+  cu_dup = cl_sf %>%
+    sf::st_drop_geometry() %>%
+    dplyr::as_tibble() %>%
+    dplyr::filter(CU_Number != 0) %>%
+    dplyr::group_by(Site_ID, Seg_Number, CU_Number) %>%
+    dplyr::summarise(n_records = n(),
+              .groups = "drop") %>%
+    dplyr::filter(n_records > 1) %>%
+    dplyr::left_join(cl_sf %>%
+                sf::st_drop_geometry() %>%
+                dplyr::as_tibble(),
+                by = c("Site_ID", "Seg_Number", 'CU_Number')) %>%
+    dplyr::mutate(error_message = paste0(Site_ID, ", segment ", Seg_Number, ", CU ", CU_Number, " has more than one record.")) %>%
+    dplyr::select(path_nm, any_of(data_id),
+                  error_message)
+
+  if( nrow(cu_dup) > 0 ) {
+    cat( nrow(cu_dup) / 2, "channel units seem to be duplicated. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, cu_dup)
   }
 
   # return qc results
