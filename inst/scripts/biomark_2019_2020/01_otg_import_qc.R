@@ -186,11 +186,30 @@ for (yw in yr_wtsd) {
 
 } # end QC loop
 
-# At this point, someone very familiar with the OTG data (field technician, field coordinator)
-# should likely intervene, review the remaining QC errors that we just wrote out, attempt to resolve those,
-# and ideally make notes for those that can't be resolved, and for those than can, identify how
-# the issue was resolved. Changes to any data should be made to a copy of all of the data i.e.,
-# do not modify the raw data!
+# At this point, someone very familiar with the OTG data (preferably a field technician or field coordinator,
+# secondarily a project leader) should likely intervene, review the remaining QC errors the we just wrote
+# to file, and attempt to resolve those, and ideally, make notes for those QC errors that can't be resolved.
+# In addition, for the QC errors that are resolved, it is useful to provide notes on how they are resolved. Notes
+# on how errors were or were not resolved can be useful towards improving data validation (e.g., during field
+# collections) or quality control steps in the future.
+
+# Above, we imported data from the "/1_formatted_csvs/" directory for 3 year x watershed combinations ("2019/lemhi",
+# "2019/nf_salmon", and "2020/secesh"), and in the case of "2019/lemhi" resolved some common issues in ocular
+# estimates using the rescale_values() function and fish cover estimates using fix_fish_cover(), and then wrote out all
+# of the remaining identified errors to a file in each respective directory titled "qc_results_YYYYMMDD.csv" which
+# is the file that should be reviewed.
+
+# The next suggested step is to copy/paste all of the Survey123 data to a new directory for each year x watershed
+# combination; we used "/2_qcd_csvs/". And then, only data in the "/2_qcd_csvs/" directories should be modified while
+# reviewing the QC results. Doing so preserved the integrity of the raw data in "/1_formatted_csvs/", which is good
+# general practice. However, it is fine to add notes in the "qc_results_YYYYMMDD.csv" about how errors were or were
+# not resolved (those qc results can always be replicated in the future using this script).
+
+# Note: the data in the "/1_formatted_csvs/" directory and "/0_raw_csvs/" directories only differ in that file
+# formatting issues may have been identified during data import (i.e., no data has changed).
+
+# Now that errors have been resolved (which as of 20201209 they all have not, still need review), we can move on and
+# re-import the "/2_qcd_csvs/" data in which some errors have been resolved.
 
 #-----------------------------
 # import QC'd OTG data; loop over year_watershed combinations
