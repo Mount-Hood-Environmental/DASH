@@ -122,12 +122,33 @@ for(i in 1:length(otg_list)) {
 # clean up
 rm(otg_list)
 
+#-------------------------
+# roll up all the OTG data to CU scale
+#-------------------------
+cu_main = rollup_cu(otg_all$cu,
+                    otg_all$survey)
+
+cu_wood = rollup_cu_wood(otg_all$wood)
+cu_jam = rollup_cu_jam(otg_all$jam)
+cu_undct = rollup_cu_undercut(otg_all$undercut)
+cu_disch = rollup_cu_discharge(otg_all$discharge,
+                               otg_all$discharge_measurements)
+
+cu_df = cu_main %>%
+  left_join(cu_wood,
+            by = c("global_id" = "parent_global_id")) %>%
+  left_join(cu_jam,
+            by = c("global_id" = "parent_global_id")) %>%
+  left_join(cu_undct,
+            by = c("global_id" = "parent_global_id")) %>%
+  left_join(cu_disch %>%
+              select(-parent_global_id))
+
 # clean up some site names to match centerline file
-otg_all$survey = otg_all$survey %>%
+cu_df = cu_df %>%
   rename(Site_ID = site_name) %>%
   mutate(Site_ID = recode(Site_ID,
                           "Lowerlemhi3_2019" = "LowerLemhi3_2019"))
-
 #-------------------------
 # join the OTG data
 #-------------------------
@@ -137,65 +158,33 @@ cl_sf %>%
   tabyl(Site_ID)
 
 # these site names are shared between the centerlines and the OTG data
-unique(cl_sf$Site_ID)[unique(cl_sf$Site_ID) %in% unique(otg_all$survey$Site_ID)]
+unique(cl_sf$Site_ID)[unique(cl_sf$Site_ID) %in% unique(cu_df$Site_ID)]
 # these sites are in the centerline data but not the OTG
-unique(cl_sf$Site_ID)[!unique(cl_sf$Site_ID) %in% unique(otg_all$survey$Site_ID)]
+unique(cl_sf$Site_ID)[!unique(cl_sf$Site_ID) %in% unique(cu_df$Site_ID)]
 # these sites are in the OTG data but not the centerlines
-unique(otg_all$survey$Site_ID)[!unique(otg_all$survey$Site_ID) %in% unique(cl_sf$Site_ID)]
+unique(cu_df$Site_ID)[!unique(cu_df$Site_ID) %in% unique(cl_sf$Site_ID)]
 
-cl_sf %>%
-  inner_join(otg_all$cu %>%
-               select(-c(creation_date:editor),
-                      -path_nm,
-                      -object_id) %>%
+
+
+cu_spatial = cl_sf %>%
+  select(-path_nm,
+         -file_row_id) %>%
+  inner_join(cu_df %>%
+               select(-matches('global_id'),
+                      -path_nm) %>%
                rename(CU_Number = channel_unit_number,
                       Seg_Number = channel_segment_number) %>%
-               left_join(otg_all$survey %>%
-                           select(parent_global_id = global_id,
-                                  Site_ID,
-                                  survey_date))) %>%
-  # filter(Site_ID == "Barton_2019",
-  #        CU_Number %in% 15:17)
-  as_tibble() %>%
-  tabyl(CU_Type, channel_unit_type)
+               mutate(across(c(CU_Number,
+                               Seg_Number),
+                             as.numeric)))
 
-cl_sf %>%
-  inner_join(otg_all$cu %>%
-               select(-c(creation_date:editor),
-                      -path_nm,
-                      -object_id) %>%
-               rename(CU_Number = channel_unit_number,
-                      Seg_Number = channel_segment_number) %>%
-               left_join(otg_all$survey %>%
-                           select(global_id,
-                                  Site_ID,
-                                  survey_date),
-                         by = c("parent_global_id" = "global_id"))) %>%
-  # filter(Site_ID == "BigTimber1_2019") %>%
+cu_spatial %>%
+  filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
+  arrange(cu_id)
+
+cu_spatial %>%
   filter(grepl('Hayden', Site_ID)) %>%
   ggplot() +
   geom_sf(aes(color = CU_Number)) +
-  scale_color_viridis_c() +
-  theme_bw()
-
-
-cu_wood = rollup_cu_wood(otg_all$wood)
-
-cl_sf %>%
-  inner_join(cu_wood %>%
-               left_join(otg_all$cu %>%
-                           select(matches("global_id"),
-                                  channel_unit_type,
-                                  CU_Number = channel_unit_number,
-                                  Seg_Number = channel_segment_number) %>%
-                           left_join(otg_all$survey %>%
-                                       select(global_id,
-                                              Site_ID,
-                                              survey_date),
-                                     by = c("parent_global_id" = "global_id")),
-                         by = c("parent_global_id" = "global_id"))) %>%
-  filter(grepl('Hayden', Site_ID)) %>%
-  ggplot() +
-  geom_sf(aes(color = lwd_n_pieces)) +
   scale_color_viridis_c() +
   theme_bw()
