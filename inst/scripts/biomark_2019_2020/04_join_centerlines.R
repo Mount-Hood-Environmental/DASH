@@ -167,9 +167,10 @@ cl_sf %>%
                rename(CU_Number = channel_unit_number,
                       Seg_Number = channel_segment_number) %>%
                left_join(otg_all$survey %>%
-                           select(parent_global_id = global_id,
+                           select(global_id,
                                   Site_ID,
-                                  survey_date))) %>%
+                                  survey_date),
+                         by = c("parent_global_id" = "global_id"))) %>%
   # filter(Site_ID == "BigTimber1_2019") %>%
   filter(grepl('Hayden', Site_ID)) %>%
   ggplot() +
@@ -178,17 +179,23 @@ cl_sf %>%
   theme_bw()
 
 
+cu_wood = rollup_cu_wood(otg_all$wood)
 
-otg_all$wood %>%
-  left_join(otg_all$cu %>%
-              select(matches("global_id"),
-                     channel_unit_type,
-                     channel_unit_number,
-                     channel_segment_number) %>%
-              left_join(otg_all$survey %>%
-                          select(global_id,
-                                 site_name,
-                                 survey_date),
-                        by = c("parent_global_id" = "global_id")),
-            by = c("parent_global_id" = "global_id")) %>%
-  janitor::tabyl(site_name)
+cl_sf %>%
+  inner_join(cu_wood %>%
+               left_join(otg_all$cu %>%
+                           select(matches("global_id"),
+                                  channel_unit_type,
+                                  CU_Number = channel_unit_number,
+                                  Seg_Number = channel_segment_number) %>%
+                           left_join(otg_all$survey %>%
+                                       select(global_id,
+                                              Site_ID,
+                                              survey_date),
+                                     by = c("parent_global_id" = "global_id")),
+                         by = c("parent_global_id" = "global_id"))) %>%
+  filter(grepl('Hayden', Site_ID)) %>%
+  ggplot() +
+  geom_sf(aes(color = lwd_n_pieces)) +
+  scale_color_viridis_c() +
+  theme_bw()
