@@ -4,7 +4,7 @@
 # DASH data collected using Survey123.
 #
 # Created: July 15, 2020
-#   Last Modified: November 5, 2020
+#   Last Modified: December 9, 2020
 #
 # Notes:
 
@@ -308,8 +308,12 @@ for (yw in yr_wtsd) {
 
 } # end qc final data loop
 
+# Here, we write out the remaining QC results to both files "qc_final.rds" and "qc_final_YYYYMMDD.csv"
+# in the "/2_qcd_csvs/" directory for each year x watershed combo. These are those remaining QC errors
+# that just can't be resolved.
+
 #-----------------------------
-# Load, join, clean, and rollup data at the channel unit scale
+# Load, join, clean, and rollup QC'd data to the channel unit scale
 #-----------------------------
 otg_path = paste0(nas_prefix,
                   "/data/habitat/DASH/OTG/")
@@ -328,6 +332,7 @@ otg_list = as.list(otg_qcd_files) %>%
       map(clean_names)
   })
 
+# combine elements of otg_list into otg
 for(i in 1:length(otg_list)) {
   if(i == 1) {
     otg = otg_list[[1]]
