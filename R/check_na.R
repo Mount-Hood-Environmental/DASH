@@ -16,8 +16,8 @@
 #' @return `NULL` or a tibble from `qc_tbl()`
 
 check_na = function(qc_df = NULL,
-                    data_id = "GlobalID",
-                    cols_to_check_nas = NULL) {
+                    cols_to_check_nas = NULL,
+                    data_id = "GlobalID") {
 
   cat("Checking for unexpected NAs in cols_to_check_nas: ")
   cat(cols_to_check_nas, sep = ", "); cat("\n")
