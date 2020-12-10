@@ -17,9 +17,9 @@ qc_wrapper(
 )
 }
 \arguments{
-\item{survey_df}{data.frame containing the survey data}
+\item{survey_df}{data.frame containing the survey data (required to run \code{qc_wrapper()})}
 
-\item{cu_df}{data.frame containing the channel uni data}
+\item{cu_df}{data.frame containing the channel unit data (required to run \code{qc_wrapper()})}
 
 \item{wood_df}{data.frame containing the wood data}
 
