@@ -5,7 +5,9 @@ author:
   email: mike.ackerman@merck.com
 - name: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{otg-import-qc}
   %\VignetteEngine{knitr::rmarkdown}
@@ -276,7 +278,15 @@ Nice work! You just completed an initial QC on your OTG data and exported the re
 
 Of course, a user could examine the initial QC results `init_qc` by opening and reviewing the .csv file written above. However, you might also find it useful to explore the QC results a little further using R. The following section is completely optional, but provides some examples and guidance about how `init_qc` could be examined in R.
 
-**At this point in the workflow, it is probably best that someone very familiar with the OTG data (e.g., field technician, field coordinator) should intervene, review the QC results, and attempt to resolve them. Ideally, notes should also be taken about those QC errors that can't be resolved, and for those that can be resolved, identify how the issue was resolved. Similar to above, it is best practice to not modify the "raw" data (i.e., don't make changes to the data in the "/1_formatted_csvs/" directory). Instead, it is a good idea to make another copy of the data (I use "/2_qcd_csvs/") and resolve any identified issues in that data. In this case, someone could then fairly easily identify any changes that were made to the data during the QC process.** In addition, by documenting changes that have been made to the data, we can identify common errors and perhaps add data validation during the data collection process to prevent those errors in the future.
+## QC Review
+
+***At this point in the workflow, someone very familiar with the data (preferably a field technician or field coordinator, secondarily a project leader) should likely intervene, review the remaining QC errors that were just written out to file, attempt to resolve those where possible, and ideally, make notes for those QC errors that can't be resolved. In addition, for the QC errors that are resolved, it is useful to provide notes on how they are resolved.*** Notes on how QC errors were resolved (or not) can be useful toward improving data validation (e.g., during field collection) ro quality control steps in the future.
+
+Similar to above, it is generally best practice to not modify the "raw" data i.e., in our case, do not make changes to the data in the "/1_formatted_csvs/" directory. Instead, it is a good idea to make another copy of your data (I use "/2_qcd_csvs/") and attempt to resolve identified issues in that data. Doing so preserves the integrity of the raw data in "/1_formatted_csvs/". In this case, someone could then fairly easily identify any changes that were made to the data during the QC process. In addition, by documenting changes that have been made to the data, we can identify common errors and perhaps add data validation during the data collection process to prevent those errors in the future.
+
+*Note: We have also saved a version of the data in a "/0_raw_csvs/" directory, which is actually the "rawest" form of the data from Survey123. The data in the "/0_raw_csvs/" and "/1_formatted_csvs/" directories only differ in that file formatting issues may have been identified during the data import process and resolved in the "/1_formatted_csvs/" version; however, no data has actually changed.
+
+We can perform and initial review of our QC results using the following:
 
 ```{r examine-qc}
 # use janitor::tabyl() to examine the "source" of the errors
@@ -289,6 +299,10 @@ init_qc %>%
 
 ```
 
+Here is simply an example of how one could examine a particular type of error. In this case, let's look at the "CU" data and look at those errors where `error_message` contains "Column Maximum Depth". We also join the source data (`otg_raw$cu`) back to the error message to look a little closer. The `dplyr` function `select()` can be used to choose the columns to include in your results.
+
+The following approach can be used to examine many (if not all) of the types of errors identified during the QC process. Alternatively, one could simply examine the QC results file we wrote above.
+
 ```{r max-depth-errors}
 # examine channel unit errors where the error_message contains "Column Maximum Depth"
 init_qc %>%
@@ -300,6 +314,8 @@ init_qc %>%
 ```
 
 During our initial review of DASH data, we commonly identified the following two "types" of errors: 1) the sum of ocular substrate estimates don't sum to 100 due to a math error in the field and/or 2) the sum of fish cover estimates do not fall within an expected range (note: the sum of fish cover estimates **can** sum to greater than 100). We've included two functions within the package `rescale_values()` and `fix_fish_cover()` that can be used to resolve a large number of the identified errors, respectively. We cover those functions in the following [section][Re-import QC'd Data and Resolve Common Errors].
+
+Examine the ocular substrate errors:
 
 ```{r ocular-ests-errors}
 # ocular estimate errors where sum_ocular does not equal 100
@@ -314,6 +330,8 @@ init_qc %>%
   
 ```
 
+Examine the fish cover errors:
+
 ```{r fish-cover-errors}
 # the sum of fish cover values fall outside the expected range
 init_qc %>%
@@ -325,6 +343,8 @@ init_qc %>%
   mutate(sum_cover = rowSums(.[4:8], na.rm = T))
   
 ```
+
+Here's one last example for exploring a somewhat common error. In this case, let's look at all errors in the undercut data `filter(source == "Undercut")`, join the source data `left_join(otg_raw$undercut)`, and then reduce the number of columns included in the results ``select(path_nm:error_message, `Undercut Number`:`Width 75% (m)`)``. Note in this case we need to place backticks around the variable (column) names "Undercut Number" and "Width 75% (m)" because they contain invalid or special character (e.g., <space>, %, ()).
 
 ```{r undercut-errors}
 # undercut errors; note many of these are flagged bc of a strange "Location" value "Island" which perhaps should be an acceptable value
@@ -401,7 +421,7 @@ save(otg,
 
 ```
 
-# "Final" QC
+# Final QC
 
 ```{r fake-load-qcd-otg, eval = F}
 load(paste0(nas_prefix,
@@ -421,20 +441,98 @@ qc_final = qc_wrapper(survey_df = otg$survey,
 ```
 
 ```{r save-final-qc, eval = F}
+# set path to write to
+qc_final_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2_qcd_csvs/")
+
 # write QC results to .csv
 write_csv(qc_final,
-          paste0(nas_prefix, "/data/habitat/DASH/OTG/2_qcd_csvs/final_qc.csv"))
+          paste0(qc_final_path, "qc_final.csv"))
 
-# append today's date
-write_csv(init_qc,
-          paste0(nas_prefix,
-                 "/data/habitat/DASH/OTG/2_qcd_csvs/final_qc_",
+# append today's date, if desired
+write_csv(qc_final,
+          paste0(qc_final_path, 
+                 "qc_final_",
                  format(Sys.Date(), format = "%Y%m%d"),
                  ".csv"))
+
+# can also be useful to save as a .rds, more on this later...
+save(qc_final, file = paste0(qc_final_path, "qc_final.rds"))
 
 ```
 
 # Data Wrangling and Export
+
+```{r clean-cu, eval = F}
+# clean channel unit data and join site info to it
+cu_cu = rollup_cu(cu_df = otg$cu,
+                  survey_df = otg$survey)
+
+```
+
+```{r rollup, eval = F}
+# summarize wood data at cu scale
+cu_wood = rollup_cu_wood(wood_df = otg$wood)
+
+# summarize jam data at cu scale
+cu_jam = rollup_cu_jam(jam_df = otg_jam)
+
+# summarize undercut data at cu scale
+cu_undercut = rollup_cu_undercut(undercut_df = otg$undercut)
+
+```
+
+```{r rollup-discharge, eval = F}
+# rolling up discharge is a little trickier
+cu_discharge = rollup_cu_discharge(discharge_df = otg$discharge,
+                                   discharge_meas_df = otg$discharge_measurements) %>%
+  # Add the below to the rollup_cu_discharge() function?
+  left_join(otg$survey %>%
+              select(global_id,
+                     site_name),
+            by = c("parent_global_id" = "global_id")) %>%
+  mutate(cu_id = paste(site_name,
+                       "01",
+                       str_pad(discharge_location_bos_tos_cu_number, 3, pad = "0"),
+                       sep = "_")) %>%
+  select(site_name,
+         cu_id,
+         discharge_cms,
+         discharge_location_bos_tos_cu_number,
+         everything()) %>%
+  left_join(cu_cu %>%
+              select(parent_global_id,
+                     cu_id,
+                     channel_unit_number) %>%
+              group_by(parent_global_id) %>%
+              summarise(min_cu = min(channel_unit_number),
+                        max_cu = max(channel_unit_number))) %>%
+  select(cu_id,
+         discharge_cms)
+
+```
+
+```{r join-cu-data, eval = F}
+# join everything at the channel unit scale
+dash_otg_cu = list(cu_cu %>%
+                     rename(site_id = global_id),
+                   cu_wood,
+                   cu_jam,
+                   cu_undercut) %>%
+  purrr::reduce(left_join,
+                by = "parent_global_id") %>%
+  left_join(cu_discharge)
+
+```
+
+```{r export-otg, eval = F}
+# write the final product
+save(dash_otg_cu,
+     file = paste0(nas_prefix, "data/habitat/DASH/OTG/prepped/dash_otg_cu.rda"))
+
+write_csv(dash_otg_cu,
+          path = paste0(nas_prefix, "data/habitat/DASH/OTG/prepped/dash_otg_cu.csv"))
+
+```
 
 #### END IMPORT AND QC VIGNETTE
 
