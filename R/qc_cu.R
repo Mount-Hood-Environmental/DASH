@@ -14,7 +14,6 @@
 #' @param md_max maximum acceptable value for max channel unit depth
 #' @param cover_columns character vector of column names for fish cover estimates
 #' @param cov_max maximum value that cover estimates can sum to
-#' @param slow_cus character vector of slow channel unit types that should have occular substrate estimates
 #' @param ocular_columns character vector of column names for ocular substrate estimates
 #' @param peb_min minimum acceptable size for pebble size (mm)
 #' @param peb_max maximum acceptable size for pebble size (mm)
@@ -40,7 +39,6 @@ qc_cu = function(qc_df = NULL,
                                    "Artificial Cover",
                                    "Total No Cover"),
                  cov_max = 130,
-                 slow_cus = c("Pool", "Run", "OCA"),
                  ocular_columns = c("Sand/Fines 2mm",
                                     "Gravel 2-64mm",
                                     "Cobble 64-256mm",
@@ -174,12 +172,13 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 8: Do all slow water channel unit types have ocular estimates and do they sum to 100?
-  cat("Do ocular estimates for all slow water channel unit types exist and sum to 100? \n")
+  # CHECK 8: Do all channel units have ocular estimates and do they sum to 100?
+  cat("Do ocular estimates for all channel units exist and sum to 100? \n")
 
+  #slow_cus = c("Pool", "Run", "OCA")
   oc_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, `Channel Unit Type`, all_of(ocular_columns)) %>%
-    dplyr::filter(`Channel Unit Type` %in% slow_cus) %>%
+    #dplyr::filter(`Channel Unit Type` %in% slow_cus) %>%
     dplyr::select(-`Channel Unit Type`) %>%
     replace(is.na(.), 0) %>%
     dplyr::mutate(ocular_sum = round(rowSums(.[3:(2+length(ocular_columns))]))) %>%
