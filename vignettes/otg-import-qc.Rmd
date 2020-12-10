@@ -452,6 +452,78 @@ save(qc_final, file = paste0(qc_final_path, "qc_final.rds"))
 
 # Data Wrangling and Export
 
+```{r clean-cu, eval = F}
+# clean channel unit data and join site info to it
+cu_cu = rollup_cu(cu_df = otg$cu,
+                  survey_df = otg$survey)
+
+```
+
+```{r rollup, eval = F}
+# summarize wood data at cu scale
+cu_wood = rollup_cu_wood(wood_df = otg$wood)
+
+# summarize jam data at cu scale
+cu_jam = rollup_cu_jam(jam_df = otg_jam)
+
+# summarize undercut data at cu scale
+cu_undercut = rollup_cu_undercut(undercut_df = otg$undercut)
+
+```
+
+```{r rollup-discharge, eval = F}
+# rolling up discharge is a little trickier
+cu_discharge = rollup_cu_discharge(discharge_df = otg$discharge,
+                                   discharge_meas_df = otg$discharge_measurements) %>%
+  # Add the below to the rollup_cu_discharge() function?
+  left_join(otg$survey %>%
+              select(global_id,
+                     site_name),
+            by = c("parent_global_id" = "global_id")) %>%
+  mutate(cu_id = paste(site_name,
+                       "01",
+                       str_pad(discharge_location_bos_tos_cu_number, 3, pad = "0"),
+                       sep = "_")) %>%
+  select(site_name,
+         cu_id,
+         discharge_cms,
+         discharge_location_bos_tos_cu_number,
+         everything()) %>%
+  left_join(cu_cu %>%
+              select(parent_global_id,
+                     cu_id,
+                     channel_unit_number) %>%
+              group_by(parent_global_id) %>%
+              summarise(min_cu = min(channel_unit_number),
+                        max_cu = max(channel_unit_number))) %>%
+  select(cu_id,
+         discharge_cms)
+
+```
+
+```{r join-cu-data, eval = F}
+# join everything at the channel unit scale
+dash_otg_cu = list(cu_cu %>%
+                     rename(site_id = global_id),
+                   cu_wood,
+                   cu_jam,
+                   cu_undercut) %>%
+  purrr::reduce(left_join,
+                by = "parent_global_id") %>%
+  left_join(cu_discharge)
+
+```
+
+```{r export-otg, eval = F}
+# write the final product
+save(dash_otg_cu,
+     file = paste0(nas_prefix, "data/habitat/DASH/OTG/prepped/dash_otg_cu.rda"))
+
+write_csv(dash_otg_cu,
+          path = paste0(nas_prefix, "data/habitat/DASH/OTG/prepped/dash_otg_cu.csv"))
+
+```
+
 #### END IMPORT AND QC VIGNETTE
 
 *Holy Guacamole! That deserves a beer!*
