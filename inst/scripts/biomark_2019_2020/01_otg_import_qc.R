@@ -248,7 +248,7 @@ for (yw in yr_wtsd) {
 
   save(otg_qcd,
        file = paste0(nas_prefix,
-                     "data/habitat/DASH/OTG/",
+                     "/data/habitat/DASH/OTG/",
                      yw,
                      "/prepped/otg_qcd.rda"))
 
@@ -278,7 +278,7 @@ for (yw in yr_wtsd) {
                         disch_meas_df = otg_qcd$discharge_measurements)
 
   qc_final_path = paste0(nas_prefix,
-                         "data/habitat/DASH/OTG/",
+                         "/data/habitat/DASH/OTG/",
                          yw,
                          "/2_qcd_csvs/qc_final")
   save(qc_final, file = paste0(qc_final_path, ".rds"))
