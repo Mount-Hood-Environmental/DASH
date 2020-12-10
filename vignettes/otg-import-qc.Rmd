@@ -299,6 +299,10 @@ init_qc %>%
 
 ```
 
+Here is simply an example of how one could examine a particular type of error. In this case, let's look at the "CU" data and look at those errors where `error_message` contains "Column Maximum Depth". We also join the source data (`otg_raw$cu`) back to the error message to look a little closer. The `dplyr` function `select()` can be used to choose the columns to include in your results.
+
+The following approach can be used to examine many (if not all) of the types of errors identified during the QC process. Alternatively, one could simply examine the QC results file we wrote above.
+
 ```{r max-depth-errors}
 # examine channel unit errors where the error_message contains "Column Maximum Depth"
 init_qc %>%
@@ -310,6 +314,8 @@ init_qc %>%
 ```
 
 During our initial review of DASH data, we commonly identified the following two "types" of errors: 1) the sum of ocular substrate estimates don't sum to 100 due to a math error in the field and/or 2) the sum of fish cover estimates do not fall within an expected range (note: the sum of fish cover estimates **can** sum to greater than 100). We've included two functions within the package `rescale_values()` and `fix_fish_cover()` that can be used to resolve a large number of the identified errors, respectively. We cover those functions in the following [section][Re-import QC'd Data and Resolve Common Errors].
+
+Examine the ocular substrate errors:
 
 ```{r ocular-ests-errors}
 # ocular estimate errors where sum_ocular does not equal 100
@@ -324,6 +330,8 @@ init_qc %>%
   
 ```
 
+Examine the fish cover errors:
+
 ```{r fish-cover-errors}
 # the sum of fish cover values fall outside the expected range
 init_qc %>%
@@ -335,6 +343,8 @@ init_qc %>%
   mutate(sum_cover = rowSums(.[4:8], na.rm = T))
   
 ```
+
+Here's one last example for exploring a somewhat common error. In this case, let's look at all errors in the undercut data `filter(source == "Undercut")`, join the source data `left_join(otg_raw$undercut)`, and then reduce the number of columns included in the results ``select(path_nm:error_message, `Undercut Number`:`Width 75% (m)`)``. Note in this case we need to place backticks around the variable (column) names "Undercut Number" and "Width 75% (m)" because they contain invalid or special character (e.g., <space>, %, ()).
 
 ```{r undercut-errors}
 # undercut errors; note many of these are flagged bc of a strange "Location" value "Island" which perhaps should be an acceptable value
