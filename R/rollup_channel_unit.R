@@ -27,7 +27,6 @@ rollup_channel_unit = function(cu_df = NULL,
                                                     "width_m",
                                                     "height_m",
                                                     "estimated_number_of_pieces"),
-
                                undercut_impute_cols = c("length_m",
                                                         "width_25_percent_m",
                                                         "width_50_percent_m",
