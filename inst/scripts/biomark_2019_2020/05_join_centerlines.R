@@ -5,7 +5,7 @@
 # unit data spatial
 #
 # Created: December 8, 2020
-# Last Modified:
+# Last Modified: December 9, 2020
 #
 # Notes:
 
@@ -60,89 +60,30 @@ for(i in 1:length(cl_list)) {
   }
 }
 cl_sf = cl_sf %>%
-  mutate(file_row_id = 1:n()) %>%
-  select(path_nm,
-         file_row_id,
+  mutate(object_id = 1:n()) %>%
+  select(object_id,
+         path_nm,
          everything())
 
 rm(cl_list)
 
+# save raw compiled centerlines
+st_write(cl_sf,
+         dsn = paste0(cl_path, "/compiled/centerlines_raw.gpkg"))
+
+#-------------------------------------
 # do a little QC
+#-------------------------------------
 cl_qc = qc_centerline(cl_sf)
 
 # save the file as a csv
-# add a local object ID to depict the row number within each file
 cl_qc %>%
-  inner_join(cl_sf %>%
-               group_by(path_nm) %>%
-               mutate(object_id = 1:n()) %>%
-               as_tibble() %>%
-               select(path_nm, file_row_id, object_id)) %>%
-  select(path_nm, file_row_id, object_id, everything()) %>%
-  arrange(path_nm, file_row_id, error_message) %>%
   write_csv(paste0(cl_path,
-                 "/QC_centerlines_",
+                 "/compiled/QC_centerlines_",
                  format(Sys.Date(), format = "%Y%m%d"),
                  ".csv"))
 
 
-cl_qc %>%
-  select(file_row_id) %>%
-  distinct() %>%
-  left_join(cl_sf)
-
-#-------------------------
-# load QC'd OTG data
-#-------------------------
-otg_path = paste0(nas_prefix,
-                  "/data/habitat/DASH/OTG/2019")
-
-# list of otg_raw files in otg_path
-otg_list = list.files(path = otg_path,
-                           pattern = "^otg_qcd.rda$",
-                           recursive = T) %>%
-  paste(otg_path, ., sep = "/") %>%
-  as.list() %>%
-  map(.f = function(x) {
-    load(x) %>%
-      get() %>%
-      map(clean_names)
-  })
-
-for(i in 1:length(otg_list)) {
-  if(i == 1) {
-    otg_all = otg_list[[1]]
-  } else {
-    otg_all = suppressMessages(purrr::map2(otg_all,
-                                               otg_list[[i]],
-                                               dplyr::full_join))
-  }
-}
-
-# clean up
-rm(otg_list)
-
-#-------------------------
-# roll up all the OTG data to CU scale
-#-------------------------
-cu_main = rollup_cu(otg_all$cu,
-                    otg_all$survey)
-
-cu_wood = rollup_cu_wood(otg_all$wood)
-cu_jam = rollup_cu_jam(otg_all$jam)
-cu_undct = rollup_cu_undercut(otg_all$undercut)
-cu_disch = rollup_cu_discharge(otg_all$discharge,
-                               otg_all$discharge_measurements)
-
-cu_df = cu_main %>%
-  left_join(cu_wood,
-            by = c("global_id" = "parent_global_id")) %>%
-  left_join(cu_jam,
-            by = c("global_id" = "parent_global_id")) %>%
-  left_join(cu_undct,
-            by = c("global_id" = "parent_global_id")) %>%
-  left_join(cu_disch %>%
-              select(-parent_global_id))
 
 # clean up some site names to match centerline file
 cu_df = cu_df %>%
@@ -152,11 +93,6 @@ cu_df = cu_df %>%
 #-------------------------
 # join the OTG data
 #-------------------------
-cl_sf %>%
-  rename(cl_path = path_nm) %>%
-  anti_join(otg_all$survey) %>%
-  tabyl(Site_ID)
-
 # these site names are shared between the centerlines and the OTG data
 unique(cl_sf$Site_ID)[unique(cl_sf$Site_ID) %in% unique(cu_df$Site_ID)]
 # these sites are in the centerline data but not the OTG
@@ -164,6 +100,18 @@ unique(cl_sf$Site_ID)[!unique(cl_sf$Site_ID) %in% unique(cu_df$Site_ID)]
 # these sites are in the OTG data but not the centerlines
 unique(cu_df$Site_ID)[!unique(cu_df$Site_ID) %in% unique(cl_sf$Site_ID)]
 
+cl_sf %>%
+  rename(cl_path = path_nm) %>%
+  st_drop_geometry() %>%
+  anti_join(cu_df) %>%
+  tabyl(Site_ID)
+
+cu_df %>%
+  anti_join(cl_sf %>%
+  # inner_join(cl_sf %>%
+              rename(cl_path = path_nm) %>%
+              st_drop_geometry()) %>%
+  tabyl(Site_ID)
 
 
 cu_spatial = cl_sf %>%
@@ -180,7 +128,31 @@ cu_spatial = cl_sf %>%
 
 cu_spatial %>%
   filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
-  arrange(cu_id)
+  arrange(cu_id) %>%
+  select(Site_ID,
+         Seg_Number,
+         CU_Number) %>%
+  st_drop_geometry() %>%
+  distinct() %>%
+  left_join(cl_sf)
+
+cl_sf %>%
+  filter(Site_ID == "LowerLemhi3_2019",
+         CU_Number == 39) %>%
+  select(path_nm)
+
+cl_sf %>%
+  filter(!is.na(Site_ID)) %>%
+  mutate(across(c(Seg_Number, CU_Number),
+                str_pad,
+                width = 3,
+                pad = "0")) %>%
+  tidyr::unite("cu_id",
+               Site_ID, Seg_Number, CU_Number,
+               remove = F) %>%
+  filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
+  arrange(cu_id) %>%
+  select(path_nm, cu_id)
 
 cu_spatial %>%
   filter(grepl('Hayden', Site_ID)) %>%
