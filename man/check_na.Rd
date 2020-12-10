@@ -4,7 +4,7 @@
 \alias{check_na}
 \title{QC - Check For NAs}
 \usage{
-check_na(qc_df = NULL, cols_to_check_nas = NULL)
+check_na(qc_df = NULL, cols_to_check_nas = NULL, data_id = "GlobalID")
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}

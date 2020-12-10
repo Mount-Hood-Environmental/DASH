@@ -5,18 +5,21 @@
 #'
 #' @author Mike Ackerman
 #'
+#' @param id name of identifying column
+#'
 #' @importFrom tibble tibble
 #' @export
 #' @return a blank tibble
 
-qc_tbl = function() {
+qc_tbl = function(data_id = "GlobalID") {
 
   # create a blank tibble
   tmp = tibble::tibble(
     path_nm = character(),
-    GlobalID = character(),
+    id = character(),
     error_message = character()
   )
+  names(tmp)[match("id", names(tmp))] = data_id
 
   return(tmp)
 
