@@ -27,12 +27,15 @@ check_na = function(qc_df = NULL,
   # check for NA in cols_to_check
   na_chk = qc_df %>%
     dplyr::select(any_of(c("path_nm", data_id)), all_of(cols_to_check_nas)) %>%
-    dplyr::filter_at(., vars(cols_to_check_nas), any_vars(is.na(.))) %>%
+    dplyr::filter_at(., vars(any_of(cols_to_check_nas)), any_vars(is.na(.))) %>%
     dplyr::mutate(across(any_of(cols_to_check_nas),
                          as.character)) %>%
-    tidyr::pivot_longer(cols = any_of(cols_to_check_nas),
-                        names_to = "col_name",
-                        values_to = "value") %>%
+    tidyr::gather(key = "col_name",
+                  value = "value",
+                  any_of(cols_to_check_nas)) %>%
+    # tidyr::pivot_longer(cols = any_of(cols_to_check_nas),
+    #                     names_to = "col_name",
+    #                     values_to = "value") %>%
     dplyr::filter(is.na(value)) %>%
     dplyr::mutate(error_message = paste0("Column ", col_name, " is <blank> or NA.")) %>%
     dplyr::select(-col_name, -value)
