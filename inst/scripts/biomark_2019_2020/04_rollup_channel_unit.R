@@ -34,6 +34,7 @@ if(.Platform$OS.type != 'unix') {
 #-------------------------
 otg_path = paste0(nas_prefix,
                   "/data/habitat/DASH/OTG/2019")
+                  # "/data/habitat/DASH/OTG/2020")
 
 # list of otg_raw files in otg_path
 otg_list = list.files(path = otg_path,
