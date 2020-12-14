@@ -16,7 +16,6 @@ qc_cu(
   cover_columns = c("Overhanging Cover", "Aquatic Vegetation", "Woody Debris Cover",
     "Artificial Cover", "Total No Cover"),
   cov_max = 130,
-  slow_cus = c("Pool", "Run", "OCA"),
   ocular_columns = c("Sand/Fines 2mm", "Gravel 2-64mm", "Cobble 64-256mm",
     "Boulder 256mm"),
   peb_min = 0.06,
@@ -41,8 +40,6 @@ qc_cu(
 \item{cover_columns}{character vector of column names for fish cover estimates}
 
 \item{cov_max}{maximum value that cover estimates can sum to}
-
-\item{slow_cus}{character vector of slow channel unit types that should have occular substrate estimates}
 
 \item{ocular_columns}{character vector of column names for ocular substrate estimates}
 
