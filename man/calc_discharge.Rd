@@ -19,6 +19,10 @@ Based on the calculations from CHaMP, described on MonitoringMethods.org, which
 states: Sum station discharge across all  stations by calculating the depth x velocity x station
 width for all stations except first and last.  Station discharge for first and last station
 is 0.5 x station width x depth x velocity. https://www.monitoringresources.org/Document/Method/Details/853
+
+This function assumes the station width represents the distance between the
+previous station and the current one. In most instances, the station widths
+will be equal across the entire transect.
 }
 \author{
 Kevin See and Mike Ackerman
