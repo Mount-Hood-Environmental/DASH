@@ -6,13 +6,22 @@
 \usage{
 qc_disch_meas(
   qc_df = NULL,
-  cols_to_check_nas = c("Station Width", "Station Depth", "Station Velocity")
+  cols_to_check_nas = c("Station Width", "Station Depth", "Station Velocity"),
+  width_range = c(0, 2),
+  depth_range = c(0, 5),
+  vel_range = c(-1, 10)
 )
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
 
 \item{cols_to_check_nas}{columns to check for NAs in}
+
+\item{width_range}{numeric vector of minimum and maximum acceptable values for station width}
+
+\item{depth_range}{numeric vector of minimum and maximum acceptable values for station depth}
+
+\item{vel_range}{numeric vector of minimum and maximum acceptable values for station velocity}
 }
 \value{
 a tibble with QC results
