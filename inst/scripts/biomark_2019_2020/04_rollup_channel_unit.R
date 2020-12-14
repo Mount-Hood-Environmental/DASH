@@ -18,7 +18,7 @@ library(purrr)
 library(stringr)
 library(janitor)
 library(sf)
-#library(DASH)
+library(DASH)
 
 #-------------------------
 # set NAS prefix, depending on operating system
