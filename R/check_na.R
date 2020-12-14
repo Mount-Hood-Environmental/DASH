@@ -27,7 +27,7 @@ check_na = function(qc_df = NULL,
   # check for NA in cols_to_check
   na_chk = qc_df %>%
     dplyr::select(any_of(c("path_nm", data_id)), all_of(cols_to_check_nas)) %>%
-    dplyr::filter_at(., vars(cols_to_check_nas), any_vars(is.na(.))) %>%
+    # dplyr::filter_at(., vars(cols_to_check_nas), any_vars(is.na(.))) %>%
     dplyr::mutate(across(any_of(cols_to_check_nas),
                          as.character)) %>%
     tidyr::pivot_longer(cols = any_of(cols_to_check_nas),
