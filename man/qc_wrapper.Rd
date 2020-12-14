@@ -13,7 +13,8 @@ qc_wrapper(
   discharge_df = NULL,
   disch_meas_df = NULL,
   redirect_output = TRUE,
-  redirect_output_path = "qc_wrapper_output.txt"
+  redirect_output_path = "qc_wrapper_output.txt",
+  ...
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ If set to \code{FALSE}, messages will simply be written to console.}
 \item{redirect_output_path}{a path and file name (e.g., .txt or .csv) to
 write the \code{qc_wrapper} output messages to. Default will write
 "qc_wrapper_output.txt" to the current working directory.}
+
+\item{...}{various other inputs to \verb{qc_*} functions, if need to change from default values}
 }
 \value{
 a tibble with combined QC results
