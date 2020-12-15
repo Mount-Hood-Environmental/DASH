@@ -11,7 +11,7 @@ qc_wrapper(
   jam_df = NULL,
   undercut_df = NULL,
   discharge_df = NULL,
-  disch_meas_df = NULL,
+  discharge_meas_df = NULL,
   redirect_output = TRUE,
   redirect_output_path = "qc_wrapper_output.txt",
   ...
@@ -28,7 +28,7 @@ qc_wrapper(
 
 \item{discharge_df}{data.frame containing the discharge location data}
 
-\item{disch_meas_df}{data.frame containing the discharge measurement data}
+\item{discharge_meas_df}{data.frame containing the discharge measurement data}
 
 \item{redirect_output}{would you like to redirect the output messages
 from \code{qc_wrapper()} to a file instead of the R terminal? Default = \code{TRUE}.

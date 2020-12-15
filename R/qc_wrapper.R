@@ -10,7 +10,7 @@
 #' @param wood_df data.frame containing the wood data
 #' @param jam_df data.frame containing the jam data
 #' @param discharge_df data.frame containing the discharge location data
-#' @param disch_meas_df data.frame containing the discharge measurement data
+#' @param discharge_meas_df data.frame containing the discharge measurement data
 #' @param redirect_output would you like to redirect the output messages
 #' from `qc_wrapper()` to a file instead of the R terminal? Default = `TRUE`.
 #' If set to `FALSE`, messages will simply be written to console.
@@ -32,7 +32,7 @@ qc_wrapper = function(survey_df = NULL,
                       jam_df = NULL,
                       undercut_df = NULL,
                       discharge_df = NULL,
-                      disch_meas_df = NULL,
+                      discharge_meas_df = NULL,
                       redirect_output = TRUE,
                       redirect_output_path = "qc_wrapper_output.txt",
                       ...) {
@@ -187,6 +187,20 @@ qc_wrapper = function(survey_df = NULL,
                        dplyr::select(-disch_id, -surv_id) %>%
                        tibble::add_column(source = "DischargeMeasurements",
                                           .before = 0))
+
+  # perform some QC on entire channel unit data
+  qc_roll = qc_rollup(cu_df = cu_df,
+                      survey_df = survey_df,
+                      jam_df = jam_df,
+                      undercut_df = undercut_df,
+                      wood_df = wood_df,
+                      discharge_df = discharge_df,
+                      discharge_meas_df = discharge_meas_df)
+
+  if(nrow(qc_roll) > 0) {
+    tmp = tmp %>%
+      bind_rows(qc_roll$error_df)
+  }
 
   if( redirect_output == T ) { sink() }
 
