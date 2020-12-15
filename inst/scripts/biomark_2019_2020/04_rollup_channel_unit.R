@@ -64,13 +64,13 @@ rm(otg_list)
 #-------------------------
 # roll up all the OTG data to CU scale
 #-------------------------
-cu_df = rollup_channel_unit(otg_all$cu,
-                            otg_all$survey,
-                            otg_all$jam,
-                            otg_all$undercut,
-                            otg_all$wood,
-                            otg_all$discharge,
-                            otg_all$discharge_measurements)
+cu_df = otg_to_cu(otg_all$cu,
+                  otg_all$survey,
+                  otg_all$jam,
+                  otg_all$undercut,
+                  otg_all$wood,
+                  otg_all$discharge,
+                  otg_all$discharge_measurements)
 
 #-------------------------
 # QC the rollup

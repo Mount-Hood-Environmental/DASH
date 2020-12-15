@@ -1,11 +1,11 @@
 #' @title Quality Control - Channel Unit Rollup
 #'
 #' @description Quality control the channel unit rollup
-#' performed by `rollup_channel_unit()`
+#' performed by `otg_to_cu()`
 #'
 #' @author Kevin See
 #'
-#' @inheritParams rollup_channel_unit
+#' @inheritParams otg_to_cu
 #'
 #' @export
 #' @return a tibble with QC results
@@ -55,18 +55,18 @@ qc_rollup = function(cu_df = NULL,
                   pad = "0"))
 
   # rollup everything at the channel unit scale
-  cu_df = rollup_channel_unit(cu_df,
-                              survey_df,
-                              jam_df,
-                              undercut_df,
-                              wood_df,
-                              discharge_df,
-                              discharge_meas_df,
-                              fix_nas = TRUE,
-                              jam_impute_cols,
-                              undercut_impute_cols,
-                              wood_impute_cols,
-                              ...)
+  cu_df = otg_to_cu(cu_df,
+                    survey_df,
+                    jam_df,
+                    undercut_df,
+                    wood_df,
+                    discharge_df,
+                    discharge_meas_df,
+                    fix_nas = TRUE,
+                    jam_impute_cols,
+                    undercut_impute_cols,
+                    wood_impute_cols,
+                    ...)
 
   # Initiate qc_tmp
   qc_tmp = tibble(source = character(),

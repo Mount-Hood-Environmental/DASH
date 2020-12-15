@@ -52,7 +52,7 @@ a tibble with QC results
 }
 \description{
 Quality control the channel unit rollup
-performed by \code{rollup_channel_unit()}
+performed by \code{otg_to_cu()}
 }
 \author{
 Kevin See
