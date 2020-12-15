@@ -12,11 +12,12 @@
 #' @inheritParams rollup_cu_discharge
 #'
 #' @import dplyr
+#' @importFrom magrittr %<>%
 #' @export
 #' @return a data.frame summarizing data for channel units
 
-otg_to_cu = function(cu_df = NULL,
-                     survey_df = NULL,
+otg_to_cu = function(survey_df = NULL,
+                     cu_df = NULL,
                      jam_df = NULL,
                      undercut_df = NULL,
                      wood_df = NULL,
@@ -34,6 +35,22 @@ otg_to_cu = function(cu_df = NULL,
                      wood_impute_cols = c('length_m',
                                           'diameter_m'),
                      ...) {
+
+  # ensure naming conventions are what's expected
+  survey_df %<>%
+    clean_names()
+  cu_df %<>%
+    clean_names()
+  jam_df %<>%
+    clean_names()
+  undercut_df %<>%
+    clean_names()
+  wood_df %<>%
+    clean_names()
+  discharge_df %<>%
+    clean_names()
+  discharge_meas_df %<>%
+    clean_names()
 
   cu_main = rollup_cu(cu_df,
                       survey_df)

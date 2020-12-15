@@ -5,8 +5,8 @@
 \title{Quality Control - Channel Unit Rollup}
 \usage{
 qc_rollup(
-  cu_df = NULL,
   survey_df = NULL,
+  cu_df = NULL,
   jam_df = NULL,
   undercut_df = NULL,
   wood_df = NULL,
@@ -21,10 +21,10 @@ qc_rollup(
 )
 }
 \arguments{
-\item{cu_df}{data.frame of \verb{otg_type =} "CU_1.csv" containing data for each channel unit}
-
 \item{survey_df}{data.frame of \verb{otg_type =} "surveyPoint_0.csv" containing information for
 each site/survey}
+
+\item{cu_df}{data.frame of \verb{otg_type =} "CU_1.csv" containing data for each channel unit}
 
 \item{jam_df}{data.frame of \verb{otg_type =} "Jam_3.csv containing the individual
 jam data to be summarized (rolled up) to the channel unit scale}

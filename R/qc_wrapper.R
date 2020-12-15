@@ -189,15 +189,15 @@ qc_wrapper = function(survey_df = NULL,
                                           .before = 0))
 
   # perform some QC on entire channel unit data
-  qc_roll = qc_rollup(cu_df = cu_df,
-                      survey_df = survey_df,
+  qc_roll = qc_rollup(survey_df = survey_df,
+                      cu_df = cu_df,
                       jam_df = jam_df,
                       undercut_df = undercut_df,
                       wood_df = wood_df,
                       discharge_df = discharge_df,
                       discharge_meas_df = discharge_meas_df)
 
-  if(nrow(qc_roll) > 0) {
+  if(nrow(qc_roll$error_df) > 0) {
     tmp = tmp %>%
       bind_rows(qc_roll$error_df)
   }

@@ -14,11 +14,11 @@ rm(list = ls())
 #-----------------------------
 # load necessary libraries
 #-----------------------------
+library(tidyverse)
 library(beepr)
 library(janitor)
-library(tidyverse)
-# library(DASH)
-devtools::load_all()
+library(DASH)
+# devtools::load_all()
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -98,7 +98,7 @@ for (yw in yr_wtsd) {
                           jam_df = otg_raw$jam,
                           undercut_df = otg_raw$undercut,
                           discharge_df = otg_raw$discharge,
-                          disch_meas_df = otg_raw$discharge_measurements)
+                          discharge_meas_df = otg_raw$discharge_measurements)
 
   #-----------------------------
   # ALTERNATIVE EXAMPLES: QC just a couple otg_types, separately
@@ -169,7 +169,7 @@ for (yw in yr_wtsd) {
                             jam_df = otg_raw$jam,
                             undercut_df = otg_raw$undercut,
                             discharge_df = otg_raw$discharge,
-                            disch_meas_df = otg_raw$discharge_measurements)
+                            discharge_meas_df = otg_raw$discharge_measurements)
 
   } # end if yw = "2019/lemhi" loop
 
@@ -338,7 +338,7 @@ for (yw in yr_wtsd) {
                         jam_df = otg_qcd$jam,
                         undercut_df = otg_qcd$undercut,
                         discharge_df = otg_qcd$discharge,
-                        disch_meas_df = otg_qcd$discharge_measurements)
+                        discharge_meas_df = otg_qcd$discharge_measurements)
 
   qc_final_path = paste0(nas_prefix,
                          "/data/habitat/DASH/OTG/",
