@@ -50,7 +50,7 @@ qc_wrapper = function(survey_df = NULL,
   if( !is.null(jam_df) )        qc_j = qc_jam(jam_df,...)                else qc_j = qc_tbl()
   if( !is.null(undercut_df) )   qc_u = qc_undercut(undercut_df,...)      else qc_u = qc_tbl()
   if( !is.null(discharge_df) )  qc_d1 = qc_disch(discharge_df,...)       else qc_d1 = qc_tbl()
-  if( !is.null(disch_meas_df) ) qc_d2 = qc_disch_meas(disch_meas_df,...) else qc_d2 = qc_tbl()
+  if( !is.null(discharge_meas_df) ) qc_d2 = qc_disch_meas(discharge_meas_df,...) else qc_d2 = qc_tbl()
 
   # combine results
   tmp = qc_tbl() %>%
@@ -171,7 +171,7 @@ qc_wrapper = function(survey_df = NULL,
                        tibble::add_column(source = "Discharge",
                                           .before = 0)) %>%
     dplyr::bind_rows(qc_d2 %>%
-                       left_join(disch_meas_df %>%
+                       left_join(discharge_meas_df %>%
                                    select(GlobalID,
                                           disch_id = ParentGlobalID)) %>%
                        left_join(discharge_df %>%
