@@ -17,6 +17,7 @@
 #' @param redirect_output_path a path and file name (e.g., .txt or .csv) to
 #' write the `qc_wrapper` output messages to. Default will write
 #' "qc_wrapper_output.txt" to the current working directory.
+#' @param ... various other inputs to `qc_*` functions, if need to change from default values
 #'
 #' @import dplyr
 #' @importFrom tibble add_column
@@ -33,7 +34,8 @@ qc_wrapper = function(survey_df = NULL,
                       discharge_df = NULL,
                       disch_meas_df = NULL,
                       redirect_output = TRUE,
-                      redirect_output_path = "qc_wrapper_output.txt") {
+                      redirect_output_path = "qc_wrapper_output.txt",
+                      ...) {
 
   if( redirect_output == T ) { sink(redirect_output_path) }
 
@@ -42,13 +44,13 @@ qc_wrapper = function(survey_df = NULL,
             !is.null(cu_df))
 
   # run QC for all cases where is not NULL
-  if( !is.null(survey_df) )     qc_s = qc_survey(survey_df)          else qc_s = qc_tbl()
-  if( !is.null(cu_df) )         qc_c = qc_cu(cu_df)                  else qc_c = qc_tbl()
-  if( !is.null(wood_df) )       qc_w = qc_wood(wood_df)              else qc_w = qc_tbl()
-  if( !is.null(jam_df) )        qc_j = qc_jam(jam_df)                else qc_j = qc_tbl()
-  if( !is.null(undercut_df) )   qc_u = qc_undercut(undercut_df)      else qc_u = qc_tbl()
-  if( !is.null(discharge_df) )  qc_d1 = qc_disch(discharge_df)       else qc_d1 = qc_tbl()
-  if( !is.null(disch_meas_df) ) qc_d2 = qc_disch_meas(disch_meas_df) else qc_d2 = qc_tbl()
+  if( !is.null(survey_df) )     qc_s = qc_survey(survey_df,...)          else qc_s = qc_tbl()
+  if( !is.null(cu_df) )         qc_c = qc_cu(cu_df,...)                  else qc_c = qc_tbl()
+  if( !is.null(wood_df) )       qc_w = qc_wood(wood_df,...)              else qc_w = qc_tbl()
+  if( !is.null(jam_df) )        qc_j = qc_jam(jam_df,...)                else qc_j = qc_tbl()
+  if( !is.null(undercut_df) )   qc_u = qc_undercut(undercut_df,...)      else qc_u = qc_tbl()
+  if( !is.null(discharge_df) )  qc_d1 = qc_disch(discharge_df,...)       else qc_d1 = qc_tbl()
+  if( !is.null(disch_meas_df) ) qc_d2 = qc_disch_meas(disch_meas_df,...) else qc_d2 = qc_tbl()
 
   # combine results
   tmp = qc_tbl() %>%

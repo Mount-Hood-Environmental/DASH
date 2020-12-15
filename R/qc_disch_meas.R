@@ -7,6 +7,9 @@
 #'
 #' @param qc_df The survey data frame to be QC'd
 #' @inheritParams check_na
+#' @param width_range numeric vector of minimum and maximum acceptable values for station width
+#' @param depth_range numeric vector of minimum and maximum acceptable values for station depth
+#' @param vel_range numeric vector of minimum and maximum acceptable values for station velocity
 #'
 #' @import dplyr
 #' @importFrom tidyr pivot_longer
@@ -17,7 +20,10 @@
 qc_disch_meas = function(qc_df = NULL,
                          cols_to_check_nas = c("Station Width",
                                                "Station Depth",
-                                               "Station Velocity")) {
+                                               "Station Velocity"),
+                         width_range = c(0, 2),
+                         depth_range = c(0, 5),
+                         vel_range = c(-1, 10)) {
 
   # set otg_type
   otg_type = "DischargeMeasurements_6.csv"
@@ -45,12 +51,17 @@ qc_disch_meas = function(qc_df = NULL,
   cat("Checking whether width, depth and velocity fall within expected values? \n")
 
   # set expected values
-  exp_values = tibble(name = c("Station Width",
-                               "Station Depth",
-                               "Station Velocity"),
-                      min = c(0,0,-1),
-                      max = c(50,5,10))
-
+  exp_values = matrix(c(width_range,
+                        depth_range,
+                        vel_range),
+                      byrow = T,
+                      ncol = 2,
+                      dimnames = list(c("Station Width",
+                                        "Station Depth",
+                                        "Station Velocity"),
+                                      c('min',
+                                        'max'))) %>%
+    as_tibble(rownames = 'name')
 
   # do measured values fall outside of expected values
   val_chk = qc_df %>%
@@ -66,7 +77,7 @@ qc_disch_meas = function(qc_df = NULL,
                                             min,
                                             max)) %>%
     dplyr::filter(!in_range) %>%
-    dplyr::mutate(error_message = paste0("The measurement ", name, " falls outside of the expected values between ", min, " and ", max)) %>%
+    dplyr::mutate(error_message = paste0("The measurement ", name, " (", value, ") falls outside of the expected values between ", min, " and ", max)) %>%
     dplyr::select(one_of(names(qc_tmp)))
 
   if( nrow(val_chk) == 0 ) cat("All discharge measurement values fall within expected values. \n")
