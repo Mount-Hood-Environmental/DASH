@@ -32,9 +32,12 @@ if(.Platform$OS.type != 'unix') {
 #-------------------------
 # load QC'd OTG data
 #-------------------------
+yr = 2019
+yr = 2020
+
 otg_path = paste0(nas_prefix,
-                  # "/data/habitat/DASH/OTG/2019")
-                  "/data/habitat/DASH/OTG/2020")
+                  "/data/habitat/DASH/OTG/",
+                  yr)
 
 # list of otg_raw files in otg_path
 otg_list = list.files(path = otg_path,
@@ -61,6 +64,17 @@ for(i in 1:length(otg_list)) {
 # clean up
 rm(otg_list)
 
+
+# clean survey names
+otg_all$survey = otg_all$survey %>%
+  mutate(across(site_name,
+                ~ str_replace(., "_.*", "")),
+         across(site_name,
+                ~str_remove(., " "))) %>%
+  tabyl(site_name)
+
+
+
 #-------------------------
 # roll up all the OTG data to CU scale
 #-------------------------
@@ -71,6 +85,10 @@ cu_df = otg_to_cu(otg_all$cu,
                   otg_all$wood,
                   otg_all$discharge,
                   otg_all$discharge_measurements)
+
+# save as prepped data
+
+
 
 #-------------------------
 # QC the rollup
@@ -100,27 +118,3 @@ qc_roll$miss_rollup %>%
 
 # where are the dangling discharge measurements?
 qc_roll$miss_discharge
-
-
-#-------------------------
-# extra junk, to be deleted later
-#-------------------------
-
-cu_df %>%
-  filter(parent_global_id == "c03aac81-2be9-4365-a5c4-94ce7abd5b3b") %>%
-  mutate(across(channel_unit_number,
-                as.numeric)) %>%
-  pull(channel_unit_number) %>%
-  range()
-
-cu_df %>%
-  filter(parent_global_id == "c03aac81-2be9-4365-a5c4-94ce7abd5b3b") %>%
-  filter(channel_unit_number %in% 215:220)
-
-cl_sf %>%
-  filter(grepl('BigTimber', Site_ID),
-         CU_Number %in% 115:120)
-
-cu_main %>%
-  filter(channel_unit_number == 317) %>%
-  select(site_name:channel_unit_notes)
