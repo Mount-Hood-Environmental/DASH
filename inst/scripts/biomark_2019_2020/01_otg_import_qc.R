@@ -17,7 +17,7 @@ rm(list = ls())
 library(beepr)
 library(janitor)
 library(tidyverse)
-#library(DASH)
+# library(DASH)
 devtools::load_all()
 
 #-------------------------
@@ -265,6 +265,48 @@ for (yw in yr_wtsd) {
 
   } # end if yw = "2019/lemhi" loop
 
+  # we need to make the discharge measurements consistent year-to-year
+  # particularly what station width represents
+  # make 2019 discharge measurement station_width's match 2020 format
+  if(grepl("2019", yw)) {
+    otg_qcd$discharge_measurements = otg_qcd$discharge_measurements %>%
+      group_by(ParentGlobalID) %>%
+      mutate(width_lag = lag(`Station Width`),
+             `Station Width` = if_else(is.na(width_lag),
+                                       `Station Width`,
+                                       `Station Width` - width_lag)) %>%
+      select(-width_lag) %>%
+  }
+
+  # in 2020, add a measurement at the short bank
+  if(grepl("2020", yw)) {
+    otg_qcd$discharge_measurements = otg_qcd$discharge_measurements %>%
+      group_by(ParentGlobalID) %>%
+      # determine which is the first and last station at a site
+      mutate(station = 1:n()) %>%
+      group_split() %>%
+      map(.f = function(x) {
+        if(x$`Station Width`[x$station == 1] > 0) {
+          y = x %>%
+            bind_rows(x %>%
+                        filter(station == 1) %>%
+                        mutate(ObjectID = NA,
+                               GlobalID = NA,
+                               `Station Width` = 0,
+                               `Station Depth` = 0,
+                               `Station Velocity` = 0,
+                               station = 0)) %>%
+            arrange(station)
+          return(y)
+        } else {
+          return(x)
+        }
+      }) %>%
+      map_df(.f = identity) %>%
+      select(-station)
+  }
+
+
   save(otg_qcd,
        file = paste0(nas_prefix,
                      "/data/habitat/DASH/OTG/",
@@ -358,43 +400,43 @@ otg$survey = otg$survey %>%
          across(site_name,
                 ~str_remove(., " ")))
 
-# make 2019 discharge measurement station_width's match 2020 format
-if(grepl("2019$", otg_path)) {
-  otg_all$discharge_measurements = otg_all$discharge_measurements %>%
-    group_by(parent_global_id) %>%
-    mutate(width_lag = lag(station_width),
-           station_width = if_else(is.na(width_lag),
-                                   station_width,
-                                   station_width - width_lag)) %>%
-    select(-width_lag)
-}
-
-# in 2020, add a measurement at the short bank
-if(grepl("2020$", otg_path)) {
-  otg_all$discharge_measurements = otg_all$discharge_measurements %>%
-    group_by(parent_global_id) %>%
-    # determine which is the first and last station at a site
-    mutate(station = 1:n()) %>%
-    group_split() %>%
-    map(.f = function(x) {
-      if(x$station_width[x$station == 1] > 0) {
-        y = x %>%
-          bind_rows(x %>%
-                      filter(station == 1) %>%
-                      mutate(object_id = NA,
-                             global_id = NA,
-                             station_width = 0,
-                             station_depth = 0,
-                             station_velocity = 0,
-                             station = 0)) %>%
-          arrange(station)
-        return(y)
-      } else {
-        return(x)
-      }
-    }) %>%
-    map_df(.f = identity)
-}
+# # make 2019 discharge measurement station_width's match 2020 format
+# if(grepl("2019$", otg_path)) {
+#   otg_all$discharge_measurements = otg_all$discharge_measurements %>%
+#     group_by(parent_global_id) %>%
+#     mutate(width_lag = lag(station_width),
+#            station_width = if_else(is.na(width_lag),
+#                                    station_width,
+#                                    station_width - width_lag)) %>%
+#     select(-width_lag)
+# }
+#
+# # in 2020, add a measurement at the short bank
+# if(grepl("2020$", otg_path)) {
+#   otg_all$discharge_measurements = otg_all$discharge_measurements %>%
+#     group_by(parent_global_id) %>%
+#     # determine which is the first and last station at a site
+#     mutate(station = 1:n()) %>%
+#     group_split() %>%
+#     map(.f = function(x) {
+#       if(x$station_width[x$station == 1] > 0) {
+#         y = x %>%
+#           bind_rows(x %>%
+#                       filter(station == 1) %>%
+#                       mutate(object_id = NA,
+#                              global_id = NA,
+#                              station_width = 0,
+#                              station_depth = 0,
+#                              station_velocity = 0,
+#                              station = 0)) %>%
+#           arrange(station)
+#         return(y)
+#       } else {
+#         return(x)
+#       }
+#     }) %>%
+#     map_df(.f = identity)
+# }
 
 # CU
 cu_cu = rollup_cu(cu_df = otg$cu,
