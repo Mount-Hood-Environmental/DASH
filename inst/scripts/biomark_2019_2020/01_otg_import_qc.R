@@ -175,7 +175,7 @@ for (yw in yr_wtsd) {
 
   # save QC results
   qc_init_path = paste0(nas_prefix,
-                        "data/habitat/DASH/OTG/",
+                        "/data/habitat/DASH/OTG/",
                         yw,
                         "/1_formatted_csvs/qc_results")
   save(qc_results, file = paste0(qc_init_path, ".rds"))
