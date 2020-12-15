@@ -276,6 +276,7 @@ for (yw in yr_wtsd) {
                                        `Station Width`,
                                        `Station Width` - width_lag)) %>%
       select(-width_lag) %>%
+      ungroup()
   }
 
   # in 2020, add a measurement at the short bank
@@ -303,7 +304,8 @@ for (yw in yr_wtsd) {
         }
       }) %>%
       map_df(.f = identity) %>%
-      select(-station)
+      select(-station) %>%
+      ungroup()
   }
 
 
