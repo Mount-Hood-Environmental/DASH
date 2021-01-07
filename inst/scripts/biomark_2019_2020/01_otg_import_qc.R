@@ -274,7 +274,8 @@ for (yw in yr_wtsd) {
       mutate(width_lag = lag(`Station Width`),
              `Station Width` = if_else(is.na(width_lag),
                                        `Station Width`,
-                                       `Station Width` - width_lag)) %>%
+                                       `Station Width` - width_lag),
+             `Station Width` = round(`Station Width`, 4)) %>%
       select(-width_lag) %>%
       ungroup()
   }
