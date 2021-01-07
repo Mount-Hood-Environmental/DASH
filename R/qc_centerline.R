@@ -38,8 +38,8 @@ qc_centerline <- function(cl_sf = NULL,
   tmp = cl_sf %>%
     sf::st_drop_geometry() %>%
     dplyr::as_tibble() %>%
-    check_na(data_id,
-             cols_to_check_nas)
+    check_na(cols_to_check_nas = cols_to_check_nas,
+             data_id = data_id)
     # dplyr::mutate(line_num = 1:n()) %>%
     # dplyr::select(line_num, any_of(cols_to_check_nas)) %>%
     # dplyr::filter_at(., vars(cols_to_check_nas), any_vars(is.na(.))) %>%
