@@ -83,7 +83,12 @@ cl_qc %>%
                  format(Sys.Date(), format = "%Y%m%d"),
                  ".csv"))
 
-
+# examine some of the channel units with issues
+cl_qc %>%
+  arrange(path_nm, object_id,
+          error_message) %>%
+  left_join(cl_sf %>%
+              st_drop_geometry())
 
 # clean up some site names to match centerline file
 cu_df = cu_df %>%
@@ -91,6 +96,7 @@ cu_df = cu_df %>%
   mutate(Site_ID = recode(Site_ID,
                           "Lowerlemhi3" = "LowerLemhi3")) %>%
   mutate(Site_ID = paste(Site_ID, lubridate::year(survey_date), sep = "_"))
+
 #-------------------------
 # join the OTG data
 #-------------------------
