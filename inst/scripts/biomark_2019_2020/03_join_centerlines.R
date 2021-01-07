@@ -89,7 +89,8 @@ cl_qc %>%
 cu_df = cu_df %>%
   rename(Site_ID = site_name) %>%
   mutate(Site_ID = recode(Site_ID,
-                          "Lowerlemhi3_2019" = "LowerLemhi3_2019"))
+                          "Lowerlemhi3" = "LowerLemhi3")) %>%
+  mutate(Site_ID = paste(Site_ID, lubridate::year(survey_date), sep = "_"))
 #-------------------------
 # join the OTG data
 #-------------------------
@@ -115,8 +116,7 @@ cu_df %>%
 
 
 cu_spatial = cl_sf %>%
-  select(-path_nm,
-         -file_row_id) %>%
+  select(-path_nm) %>%
   inner_join(cu_df %>%
                select(-matches('global_id'),
                       -path_nm) %>%
