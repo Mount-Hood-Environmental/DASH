@@ -52,7 +52,7 @@ qc_centerline <- function(cl_sf = NULL,
     # dplyr::mutate(error_message = paste0("Column ", col_name, " is <blank> or NA on line ", line_num, ".")) %>%
     # dplyr::select(line_num, error_message)
 
-  if( nrow(tmp) > 0 ) qc_tmp = rbind(qc_tmp, tmp)
+  if(!is.null(tmp)) qc_tmp = rbind(qc_tmp, tmp)
 
   #####
   # CHECK 2: Are any channel units labeled 0?
