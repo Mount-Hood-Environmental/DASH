@@ -70,16 +70,17 @@ otg_all$survey = otg_all$survey %>%
   mutate(across(site_name,
                 ~ str_replace(., "_.*", "")),
          across(site_name,
-                ~str_remove(., " "))) %>%
-  tabyl(site_name)
+                ~str_remove(., " ")))
+tabyl(otg_all$survey,
+      site_name)
 
 
 
 #-------------------------
 # roll up all the OTG data to CU scale
 #-------------------------
-cu_df = otg_to_cu(otg_all$cu,
-                  otg_all$survey,
+cu_df = otg_to_cu(otg_all$survey,
+                  otg_all$cu,
                   otg_all$jam,
                   otg_all$undercut,
                   otg_all$wood,
