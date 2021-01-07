@@ -126,6 +126,7 @@ cu_spatial = cl_sf %>%
                                Seg_Number),
                              as.numeric)))
 
+# any duplicated channel units?
 cu_spatial %>%
   filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
   arrange(cu_id) %>%
@@ -137,9 +138,15 @@ cu_spatial %>%
   left_join(cl_sf)
 
 cl_sf %>%
-  filter(Site_ID == "LowerLemhi3_2019",
-         CU_Number == 39) %>%
-  select(path_nm)
+  # filter(Site_ID == "LowerLemhi3_2019",
+  #        CU_Number == 39) %>%
+  # filter(Site_ID == "BigTimber1_2019",
+  #        CU_Number %in% c(11, 75)) %>%
+  filter(Site_ID == "Hayden1_2019",
+         CU_Number %in% c(6)) %>%
+  select(Site_ID, CU_Number, path_nm)
+
+
 
 cl_sf %>%
   filter(!is.na(Site_ID)) %>%
