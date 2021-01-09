@@ -88,14 +88,20 @@ cu_df = otg_to_cu(otg_all$survey,
                   otg_all$discharge_measurements)
 
 # save as prepped data
-
+write_csv(cu_df,
+          paste0(nas_prefix,
+                 "/data/habitat/DASH/OTG/prepped/dash_",
+                 paste(sort(na.omit(unique(lubridate::year(cu_df$survey_date)))), collapse = "_"),
+                 "_otg_cu.csv"))
+write_rds(cu_df,
+          )
 
 
 #-------------------------
 # QC the rollup
 #-------------------------
-qc_roll = qc_rollup(otg_all$cu,
-                    otg_all$survey,
+qc_roll = qc_rollup(otg_all$survey,
+                    otg_all$cu,
                     otg_all$jam,
                     otg_all$undercut,
                     otg_all$wood,
