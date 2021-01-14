@@ -120,7 +120,13 @@ for (yw in yr_wtsd) {
   # estimates not summing to 100 and fish cover estimates not summing to within an
   # expected range. Let's resolve those using some functions we've created within the
   # DASH package.
-  if( yw == "2019/lemhi" ) {
+
+  # I've also identified a handful of the same errors in the nf_salmon 2019 &
+  # secesh 2020 data. So I'll expand this loop here to include those.
+
+  # 1/14/2021: We've also identified a handful of the same errors in the nf_salmon 2019 &
+  # secesh 2020 data. We've expanded this if loop to include those.
+  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/secesh" ) {
 
     # ocular substrate estimates
     qc_results %>%
@@ -263,7 +269,7 @@ for (yw in yr_wtsd) {
                                                "Artificial Cover",
                                                "Total No Cover"))
 
-  } # end if yw = "2019/lemhi" loop
+  } # end if loop
 
   # we need to make the discharge measurements consistent year-to-year
   # particularly what station width represents

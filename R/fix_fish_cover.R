@@ -43,9 +43,9 @@ fix_fish_cover <- function(cu_df = NULL,
     # if all values sum between 0.9 and 1.9 and appear to be proportions (decimal scale), convert them to
     # percents before moving on...
     dplyr::group_by(GlobalID) %>%
-    dplyr::  mutate(value = dplyr::if_else(sum_values < 2,
-                                           value * 100,
-                                           value)) %>%
+    dplyr::mutate(value = dplyr::if_else(sum_values < 2,
+                                         value * 100,
+                                         value)) %>%
     # redo sums
     dplyr::group_by(GlobalID) %>%
     dplyr::mutate(sum_values = sum(value, na.rm = T)) %>%
