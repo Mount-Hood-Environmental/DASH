@@ -309,7 +309,20 @@ for (yw in yr_wtsd) {
       ungroup()
   }
 
+  # overwrite csvs with updated values
+  otg_qcd %>%
+    map(.f = function(x) {
+      x %>%
+        group_by(path_nm) %>%
+        group_split() %>%
+        map(.f = function(y) {
+          y %>%
+            select(-path_nm) %>%
+            write_csv(paste0(path, unique(y$path_nm)))
+        })
+    })
 
+  # save as .Rdata object
   save(otg_qcd,
        file = paste0(nas_prefix,
                      "/data/habitat/DASH/OTG/",
