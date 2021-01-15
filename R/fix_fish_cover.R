@@ -28,8 +28,8 @@ fix_fish_cover <- function(cu_df = NULL,
 
   fix_df = cu_df %>%
     dplyr::select(GlobalID,
-                  one_of(cover_cols)) %>%
-    tidyr::pivot_longer(cols = one_of(cover_cols)) %>%
+                  all_of(cover_cols)) %>%
+    tidyr::pivot_longer(cols = all_of(cover_cols)) %>%
     dplyr::group_by(GlobalID) %>%
     dplyr::mutate(sum_values = sum(value, na.rm = T)) %>%
     dplyr::ungroup() %>%
@@ -66,9 +66,9 @@ fix_fish_cover <- function(cu_df = NULL,
 
   # and create the return df
   return_df = cu_df %>%
-    dplyr::select(-one_of(cover_cols)) %>%
+    dplyr::select(-all_of(cover_cols)) %>%
     dplyr::left_join(fix_df) %>%
-    dplyr::select(one_of(names(cu_df)))
+    dplyr::select(all_of(names(cu_df)))
 
   return(return_df)
 

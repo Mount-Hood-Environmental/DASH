@@ -51,7 +51,7 @@ qc_undercut = function(qc_df = NULL,
 
            !is.na(Location)) %>%
     mutate(error_message = paste0("Strange value, ", Location, ", in Location column")) %>%
-    select(one_of(names(qc_tmp)))
+    select(all_of(names(qc_tmp)))
   if( !is.null(loc_qc) ) qc_tmp = rbind(qc_tmp, loc_qc)
 
   #####
@@ -89,7 +89,7 @@ qc_undercut = function(qc_df = NULL,
                                             max)) %>%
     dplyr::filter(!in_range) %>%
     dplyr::mutate(error_message = paste0("The ", name, " measurement ", value, " is outside of the expected values of ", min, " and ", max)) %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
 
   if( nrow(val_chk) == 0 ) cat("All undercut measurement values fall within expected values. \n")
   if( nrow(val_chk) > 0 ) {

@@ -78,7 +78,7 @@ qc_disch_meas = function(qc_df = NULL,
                                             max)) %>%
     dplyr::filter(!in_range) %>%
     dplyr::mutate(error_message = paste0("The measurement ", name, " (", value, ") falls outside of the expected values between ", min, " and ", max)) %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
 
   if( nrow(val_chk) == 0 ) cat("All discharge measurement values fall within expected values. \n")
   if( nrow(val_chk) > 0 ) {

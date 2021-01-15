@@ -24,8 +24,8 @@ rescale_values <- function(data_df = NULL,
 
   fix_df = data_df %>%
     select(GlobalID,
-           one_of(col_names)) %>%
-    pivot_longer(cols = one_of(col_names)) %>%
+           all_of(col_names)) %>%
+    pivot_longer(cols = all_of(col_names)) %>%
     group_by(GlobalID) %>%
     mutate(sum_values = sum(value, na.rm = T)) %>%
     ungroup() %>%
@@ -42,9 +42,9 @@ rescale_values <- function(data_df = NULL,
     select(-sum_values)
 
   return_df = data_df %>%
-    select(-one_of(col_names)) %>%
+    select(-all_of(col_names)) %>%
     left_join(fix_df) %>%
-    select(one_of(names(data_df)))
+    select(all_of(names(data_df)))
 
   return(return_df)
 

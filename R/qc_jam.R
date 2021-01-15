@@ -58,7 +58,7 @@ qc_jam = function(qc_df = NULL,
   # do measured values fall outside of expected values
   val_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID,
-                  one_of(exp_values$name)) %>%
+                  all_of(exp_values$name)) %>%
     tidyr::pivot_longer(cols = -c(path_nm, GlobalID)) %>%
     dplyr::left_join(exp_values) %>%
     rowwise() %>%
@@ -68,7 +68,7 @@ qc_jam = function(qc_df = NULL,
                                             max)) %>%
     dplyr::filter(!in_range) %>%
     dplyr::mutate(error_message = paste0("The measurement ", name, " falls outside of the expected values between ", min, " and ", max)) %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
 
   if( nrow(val_chk) == 0 ) cat("All jam measurement values fall within expected values. \n")
   if( nrow(val_chk) > 0 ) {

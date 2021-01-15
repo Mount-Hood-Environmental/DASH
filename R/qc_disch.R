@@ -45,7 +45,7 @@ qc_disch = function(qc_df = NULL,
                      list(as.numeric)) %>%
     dplyr::filter(is.na(`Discharge Location (BOS, TOS, CU #)`)) %>%
     dplyr::mutate(error_message = "Non-numeric channel unit number") %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
   if( nrow(na_cu) > 0 ) qc_tmp = rbind(qc_tmp, na_cu)
 
   #####
@@ -56,7 +56,7 @@ qc_disch = function(qc_df = NULL,
                      list(as.numeric)) %>%
     dplyr::filter(`Discharge Location (BOS, TOS, CU #)` <= 0) %>%
     dplyr::mutate(error_message = "Non-numeric channel unit number") %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
   if( nrow(neg_cu) > 0 ) qc_tmp = rbind(qc_tmp, neg_cu)
 
   #####

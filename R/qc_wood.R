@@ -57,7 +57,7 @@ qc_wood = function(qc_df = NULL,
     dplyr::filter(!is.na(value),
            !value %in% c("Yes", "No")) %>%
     dplyr::mutate(error_message = paste0("Column ", name, " has an unusal value.")) %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
 
   if( nrow(yes_no_qc) == 0 ) cat("Values in Wet, Ballasted, and Channel Forming columns look good! \n")
   if( nrow(yes_no_qc) > 0 ) {
@@ -71,7 +71,7 @@ qc_wood = function(qc_df = NULL,
   len_diam_qc = qc_df %>%
     dplyr::filter(`Length (m)` <= `Diameter (m)`) %>%
     dplyr::mutate(error_message = "Length is less than or equal to the diameter of a piece of large wood") %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
 
   if( nrow(len_diam_qc) == 0 ) cat("Length and diameter values appear okay. \n")
   if( nrow(len_diam_qc) > 0 ) {
@@ -95,7 +95,7 @@ qc_wood = function(qc_df = NULL,
   # do measured values fall outside of expected values
   val_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID,
-                  one_of(exp_values$name)) %>%
+                  all_of(exp_values$name)) %>%
     tidyr::pivot_longer(cols = -c(path_nm, GlobalID)) %>%
     dplyr::left_join(exp_values) %>%
     rowwise() %>%
@@ -105,7 +105,7 @@ qc_wood = function(qc_df = NULL,
                                             max)) %>%
     dplyr::filter(!in_range) %>%
     dplyr::mutate(error_message = paste0("The measurement ", name, " falls outside of the expected values between ", min, " and ", max)) %>%
-    dplyr::select(one_of(names(qc_tmp)))
+    dplyr::select(all_of(names(qc_tmp)))
 
   if( nrow(val_chk) == 0 ) cat("All wood measurement values fall within expected values. \n")
   if( nrow(val_chk) > 0 ) {
