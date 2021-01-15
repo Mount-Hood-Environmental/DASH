@@ -59,6 +59,27 @@ qc_disch = function(qc_df = NULL,
     dplyr::select(one_of(names(qc_tmp)))
   if( nrow(neg_cu) > 0 ) qc_tmp = rbind(qc_tmp, neg_cu)
 
+  #####
+  # CHECK 5: Is there more than one ParentGlobalID for channel units within a survey?
+  # We expect only 1.
+
+  cat("Checking for multiple ParentGlobalIDs. \n")
+
+  id_chk = qc_df %>%
+    dplyr::select(path_nm, ParentGlobalID) %>%
+    dplyr::group_by(path_nm) %>%
+    dplyr::summarise(count = n_distinct(ParentGlobalID)) %>%
+    dplyr::filter(count > 1) %>%
+    dplyr::mutate(GlobalID = "multiple rows",
+                  error_message = paste0("File ", path_nm, " contains multiple ParentGlobalIDs; expect only one.")) %>%
+    dplyr::select(-count)
+
+  if( nrow(id_chk) == 0 ) cat("ParentGlobalIDs appear good! \n")
+  if( nrow(id_chk) > 0 ) {
+    cat("Some files contain multiple ParentGlobalIDs when expecting only one. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, id_chk)
+  }
+
   # return qc results
   return(qc_tmp)
 
