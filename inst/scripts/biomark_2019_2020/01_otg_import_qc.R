@@ -98,7 +98,8 @@ for (yw in yr_wtsd) {
                           jam_df = otg_raw$jam,
                           undercut_df = otg_raw$undercut,
                           discharge_df = otg_raw$discharge,
-                          discharge_meas_df = otg_raw$discharge_measurements)
+                          discharge_meas_df = otg_raw$discharge_measurements,
+                          redirect_output = F)
 
   #-----------------------------
   # ALTERNATIVE EXAMPLES: QC just a couple otg_types, separately
@@ -358,7 +359,8 @@ for (yw in yr_wtsd) {
                         jam_df = otg_qcd$jam,
                         undercut_df = otg_qcd$undercut,
                         discharge_df = otg_qcd$discharge,
-                        discharge_meas_df = otg_qcd$discharge_measurements)
+                        discharge_meas_df = otg_qcd$discharge_measurements,
+                        redirect_output = F)
 
   qc_final_path = paste0(nas_prefix,
                          "/data/habitat/DASH/OTG/",
