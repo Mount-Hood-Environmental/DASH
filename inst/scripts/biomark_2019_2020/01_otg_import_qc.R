@@ -35,6 +35,7 @@ if(.Platform$OS.type != 'unix') {
 # create a vector to directories containing the raw data, formatted for import
 yr_wtsd = c("2019/lemhi",
             "2019/nf_salmon",
+            "2020/lemhi",
             "2020/secesh")
 
 #-----------------------------
@@ -127,7 +128,7 @@ for (yw in yr_wtsd) {
 
   # 1/14/2021: We've also identified a handful of the same errors in the nf_salmon 2019 &
   # secesh 2020 data. We've expanded this if loop to include those.
-  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/secesh" ) {
+  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/lemhi" | yw == "2020/secesh" ) {
 
     # ocular substrate estimates
     qc_results %>%
@@ -176,7 +177,8 @@ for (yw in yr_wtsd) {
                             jam_df = otg_raw$jam,
                             undercut_df = otg_raw$undercut,
                             discharge_df = otg_raw$discharge,
-                            discharge_meas_df = otg_raw$discharge_measurements)
+                            discharge_meas_df = otg_raw$discharge_measurements,
+                            redirect_output = F)
 
   } # end if yw = "2019/lemhi" loop
 
@@ -250,7 +252,7 @@ for (yw in yr_wtsd) {
 
   # I've also identified a handful of the same errors in the nf_salmon 2019 &
   # secesh 2020 data. So I'll expand this loop here to include those.
-  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/secesh" ) {
+  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/lemhi" yw == "2020/secesh" ) {
 
     # ocular substrate fixes
     otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
