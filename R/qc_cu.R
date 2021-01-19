@@ -175,10 +175,10 @@ qc_cu = function(qc_df = NULL,
   # CHECK 8: Do all channel units have ocular estimates and do they sum to 100?
   cat("Do ocular estimates for all channel units exist and sum to 100? \n")
 
-  #slow_cus = c("Pool", "Run", "OCA")
+  oc_cus = c("Pool", "Run", "Riffle", "OCA", "SSC")
   oc_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, `Channel Unit Type`, all_of(ocular_columns)) %>%
-    #dplyr::filter(`Channel Unit Type` %in% slow_cus) %>%
+    dplyr::filter(`Channel Unit Type` %in% oc_cus) %>%
     dplyr::select(-`Channel Unit Type`) %>%
     replace(is.na(.), 0) %>%
     dplyr::mutate(ocular_sum = round(rowSums(.[3:(2+length(ocular_columns))]))) %>%
@@ -187,9 +187,9 @@ qc_cu = function(qc_df = NULL,
     dplyr::mutate(error_message = paste0("Ocular estimates sum to ", ocular_sum, ", not 100.")) %>%
     dplyr::select(-ocular_sum)
 
-  if( nrow(oc_chk) == 0 ) cat("Ocular estimates for all slow channel units sum to 100! \n")
+  if( nrow(oc_chk) == 0 ) cat("Ocular estimates for all channel units sum to 100! \n")
   if( nrow(oc_chk) > 0 ) {
-    cat("The ocular estimates for", nrow(oc_chk), "slow channel units do not sum to 100. Adding to QC results. \n")
+    cat("The ocular estimates for", nrow(oc_chk), "channel units do not sum to 100. Adding to QC results. \n")
     qc_tmp = rbind(qc_tmp, oc_chk)
   }
 
