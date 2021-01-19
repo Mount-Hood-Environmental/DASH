@@ -94,7 +94,10 @@ write_csv(cu_df,
                  paste(sort(na.omit(unique(lubridate::year(cu_df$survey_date)))), collapse = "_"),
                  "_otg_cu.csv"))
 write_rds(cu_df,
-          )
+          paste0(nas_prefix,
+                 "/data/habitat/DASH/OTG/prepped/dash_",
+                 paste(sort(na.omit(unique(lubridate::year(cu_df$survey_date)))), collapse = "_"),
+                 "_otg_cu.rds"))
 
 
 #-------------------------
