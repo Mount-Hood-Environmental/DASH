@@ -252,7 +252,7 @@ for (yw in yr_wtsd) {
 
   # I've also identified a handful of the same errors in the nf_salmon 2019 &
   # secesh 2020 data. So I'll expand this loop here to include those.
-  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/lemhi" yw == "2020/secesh" ) {
+  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/lemhi" | yw == "2020/secesh" ) {
 
     # ocular substrate fixes
     otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
@@ -321,10 +321,32 @@ for (yw in yr_wtsd) {
   # overwrite csvs with updated values
   otg_qcd %>%
     map(.f = function(x) {
+      # fix issue with writing date from survey back to csv
+      if("Survey Date" %in% names(x)) {
+        x = x %>%
+          mutate(org_date = map_chr(path_nm,
+                                    .f = function(x) {
+                                      suppressWarnings(read_csv(paste0(path, x),
+                                                                col_types = get_otg_col_specs("surveyPoint_0.csv"))) %>%
+                                        pull(`Survey Date`)
+                                    })) %>%
+          mutate(date_split = str_split(org_date, " "),
+                 org_time = map_chr(date_split,
+                                    .f = function(x) x[[2]]),
+                 `Survey Date` = paste(format(`Survey Date`, "%m/%d/%Y"), org_time, sep = " ")) %>%
+          select(all_of(names(x)))
+      }
+
+      if(sum(c("CreationDate", "EditDate") %in% names(x)) > 0) {
+        x = x %>%
+          mutate(across(c(CreationDate, EditDate),
+                        ~ format(., "%m/%d/%Y")))
+      }
+
       x %>%
         group_by(path_nm) %>%
         group_split() %>%
-        map(.f = function(y) {
+        walk(.f = function(y) {
           y %>%
             select(-path_nm) %>%
             write_csv(paste0(path, unique(y$path_nm)))
