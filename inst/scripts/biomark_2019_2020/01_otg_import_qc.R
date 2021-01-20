@@ -4,7 +4,7 @@
 # DASH data collected using Survey123.
 #
 # Created: July 15, 2020
-#   Last Modified: January 14, 2021
+#   Last Modified: January 20, 2021
 #
 # Notes:
 
@@ -118,71 +118,7 @@ for (yw in yr_wtsd) {
   # qc_results_some = qc_wrapper(cu_df = otg_raw$cu,
   #                              wood_df = otg_raw$wood)
 
-  # Many errors in the "CU" data, especially for 2019/lemhi are related to ocular substrate
-  # estimates not summing to 100 and fish cover estimates not summing to within an
-  # expected range. Let's resolve those using some functions we've created within the
-  # DASH package.
-
-  # I've also identified a handful of the same errors in the nf_salmon 2019 &
-  # secesh 2020 data. So I'll expand this loop here to include those.
-
-  # 1/14/2021: We've also identified a handful of the same errors in the nf_salmon 2019 &
-  # secesh 2020 data. We've expanded this if loop to include those.
-  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/lemhi" | yw == "2020/secesh" ) {
-
-    # ocular substrate estimates
-    qc_results %>%
-      filter(source == "CU") %>%
-      filter(grepl("Ocular estimates sum", error_message)) %>%
-      left_join(otg_raw$cu) %>%
-      select(source:GlobalID,
-             `Channel Unit Type`,
-             `Sand/Fines 2mm`:`Boulder 256mm`) %>%
-      mutate(oc_cover = rowSums(.[5:8], na.rm = T))
-
-    # resolve ocular substrate estimates that sum close to 100, but not quite
-    otg_raw$cu = rescale_values(data_df = otg_raw$cu,
-                                col_names = c("Sand/Fines 2mm",
-                                              "Gravel 2-64mm",
-                                              "Cobble 64-256mm",
-                                              "Boulder 256mm"),
-                                min_value = 90,
-                                max_value = 110,
-                                sum_to = 100)
-
-    # fish cover estimates
-    qc_results %>%
-      filter(source == "CU") %>%
-      filter(grepl("Cover values sum", error_message)) %>%
-      left_join(otg_raw$cu) %>%
-      select(source:GlobalID,
-             `Overhanging Cover`:`Total No Cover`) %>%
-      mutate(sum_cover = rowSums(.[4:8], na.rm = T)) %>%
-      # select(path_nm, sum_cover) %>%
-      # table()
-      tabyl(sum_cover)
-
-    # lots of issues w/ fish cover ests, resolve some...
-    otg_raw$cu = fix_fish_cover(cu_df = otg_raw$cu,
-                                cover_cols = c("Overhanging Cover",
-                                               "Aquatic Vegetation",
-                                               "Woody Debris Cover",
-                                               "Artificial Cover",
-                                               "Total No Cover"))
-
-    # re-run QC after resolving above issues
-    qc_results = qc_wrapper(survey_df = otg_raw$survey,
-                            cu_df = otg_raw$cu,
-                            wood_df = otg_raw$wood,
-                            jam_df = otg_raw$jam,
-                            undercut_df = otg_raw$undercut,
-                            discharge_df = otg_raw$discharge,
-                            discharge_meas_df = otg_raw$discharge_measurements,
-                            redirect_output = F)
-
-  } # end if yw = "2019/lemhi" loop
-
-  # save QC results
+  # save initial QC results
   qc_init_path = paste0(nas_prefix,
                         "/data/habitat/DASH/OTG/",
                         yw,
@@ -193,32 +129,7 @@ for (yw in yr_wtsd) {
                                format(Sys.Date(), format = "%Y%m%d"),
                                ".csv"))
 
-} # end QC loop
-
-# At this point, someone very familiar with the OTG data (preferably a field technician or field coordinator,
-# secondarily a project leader) should likely intervene, review the remaining QC errors that we just wrote
-# to file, and attempt to resolve those, and ideally, make notes for those QC errors that can't be resolved.
-# In addition, for the QC errors that are resolved, it is useful to provide notes on how they are resolved. Notes
-# on how errors were or were not resolved can be useful towards improving data validation (e.g., during field
-# collections) or quality control steps in the future.
-
-# Above, we imported data from the "/1_formatted_csvs/" directory for 3 year x watershed combinations ("2019/lemhi",
-# "2019/nf_salmon", and "2020/secesh"), and in the case of "2019/lemhi" resolved some common issues in ocular
-# estimates using the rescale_values() function and fish cover estimates using fix_fish_cover(), and then wrote out all
-# of the remaining identified errors to a file in each respective directory titled "qc_results_YYYYMMDD.csv" which
-# is the file that should be reviewed.
-
-# The next suggested step is to copy/paste all of the Survey123 data to a new directory for each year x watershed
-# combination; we used "/2_qcd_csvs/". And then, only data in the "/2_qcd_csvs/" directories should be modified while
-# reviewing the QC results. Doing so preserves the integrity of the raw data in "/1_formatted_csvs/", which is good
-# general practice. However, it is fine to add notes in the "qc_results_YYYYMMDD.csv" about how errors were or were
-# not resolved (those qc results can always be replicated in the future using this script).
-
-# Note: the data in the "/1_formatted_csvs/" directory and "/0_raw_csvs/" directories only differ in that file
-# formatting issues may have been identified during data import (i.e., no data has changed).
-
-# Now that errors have been resolved (which as of 20201209 they all have not, still need review), we can move on and
-# re-import the "/2_qcd_csvs/" data in which some errors have been resolved.
+} # end initial QC loop
 
 #-----------------------------
 # import QC'd OTG data; loop over year_watershed combinations
@@ -247,35 +158,34 @@ for (yw in yr_wtsd) {
                                                     "discharge",
                                                     "discharge_measurements"))
 
-  # recall, for the lemhi 2019 data, we need to re-do our fixes to the ocular substrate
-  # and fish cover estimates
+  # We've identified a number of common errors in the 2019/2020 data. For example, many of
+  # the errors in the channel unit data, especially for 2019/lemhi, are related to ocular
+  # substrate estimates not summing to 100 and fish cover estimates not summing to within an
+  # expected range. Let's resolve those common errors using some functions we've created
+  # within the DASH package.
 
-  # I've also identified a handful of the same errors in the nf_salmon 2019 &
-  # secesh 2020 data. So I'll expand this loop here to include those.
-  if( yw == "2019/lemhi" | yw == "2019/nf_salmon" | yw == "2020/lemhi" yw == "2020/secesh" ) {
+  # ocular substrate fixes
+  otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
+                              col_names = c("Sand/Fines 2mm",
+                                            "Gravel 2-64mm",
+                                            "Cobble 64-256mm",
+                                            "Boulder 256mm"),
+                              min_value = 90,
+                              max_value = 110,
+                              sum_to = 100)
 
-    # ocular substrate fixes
-    otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
-                                col_names = c("Sand/Fines 2mm",
-                                              "Gravel 2-64mm",
-                                              "Cobble 64-256mm",
-                                              "Boulder 256mm"),
-                                min_value = 90,
-                                max_value = 110,
-                                sum_to = 100)
+  # fish cover fixes
+  otg_qcd$cu = fix_fish_cover(cu_df = otg_qcd$cu,
+                              cover_cols = c("Overhanging Cover",
+                                             "Aquatic Vegetation",
+                                             "Woody Debris Cover",
+                                             "Artificial Cover",
+                                             "Total No Cover"))
 
-    # fish cover fixes
-    otg_qcd$cu = fix_fish_cover(cu_df = otg_qcd$cu,
-                                cover_cols = c("Overhanging Cover",
-                                               "Aquatic Vegetation",
-                                               "Woody Debris Cover",
-                                               "Artificial Cover",
-                                               "Total No Cover"))
+  # Additionally, we need to make discharge measurements consistent
+  # year-to-year. Particularly, what the station width measurement
+  # actually represents.
 
-  } # end if loop
-
-  # we need to make the discharge measurements consistent year-to-year
-  # particularly what station width represents
   # make 2019 discharge measurement station_width's match 2020 format
   if(grepl("2019", yw)) {
     otg_qcd$discharge_measurements = otg_qcd$discharge_measurements %>%
@@ -289,7 +199,7 @@ for (yw in yr_wtsd) {
       ungroup()
   }
 
-  # in 2020, add a measurement at the short bank
+  # for 2020, add a measurement at the short bank
   if(grepl("2020", yw)) {
     otg_qcd$discharge_measurements = otg_qcd$discharge_measurements %>%
       group_by(ParentGlobalID) %>%
@@ -376,9 +286,28 @@ for (yw in yr_wtsd) {
 
 } # end qc final data loop
 
-# Here, we write out the remaining QC results to both files "qc_final.rds" and "qc_final_YYYYMMDD.csv"
-# in the "/2_qcd_csvs/" directory for each year x watershed combo. These are those remaining QC errors
-# that just can't be resolved.
+# IMPORTANT: THE ABOVE TWO LOOPS 1) IMPORTING QC'D DATA AND QC'ING THAT DATA IS A
+# POTENTIALLY ITERATIVE PROCESS, DESCRIBED BELOW
+
+# At this point, someone very familiar with the OTG data, (preferably a field technician or field coordinator,
+# secondarily a project leader) should intervene, review the QC errors flagged on the /2_qcd_csvs/ versions of
+# the data that we just wrote out, attempt to resolve those, and ideally, make notes for those QC errors that can't
+# be resolved. Errors should be resolved to the .csvs within the survey folders in the /2_qcd_csvs/ directory.
+
+# In addition, for the QC errors that are resolved, it is useful to provide notes on how they are resolved. Those
+# notes on how errors were/were not resolved care helpful towards improving potential data validation (i.e.,
+# validation of data during field surveys) or quality control steps in the future.
+
+# After resolving QC's to the best of your abilities, the next step is to re-run the above two loops. This will
+# re-import the .csvs with the "improved" data and re-run the QC, exporting a new summary of remaining flags,
+# which can then be reviewed again. This process can be repeated until as many errors are resolved as possible.
+# It is fine to add notes in the above "qc_final_YYYYMMDD.csv" data about how errors were or were not resolved.
+
+# Now that errors have been resolved (which as on 20210120 they all have not, still need to review), we can proceed.
+# As of 20210120, the majority of QC flags in the "2019/lemhi" data have been reviewed, but those in the
+# "2019/nf_salmon", "2020/lemhi", and "2020/secesh" have not.
+
+###############################################################################
 
 #-----------------------------
 # Load, join, clean, and rollup QC'd data to the channel unit scale
