@@ -1,9 +1,9 @@
-# Authors: Kevin See
+# Authors: Kevin See & Mike Ackerman
 #
 # Purpose: rollup all OTG data to channel unit scale
 #
 # Created: December 9, 2020
-# Last Modified:
+# Last Modified: January 20, 2021
 #
 # Notes:
 
@@ -32,14 +32,11 @@ if(.Platform$OS.type != 'unix') {
 #-------------------------
 # load QC'd OTG data
 #-------------------------
-yr = 2019
-yr = 2020
-
 otg_path = paste0(nas_prefix,
-                  "/data/habitat/DASH/OTG/",
-                  yr)
+                  "/data/habitat/DASH/OTG/")
 
-# list of otg_raw files in otg_path
+# list of otg_qcd files in otg_path
+# take advantage of fact that 2018 data doesn't contain a "^otg_qcd.rda$"
 otg_list = list.files(path = otg_path,
                       pattern = "^otg_qcd.rda$",
                       recursive = T) %>%
@@ -51,6 +48,7 @@ otg_list = list.files(path = otg_path,
       map(clean_names)
   })
 
+# combine elements of otg_list into otg
 for(i in 1:length(otg_list)) {
   if(i == 1) {
     otg_all = otg_list[[1]]
@@ -65,7 +63,7 @@ for(i in 1:length(otg_list)) {
 rm(otg_list)
 
 
-# clean survey names
+# clean site names
 otg_all$survey = otg_all$survey %>%
   mutate(across(site_name,
                 ~ str_replace(., "_.*", "")),
@@ -73,8 +71,6 @@ otg_all$survey = otg_all$survey %>%
                 ~str_remove(., " ")))
 tabyl(otg_all$survey,
       site_name)
-
-
 
 #-------------------------
 # roll up all the OTG data to CU scale
@@ -90,12 +86,11 @@ cu_df = otg_to_cu(otg_all$survey,
 # save as prepped data
 write_csv(cu_df,
           paste0(nas_prefix,
-                 "/data/habitat/DASH/OTG/prepped/dash_",
-                 paste(sort(na.omit(unique(lubridate::year(cu_df$survey_date)))), collapse = "_"),
-                 "_otg_cu.csv"))
-write_rds(cu_df,
-          )
+                 "/data/habitat/DASH/OTG/prepped/dash_2019_2020_otg_cu.csv"))
 
+write_rds(cu_df,
+          paste0(nas_prefix,
+                 "/data/habitat/DASH/OTG/prepped/dash_2019_2020_otg_cu.rds"))
 
 #-------------------------
 # QC the rollup

@@ -1,4 +1,4 @@
-# Authors: Mike Ackerman
+# Authors: Mike Ackerman & Kevin See
 #
 # Purpose: A script to import and QC all of the 2019 & 2020 on-the-ground (OTG)
 # DASH data collected using Survey123.
