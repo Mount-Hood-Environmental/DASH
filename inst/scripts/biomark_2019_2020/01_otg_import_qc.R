@@ -320,21 +320,15 @@ for (yw in yr_wtsd) {
 
   # overwrite csvs with updated values
   otg_qcd %>%
-    map(.f = function(x) {
+    walk(.f = function(x) {
       # fix issue with writing date from survey back to csv
       if("Survey Date" %in% names(x)) {
         x = x %>%
-          mutate(org_date = map_chr(path_nm,
-                                    .f = function(x) {
-                                      suppressWarnings(read_csv(paste0(path, x),
-                                                                col_types = get_otg_col_specs("surveyPoint_0.csv"))) %>%
+          mutate(`Survey Date` = map_chr(path_nm,
+                                    .f = function(y) {
+                                      suppressMessages(read_csv(paste0(path, y))) %>%
                                         pull(`Survey Date`)
-                                    })) %>%
-          mutate(date_split = str_split(org_date, " "),
-                 org_time = map_chr(date_split,
-                                    .f = function(x) x[[2]]),
-                 `Survey Date` = paste(format(`Survey Date`, "%m/%d/%Y"), org_time, sep = " ")) %>%
-          select(all_of(names(x)))
+                                    }))
       }
 
       if(sum(c("CreationDate", "EditDate") %in% names(x)) > 0) {
