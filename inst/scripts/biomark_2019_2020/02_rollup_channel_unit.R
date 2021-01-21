@@ -48,7 +48,7 @@ otg_list = list.files(path = otg_path,
       map(clean_names)
   })
 
-# combine elements of otg_list into otg
+# combine elements of otg_list into otg_all
 for(i in 1:length(otg_list)) {
   if(i == 1) {
     otg_all = otg_list[[1]]
