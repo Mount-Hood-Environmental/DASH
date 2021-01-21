@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Fix survey dates on 2_qcd_csv files
 # Created: 1/20/21
-# Last Modified: 1/20/21
+# Last Modified: 1/21/21
 # Notes: This should only need to be run once, and only because somehow the dates in the 2_qcd_csv files were corrupted
 
 #-----------------------------------------------------------------
@@ -80,10 +80,18 @@ for (yw in yr_wtsd) {
                                          }))
       }
 
-      if(sum(c("CreationDate", "EditDate") %in% names(x)) > 0) {
+      if("CreationDate" %in% names(x)) {
         x = x %>%
-          mutate(across(c(CreationDate, EditDate),
-                        ~ format(., "%m/%d/%Y")))
+          mutate(CreationDate = map_chr(path_nm,
+                                         .f = function(y) {
+                                           suppressMessages(read_csv(paste0(path_format, y))) %>%
+                                             pull(CreationDate)
+                                         }),
+                 EditDate = map_chr(path_nm,
+                                    .f = function(y) {
+                                      suppressMessages(read_csv(paste0(path_format, y))) %>%
+                                        pull(EditDate)
+                                    }))
       }
 
       x %>%
