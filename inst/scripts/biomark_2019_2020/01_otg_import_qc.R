@@ -70,37 +70,15 @@ for (yw in yr_wtsd) {
   # otg_raw_cu = read_otg_csv(path,
   #                           otg_type = "CU_1.csv")
 
-  # save the otg_data list of dfs
-  save(otg_raw,
-       file = paste0(nas_prefix,
-                     "data/habitat/DASH/OTG/",
-                     yw,
-                     "/prepped/otg_raw.rda"))
-
-  # after last loop, sound an alarm
-  if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
-
-} # end import raw and save loop
-
-#-----------------------------
-# Initial data QC
-#-----------------------------
-for (yw in yr_wtsd) {
-
-  load(paste0(nas_prefix,
-              "/data/habitat/DASH/OTG/",
-              yw,
-              "/prepped/otg_raw.rda"))
-
   # QC all data types for each yr_wtsd
-  qc_results = qc_wrapper(survey_df = otg_raw$survey,
-                          cu_df = otg_raw$cu,
-                          wood_df = otg_raw$wood,
-                          jam_df = otg_raw$jam,
-                          undercut_df = otg_raw$undercut,
-                          discharge_df = otg_raw$discharge,
-                          discharge_meas_df = otg_raw$discharge_measurements,
-                          redirect_output = F)
+  otg_raw$qc_results = qc_wrapper(survey_df = otg_raw$survey,
+                                  cu_df = otg_raw$cu,
+                                  wood_df = otg_raw$wood,
+                                  jam_df = otg_raw$jam,
+                                  undercut_df = otg_raw$undercut,
+                                  discharge_df = otg_raw$discharge,
+                                  discharge_meas_df = otg_raw$discharge_measurements,
+                                  redirect_output = F)
 
   #-----------------------------
   # ALTERNATIVE EXAMPLES: QC just a couple otg_types, separately
@@ -118,18 +96,19 @@ for (yw in yr_wtsd) {
   # qc_results_some = qc_wrapper(cu_df = otg_raw$cu,
   #                              wood_df = otg_raw$wood)
 
-  # save initial QC results
-  qc_init_path = paste0(nas_prefix,
-                        "/data/habitat/DASH/OTG/",
-                        yw,
-                        "/1_formatted_csvs/qc_results")
-  save(qc_results, file = paste0(qc_init_path, ".rds"))
-  write_csv(qc_results, paste0(qc_init_path,
-                               "_",
-                               format(Sys.Date(), format = "%Y%m%d"),
-                               ".csv"))
+  # save the otg_raw list of dfs
+  save(otg_raw,
+       file = paste0(nas_prefix,
+                     "data/habitat/DASH/OTG/",
+                     yw,
+                     "/1_formatted_csvs/otg_raw.rda"))
 
-} # end initial QC loop
+  # after last loop, sound an alarm
+  if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
+
+} # end import raw, QC, and save loop
+
+# END LOOP 1, START LOOP 2
 
 #-----------------------------
 # import QC'd OTG data; loop over year_watershed combinations
