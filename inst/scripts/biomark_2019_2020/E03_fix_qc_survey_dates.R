@@ -2,7 +2,7 @@
 # Purpose: Fix survey dates on 2_qcd_csv files
 # Created: 1/20/21
 # Last Modified: 1/20/21
-# Notes:
+# Notes: This should only need to be run once, and only because somehow the dates in the 2_qcd_csv files were corrupted
 
 #-----------------------------------------------------------------
 # load needed libraries
@@ -50,20 +50,22 @@ for (yw in yr_wtsd) {
 
   # read in the data from the 2_qcd_csv folder
   otg_qcd = read_otg_csv_wrapper(path = path_qcd,
-                                 otg_type_list = c("surveyPoint_0.csv",
-                                                   "CU_1.csv",
-                                                   "Wood_2.csv",
-                                                   "Jam_3.csv",
-                                                   "Undercut_4.csv",
-                                                   "Discharge_5.csv",
-                                                   "DischargeMeasurements_6.csv"),
-                                 otg_type_names = c("survey",
-                                                    "cu",
-                                                    "wood",
-                                                    "jam",
-                                                    "undercut",
-                                                    "discharge",
-                                                    "discharge_measurements"))
+                                 otg_type_list = c("surveyPoint_0.csv"),
+                                 otg_type_names = "survey")
+                                 # otg_type_list = c("surveyPoint_0.csv",
+                                 #                   "CU_1.csv",
+                                 #                   "Wood_2.csv",
+                                 #                   "Jam_3.csv",
+                                 #                   "Undercut_4.csv",
+                                 #                   "Discharge_5.csv",
+                                 #                   "DischargeMeasurements_6.csv"),
+                                 # otg_type_names = c("survey",
+                                 #                    "cu",
+                                 #                    "wood",
+                                 #                    "jam",
+                                 #                    "undercut",
+                                 #                    "discharge",
+                                 #                    "discharge_measurements"))
 
   # overwrite csvs with updated values
   otg_qcd %>%
