@@ -46,7 +46,7 @@ for (yw in yr_wtsd) {
                     "/data/habitat/DASH/OTG/",
                     yw,
                     "/2_qcd_csvs/")
-  # path_qcd = "~/Desktop/"
+  # path_qcd = "~/Desktop/2_qcd_csvs/"
 
   # read in the data from the 2_qcd_csv folder
   otg_qcd = read_otg_csv_wrapper(path = path_qcd,
