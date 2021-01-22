@@ -29,6 +29,17 @@ if(.Platform$OS.type != 'unix') {
   nas_prefix = "~/../../Volumes/ABS"
 }
 
+
+#-----------------------------
+# Do you need to copy initial formatted files to a QC'd folder?
+#-----------------------------
+# if copy_to_qcd is set to TRUE, the files contained in the /1_formatted_csvs/
+# folder will be copied into a /2_qcd_csvs/ folder to have QC edits made.
+# If /2_qcd_csvs/ folders already exist, this will overwrite what's in there.
+# So please set to TRUE only the first time running this script
+copy_to_qcd = FALSE
+# copy_to_qcd = TRUE
+
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
@@ -96,7 +107,82 @@ for (yw in yr_wtsd) {
   # qc_results_some = qc_wrapper(cu_df = otg_raw$cu,
   #                              wood_df = otg_raw$wood)
 
-  # save the otg_raw list of dfs
+  #-----------------------------
+  # if you need to copy the files into a QC'd series of folders
+  # this should only happen the first time you run this script
+  #-----------------------------
+  if(copy_to_qcd) {
+
+    # where will QC'd files go
+    path_qcd = paste0(nas_prefix,
+                      "/data/habitat/DASH/OTG/",
+                      yw,
+                      "/2_qcd_csvs/")
+
+    # create /2_qcd_csvs/ folder
+    if(!dir.exists(path_qcd)) {
+      dir.create(path_qcd)
+    }
+
+    # create folders for each survey
+    survy_fldrs = otg_raw %>%
+      map_df(.id = 'source',
+             .f = function(x) {
+               x %>%
+                 select(path_nm) %>%
+                 distinct()
+             }) %>%
+      mutate(fldr_nm = str_split(path_nm, "/", simplify = T)[,1]) %>%
+      pull(fldr_nm) %>%
+      unique()
+    for(i in 1:length(survy_fldrs)) {
+      if(!dir.exists(paste0(path_qcd, survy_fldrs[i]))) {
+        dir.create(paste0(path_qcd, survy_fldrs[i]))
+      }
+    }
+
+    # copy csvs into appropriate QC folder
+    otg_raw %>%
+      walk(.f = function(x) {
+        # fix issue with writing date from survey back to csv (grab date from 1_formatted_csv folder)
+        if("Survey Date" %in% names(x)) {
+          x = x %>%
+            mutate(`Survey Date` = map_chr(path,
+                                           .f = function(y) {
+                                             suppressMessages(read_csv(paste0(path_format, y))) %>%
+                                               pull(`Survey Date`)
+                                           }))
+        }
+
+        if("CreationDate" %in% names(x)) {
+          x = x %>%
+            mutate(CreationDate = map_chr(path_nm,
+                                          .f = function(y) {
+                                            suppressMessages(read_csv(paste0(path, y))) %>%
+                                              pull(CreationDate)
+                                          }),
+                   EditDate = map_chr(path_nm,
+                                      .f = function(y) {
+                                        suppressMessages(read_csv(paste0(path, y))) %>%
+                                          pull(EditDate)
+                                      }))
+        }
+
+        x %>%
+          group_by(path_nm) %>%
+          group_split() %>%
+          map(.f = function(y) {
+            y %>%
+              select(-path_nm) %>%
+              write_csv(paste0(path_qcd, unique(y$path_nm)))
+            return(NULL)
+          })
+        return(NULL)
+      })
+
+  }
+
+  # save the otg_raw list of dfs, and the initial QC messsages
   save(otg_raw,
        file = paste0(nas_prefix,
                      "data/habitat/DASH/OTG/",
@@ -220,10 +306,18 @@ for (yw in yr_wtsd) {
                                     }))
       }
 
-      if(sum(c("CreationDate", "EditDate") %in% names(x)) > 0) {
+      if("CreationDate" %in% names(x)) {
         x = x %>%
-          mutate(across(c(CreationDate, EditDate),
-                        ~ format(., "%m/%d/%Y")))
+          mutate(CreationDate = map_chr(path_nm,
+                                        .f = function(y) {
+                                          suppressMessages(read_csv(paste0(path, y))) %>%
+                                            pull(CreationDate)
+                                        }),
+                 EditDate = map_chr(path_nm,
+                                    .f = function(y) {
+                                      suppressMessages(read_csv(paste0(path, y))) %>%
+                                        pull(EditDate)
+                                    }))
       }
 
       x %>%
