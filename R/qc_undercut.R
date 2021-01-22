@@ -47,8 +47,8 @@ qc_undercut = function(qc_df = NULL,
   # CHECK 3:  Do all the locations have acceptable values?
   loc_qc = qc_df %>%
     filter(!Location %in% c("Right_Bank",
-                            "Left_Bank"),
-
+                            "Left_Bank",
+                            "Island"),
            !is.na(Location)) %>%
     mutate(error_message = paste0("Strange value, ", Location, ", in Location column")) %>%
     select(all_of(names(qc_tmp)))
