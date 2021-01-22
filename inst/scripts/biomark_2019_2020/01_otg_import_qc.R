@@ -143,43 +143,18 @@ for (yw in yr_wtsd) {
 
     # copy csvs into appropriate QC folder
     otg_raw %>%
+      map_df(.id = 'source',
+             .f = function(x) {
+               x %>%
+                 select(path_nm) %>%
+                 distinct()
+             }) %>%
+      pull(path_nm) %>%
+      as.list() %>%
       walk(.f = function(x) {
-        # fix issue with writing date from survey back to csv (grab date from 1_formatted_csv folder)
-        if("Survey Date" %in% names(x)) {
-          x = x %>%
-            mutate(`Survey Date` = map_chr(path,
-                                           .f = function(y) {
-                                             suppressMessages(read_csv(paste0(path_format, y))) %>%
-                                               pull(`Survey Date`)
-                                           }))
-        }
-
-        if("CreationDate" %in% names(x)) {
-          x = x %>%
-            mutate(CreationDate = map_chr(path_nm,
-                                          .f = function(y) {
-                                            suppressMessages(read_csv(paste0(path, y))) %>%
-                                              pull(CreationDate)
-                                          }),
-                   EditDate = map_chr(path_nm,
-                                      .f = function(y) {
-                                        suppressMessages(read_csv(paste0(path, y))) %>%
-                                          pull(EditDate)
-                                      }))
-        }
-
-        x %>%
-          group_by(path_nm) %>%
-          group_split() %>%
-          map(.f = function(y) {
-            y %>%
-              select(-path_nm) %>%
-              write_csv(paste0(path_qcd, unique(y$path_nm)))
-            return(NULL)
-          })
-        return(NULL)
+        file.copy(from = paste0(path, x),
+                  to = paste0(path_qcd, x))
       })
-
   }
 
   # save the otg_raw list of dfs, and the initial QC messsages
