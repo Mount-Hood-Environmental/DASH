@@ -298,7 +298,7 @@ for (yw in yr_wtsd) {
       x %>%
         group_by(path_nm) %>%
         group_split() %>%
-        walk(.f = function(y) {
+        map(.f = function(y) {
           y %>%
             select(-path_nm) %>%
             write_csv(paste0(path, unique(y$path_nm)))
@@ -322,11 +322,28 @@ for (yw in yr_wtsd) {
 #-----------------------------
 for (yw in yr_wtsd) {
 
-  # load QC'd data
-  load(paste0(nas_prefix,
-              "/data/habitat/DASH/OTG/",
-              yw,
-              "/prepped/otg_qcd.rda"))
+  # # load QC'd data
+  # load(paste0(nas_prefix,
+  #             "/data/habitat/DASH/OTG/",
+  #             yw,
+  #             "/prepped/otg_qcd.rda"))
+
+  # read in QC'd data from CSVs
+  otg_qcd = read_otg_csv_wrapper(path = path,
+                                 otg_type_list = c("surveyPoint_0.csv",
+                                                   "CU_1.csv",
+                                                   "Wood_2.csv",
+                                                   "Jam_3.csv",
+                                                   "Undercut_4.csv",
+                                                   "Discharge_5.csv",
+                                                   "DischargeMeasurements_6.csv"),
+                                 otg_type_names = c("survey",
+                                                    "cu",
+                                                    "wood",
+                                                    "jam",
+                                                    "undercut",
+                                                    "discharge",
+                                                    "discharge_measurements"))
 
   # perform QC on the qc'd data
   qc_final = qc_wrapper(survey_df = otg_qcd$survey,
@@ -362,7 +379,7 @@ for (yw in yr_wtsd) {
 # notes on how errors were/were not resolved care helpful towards improving potential data validation (i.e.,
 # validation of data during field surveys) or quality control steps in the future.
 
-# After resolving QC's to the best of your abilities, the next step is to re-run the above two loops. This will
+# After resolving QC's to the best of your abilities, the next step is to re-run the above loop. This will
 # re-import the .csvs with the "improved" data and re-run the QC, exporting a new summary of remaining flags,
 # which can then be reviewed again. This process can be repeated until as many errors are resolved as possible.
 # It is fine to add notes in the above "qc_final_YYYYMMDD.csv" data about how errors were or were not resolved.
