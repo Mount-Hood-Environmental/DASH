@@ -194,8 +194,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 9: Do riffles with pebble counts have all columns filled? And if so, do values
-  # fall within expected values?
+  # CHECK 9: Do riffles with pebble counts have all columns filled?
   cat("Do riffles with pebble counts have all values filled and within expected values? \n")
 
   peb_chk = qc_df %>%
@@ -216,7 +215,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 10: Do we need to add a check to see if pebble values fall within an expected range?
+  # CHECK 10: Do pebble values fall within an expected range?
   cat("Do the pebble size values fall within a reasonable range btw", peb_min, "and", peb_max, "? \n")
 
   peb_sz_chk = qc_df %>%
