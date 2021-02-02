@@ -33,7 +33,7 @@ qc_wrapper = function(survey_df = NULL,
                       undercut_df = NULL,
                       discharge_df = NULL,
                       discharge_meas_df = NULL,
-                      redirect_output = TRUE,
+                      redirect_output = FALSE,
                       redirect_output_path = "qc_wrapper_output.txt",
                       ...) {
 
@@ -44,20 +44,20 @@ qc_wrapper = function(survey_df = NULL,
             !is.null(cu_df))
 
   # run QC for all cases where is not NULL
-  if( !is.null(survey_df) )     qc_s = qc_survey(survey_df,...)          else qc_s = qc_tbl()
-  if( !is.null(cu_df) )         qc_c = qc_cu(cu_df,...)                  else qc_c = qc_tbl()
-  if( !is.null(wood_df) )       qc_w = qc_wood(wood_df,...)              else qc_w = qc_tbl()
-  if( !is.null(jam_df) )        qc_j = qc_jam(jam_df,...)                else qc_j = qc_tbl()
-  if( !is.null(undercut_df) )   qc_u = qc_undercut(undercut_df,...)      else qc_u = qc_tbl()
-  if( !is.null(discharge_df) )  qc_d1 = qc_disch(discharge_df,...)       else qc_d1 = qc_tbl()
+  if( !is.null(survey_df) )         qc_s = qc_survey(survey_df,...)              else qc_s = qc_tbl()
+  if( !is.null(cu_df) )             qc_c = qc_cu(cu_df,...)                      else qc_c = qc_tbl()
+  if( !is.null(wood_df) )           qc_w = qc_wood(wood_df,...)                  else qc_w = qc_tbl()
+  if( !is.null(jam_df) )            qc_j = qc_jam(jam_df,...)                    else qc_j = qc_tbl()
+  if( !is.null(undercut_df) )       qc_u = qc_undercut(undercut_df,...)          else qc_u = qc_tbl()
+  if( !is.null(discharge_df) )      qc_d1 = qc_disch(discharge_df,...)           else qc_d1 = qc_tbl()
   if( !is.null(discharge_meas_df) ) qc_d2 = qc_disch_meas(discharge_meas_df,...) else qc_d2 = qc_tbl()
 
-  # combine results
+  # combin results
   tmp = qc_tbl() %>%
     tibble::add_column(source = "Dummy",
                        .before = 0) %>%
     tibble::add_column(location_id = character(),
-                       .after = Inf) %>%
+                        .after = Inf) %>%
     dplyr::bind_rows(qc_s %>%
                        left_join(survey_df %>%
                                    select(GlobalID,
@@ -76,131 +76,151 @@ qc_wrapper = function(survey_df = NULL,
                                                                width = 3,
                                                                pad = "0")) %>%
                                    tidyr::unite("location_id",
-                                         `Site Name`,
-                                         `Channel Segment Number`,
-                                         `Channel Unit Number`) %>%
+                                                `Site Name`,
+                                                `Channel Segment Number`,
+                                                `Channel Unit Number`) %>%
                                    select(GlobalID,
                                           location_id)) %>%
                        tibble::add_column(source = "CU",
-                                          .before = 0)) %>%
-    dplyr::bind_rows(qc_w %>%
-                       left_join(wood_df %>%
-                                   select(GlobalID,
-                                          ParentGlobalID)) %>%
-                       left_join(cu_df %>%
-                                   left_join(survey_df %>%
-                                               select(GlobalID,
-                                                      `Site Name`),
-                                             by = c("ParentGlobalID" = "GlobalID")) %>%
-                                   dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
-                                                                 `Channel Unit Number`),
-                                                               str_pad,
-                                                               width = 3,
-                                                               pad = "0")) %>%
-                                   tidyr::unite("location_id",
-                                                `Site Name`,
-                                                `Channel Segment Number`,
-                                                `Channel Unit Number`) %>%
-                                   select(GlobalID,
-                                          location_id),
-                                 by = c("ParentGlobalID" = "GlobalID")) %>%
-                       dplyr::select(-ParentGlobalID) %>%
-                       tibble::add_column(source = "Wood",
-                                          .before = 0)) %>%
-    dplyr::bind_rows(qc_j %>%
-                       left_join(jam_df %>%
-                                   select(GlobalID,
-                                          ParentGlobalID)) %>%
-                       left_join(cu_df %>%
-                                   left_join(survey_df %>%
-                                               select(GlobalID,
-                                                      `Site Name`),
-                                             by = c("ParentGlobalID" = "GlobalID")) %>%
-                                   dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
-                                                                 `Channel Unit Number`),
-                                                               str_pad,
-                                                               width = 3,
-                                                               pad = "0")) %>%
-                                   tidyr::unite("location_id",
-                                                `Site Name`,
-                                                `Channel Segment Number`,
-                                                `Channel Unit Number`) %>%
-                                   select(GlobalID,
-                                          location_id),
-                                 by = c("ParentGlobalID" = "GlobalID")) %>%
-                       dplyr::select(-ParentGlobalID) %>%
-                       tibble::add_column(source = "Jam",
-                                          .before = 0)) %>%
-    dplyr::bind_rows(qc_u %>%
-                       left_join(undercut_df %>%
-                                   select(GlobalID,
-                                          ParentGlobalID)) %>%
-                       left_join(cu_df %>%
-                                   left_join(survey_df %>%
-                                               select(GlobalID,
-                                                      `Site Name`),
-                                             by = c("ParentGlobalID" = "GlobalID")) %>%
-                                   dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
-                                                                 `Channel Unit Number`),
-                                                               str_pad,
-                                                               width = 3,
-                                                               pad = "0")) %>%
-                                   tidyr::unite("location_id",
-                                                `Site Name`,
-                                                `Channel Segment Number`,
-                                                `Channel Unit Number`) %>%
-                                   select(GlobalID,
-                                          location_id),
-                                 by = c("ParentGlobalID" = "GlobalID")) %>%
-                       dplyr::select(-ParentGlobalID) %>%
-                       tibble::add_column(source = "Undercut",
-                                          .before = 0)) %>%
-    dplyr::bind_rows(qc_d1 %>%
-                       left_join(discharge_df %>%
-                                   select(GlobalID,
-                                          ParentGlobalID,
-                                          loc = `Discharge Location (BOS, TOS, CU #)`)) %>%
-                       left_join(survey_df %>%
-                                   select(GlobalID,
-                                          `Site Name`),
-                                 by = c("ParentGlobalID" = "GlobalID")) %>%
-                       tidyr::unite("location_id",
-                                   `Site Name`,
-                                   loc) %>%
-                       dplyr::select(-ParentGlobalID) %>%
-                       tibble::add_column(source = "Discharge",
-                                          .before = 0)) %>%
-    dplyr::bind_rows(qc_d2 %>%
-                       left_join(discharge_meas_df %>%
-                                   select(GlobalID,
-                                          disch_id = ParentGlobalID)) %>%
-                       left_join(discharge_df %>%
-                                   select(disch_id = GlobalID,
-                                          surv_id = ParentGlobalID,
-                                          loc = `Discharge Location (BOS, TOS, CU #)`)) %>%
-                       left_join(survey_df %>%
-                                   select(surv_id = GlobalID,
-                                          `Site Name`)) %>%
-                       tidyr::unite("location_id",
-                                    `Site Name`,
-                                    loc) %>%
-                       dplyr::select(-disch_id, -surv_id) %>%
-                       tibble::add_column(source = "DischargeMeasurements",
                                           .before = 0))
 
-  # perform some QC on entire channel unit data
-  qc_roll = qc_rollup(survey_df = survey_df,
-                      cu_df = cu_df,
-                      jam_df = jam_df,
-                      undercut_df = undercut_df,
-                      wood_df = wood_df,
-                      discharge_df = discharge_df,
-                      discharge_meas_df = discharge_meas_df)
-
-  if(nrow(qc_roll$error_df) > 0) {
+  if( !is.null(wood_df) ) {
     tmp = tmp %>%
-      bind_rows(qc_roll$error_df)
-  }
+      dplyr::bind_rows(qc_w %>%
+                         left_join(wood_df %>%
+                                     select(GlobalID,
+                                            ParentGlobalID)) %>%
+                         left_join(cu_df %>%
+                                     left_join(survey_df %>%
+                                                 select(GlobalID,
+                                                        `Site Name`),
+                                               by = c("ParentGlobalID" = "GlobalID")) %>%
+                                     dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
+                                                                   `Channel Unit Number`),
+                                                                 str_pad,
+                                                                 width = 3,
+                                                                 pad = "0")) %>%
+                                     tidyr::unite("location_id",
+                                                  `Site Name`,
+                                                  `Channel Segment Number`,
+                                                  `Channel Unit Number`) %>%
+                                     select(GlobalID,
+                                            location_id),
+                                   by = c("ParentGlobalID" = "GlobalID")) %>%
+                         dplyr::select(-ParentGlobalID) %>%
+                         tibble::add_column(source = "Wood",
+                                            .before = 0))
+  } # end if wood_df NOT NULL
+
+  if( !is.null(jam_df) ) {
+    tmp = tmp %>%
+      dplyr::bind_rows(qc_j %>%
+                         left_join(jam_df %>%
+                                     select(GlobalID,
+                                            ParentGlobalID)) %>%
+                         left_join(cu_df %>%
+                                     left_join(survey_df %>%
+                                                 select(GlobalID,
+                                                        `Site Name`),
+                                               by = c("ParentGlobalID" = "GlobalID")) %>%
+                                     dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
+                                                                   `Channel Unit Number`),
+                                                                 str_pad,
+                                                                 width = 3,
+                                                                 pad = "0")) %>%
+                                     tidyr::unite("location_id",
+                                                  `Site Name`,
+                                                  `Channel Segment Number`,
+                                                  `Channel Unit Number`) %>%
+                                     select(GlobalID,
+                                            location_id),
+                                   by = c("ParentGlobalID" = "GlobalID")) %>%
+                         dplyr::select(-ParentGlobalID) %>%
+                         tibble::add_column(source = "Jam",
+                                            .before = 0))
+  } # end if jam_df NOT NULL
+
+  if( !is.null(undercut_df) ) {
+    tmp = tmp %>%
+      dplyr::bind_rows(qc_u %>%
+                         left_join(undercut_df %>%
+                                     select(GlobalID,
+                                            ParentGlobalID)) %>%
+                         left_join(cu_df %>%
+                                     left_join(survey_df %>%
+                                                 select(GlobalID,
+                                                        `Site Name`),
+                                               by = c("ParentGlobalID" = "GlobalID")) %>%
+                                     dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
+                                                                   `Channel Unit Number`),
+                                                                 str_pad,
+                                                                 width = 3,
+                                                                 pad = "0")) %>%
+                                     tidyr::unite("location_id",
+                                                  `Site Name`,
+                                                  `Channel Segment Number`,
+                                                  `Channel Unit Number`) %>%
+                                     select(GlobalID,
+                                            location_id),
+                                   by = c("ParentGlobalID" = "GlobalID")) %>%
+                         dplyr::select(-ParentGlobalID) %>%
+                         tibble::add_column(source = "Undercut",
+                                            .before = 0))
+  } # end if undercut_df NOT NULL
+
+  if( !is.null(discharge_df) ) {
+    tmp = tmp %>%
+      dplyr::bind_rows(qc_d1 %>%
+                         left_join(discharge_df %>%
+                                     select(GlobalID,
+                                            ParentGlobalID,
+                                            loc = `Discharge Location (BOS, TOS, CU #)`)) %>%
+                         left_join(survey_df %>%
+                                     select(GlobalID,
+                                            `Site Name`),
+                                   by = c("ParentGlobalID" = "GlobalID")) %>%
+                         tidyr::unite("location_id",
+                                      `Site Name`,
+                                      loc) %>%
+                         dplyr::select(-ParentGlobalID) %>%
+                         tibble::add_column(source = "Discharge",
+                                            .before = 0))
+  } # end if discharge_df NOT NULL
+
+  if( !is.null(discharge_meas_df) ) {
+    tmp = tmp %>%
+      dplyr::bind_rows(qc_d2 %>%
+                         left_join(discharge_meas_df %>%
+                                     select(GlobalID,
+                                            disch_id = ParentGlobalID)) %>%
+                         left_join(discharge_df %>%
+                                     select(disch_id = GlobalID,
+                                            surv_id = ParentGlobalID,
+                                            loc = `Discharge Location (BOS, TOS, CU #)`)) %>%
+                         left_join(survey_df %>%
+                                     select(surv_id = GlobalID,
+                                            `Site Name`)) %>%
+                         tidyr::unite("location_id",
+                                      `Site Name`,
+                                      loc) %>%
+                         dplyr::select(-disch_id, -surv_id) %>%
+                         tibble::add_column(source = "DischargeMeasurements",
+                                            .before = 0))
+  } # end if discharge_meas_df NOT NULL
+
+  # perform some QC on entire channel unit data
+  # qc_roll = qc_rollup(survey_df = survey_df,
+  #                     cu_df = cu_df,
+  #                     jam_df = jam_df,
+  #                     undercut_df = undercut_df,
+  #                     wood_df = wood_df,
+  #                     discharge_df = discharge_df,
+  #                     discharge_meas_df = discharge_meas_df)
+  #
+  # if(nrow(qc_roll$error_df) > 0) {
+  #   tmp = tmp %>%
+  #     bind_rows(qc_roll$error_df)
+  # }
 
   if( redirect_output == T ) { sink() }
 
