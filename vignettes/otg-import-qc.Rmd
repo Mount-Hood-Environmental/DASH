@@ -1,5 +1,5 @@
 ---
-title: "Import and QC of OTG Data"
+title: "1.0) Import and QC of OTG Data"
 author: 
 - name: Mike Ackerman
   email: mike.ackerman@merck.com
@@ -9,7 +9,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{otg-import-qc}
+  %\VignetteIndexEntry{1.0) otg-import-qc}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -28,9 +28,9 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Welcome to the [DASH](https://github.com/BiomarkABS/DASH) R package! This vignette, which logically follows as the first of multiple vignettes in the package, describes how to import and quality control (QC) on-the-ground (OTG hereafter) collected habitat data  using the DASH protocol. The initial data collection forms to record the OTG data were generated using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) and we focus on importing data from those forms. After data import, we describe how functions included in the DASH R package can then be used to perform QC on the data to identify potential errors, perhaps that occurred in the field. Finally, we describe initial data cleaning and joining (i.e., joining channel unit scale information with wood, undercut, etc. information collected for that unit) in preparation of attaching the OTG collected data to stream centerline data to make it spatial. Later, our spatial OTG data can then be connected to drone-generated orthomosaics. 
+Welcome to the [DASH](https://github.com/BiomarkABS/DASH) R package! This vignette, which logically serves as the first of multiple vignettes in the package, describes how to import and quality control (QC) on-the-ground (OTG hereafter) collected habitat data  using the DASH protocol. The initial data collection forms to record the OTG data were generated using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) and we focus on importing data from those forms. After data import, we describe how functions included in the DASH R package can then be used to perform QC on the data to identify potential errors, perhaps that occurred in the field. Finally, we describe initial data cleaning and joining (i.e., joining channel unit scale information with wood, undercut, etc. information collected for that unit) in preparation of attaching the OTG collected data to stream centerline data to make it spatial. Later, our spatial OTG data can then be connected to drone-generated orthomosaics. 
 
-Let's start by describing the data import procedure; we'll then go into data QC and how to resolve some of the identified errors. Begin by loading the necessary libraries (R packages) needed for this vignette and analysis:
+We'll start by describing the import procedure for OTG data; we'll then go into QC of that data and how to resolve some of the identified errors. Begin by loading the necessary libraries (R packages) needed for this vignette and analysis:
 
 ```{r setup}
 # load necessary libraries
@@ -50,16 +50,16 @@ Each DASH OTG survey conducted using [ArcGIS Survey123](https://www.esri.com/en-
 * **CU_1.csv**: Data collected for individual channel units. Valid channel units (should) include the following: Riffle, Run, Pool, Rapid+, OCA (off-channel area), and SSC (small side channel).
 * **Wood_2.csv**: Data for large wood measured within channel units including count, size, etc.
 * **Jam_3.csv**: Data for wood jams within channel units.
-* **Undercut_4.csv**: Data for undercuts within channel units.
-* **Discharge_5.csv**: Data indicating the location where discharge was measured at a site.
+* **Undercut_4.csv**: Data for undercut banks within channel units.
+* **Discharge_5.csv**: Data indicating the location where discharge was measured at a given site.
 * **DischargeMeasurements_6.csv**: The width, depth, and velocity measurements for each station where discharge is to be estimated.
 
-Each of the .csv files can be joined or related to each other using the **GlobalID** and **ParentGlobalID** columns in each. For example, the **ParentGlobalID** in **CU_1.csv** can be used to related it back to a **GlobalID** in **surveyPoint_0.csv**, whereas the **GlobalID** in **CU_1.csv** is a unique identifier for each channel unit. Similarly, the **ParentGlobalID** in **Wood_2.csv** can be used to join it back to a **GlobalID** in **CU_1.csv**. Note that the **surveyPoint_0.csv** file does not contain a **ParentGlobalID** column as it does not have a "parent" (it is the parent).
+Each of the .csv files can be joined or related to each other using the **GlobalID** and **ParentGlobalID** columns in each. For example, the **ParentGlobalID** in **CU_1.csv** can be used to related it back to a **GlobalID** in **surveyPoint_0.csv**, whereas the **GlobalID** in **CU_1.csv** is a unique identifier for each channel unit. Similarly, the **ParentGlobalID** in **Wood_2.csv** can be used to join it back to a **GlobalID** in **CU_1.csv**. Note that the **surveyPoint_0.csv** file does not contain a **ParentGlobalID** column as it does not have a "parent" (i.e., it is the parent).
 
-To start, let's set `otg_path` a path to the directory containing the ArcGIS Survey123 folder of interest. `otg_path` should only contain folders (no files), and each of those folders should only contain the above files (and no folders).
+To start, set `otg_path` a path to the directory containing the ArcGIS Survey123 folder of interest. `otg_path` should only contain folders (no files), and each of those folders should only contain the above files (and no folders).
 
 ```{r otg-path}
-# As an example, if the Survey123 site folders were in a "1_formatted_csvs" folder on your Desktop
+# As an example, if the Survey123 site folders were in a "/1_formatted_csvs/" folder on your Desktop
 otg_path = "C:/Users/username/Desktop/1_formatted_csvs/"
 
 # For internal Biomark folks, set nas_prefix based on your operating system and then set otg_path to the NAS
@@ -76,7 +76,7 @@ otg_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/1_formatted_csvs/")
 
 ## `read_otg_csv()`: Reading in One Type of OTG Data at a Time
 
-The [DASH](https://github.com/BiomarkABS/DASH) R package includes a function `read_otg_csv()` which can be used to import one type (`otg_type`) of OTG data at a time. `otg_type` includes two arguments, `path` and `otg_type`. Here, we provide examples of how `read_otg_csv()` can be used to import channel unit (cu) or wood data to create two objects, `otg_raw_cu` and `otg_raw_wood`, respectively. In our case, we'll set `path = otg_path` which we created above, and `otg_type` is set using the name of the files containing the OTG data of interest.
+The [DASH](https://github.com/BiomarkABS/DASH) R package includes a function `read_otg_csv()` which can be used to import one type (`otg_type`) of OTG data at a time. `read_otg_csv()` includes two arguments, `path` and `otg_type`. Here, we provide examples of how `read_otg_csv()` can be used to import channel unit (CU) or wood data to create two objects, `otg_raw_cu` and `otg_raw_wood`, respectively. In our case, we'll set `path = otg_path` which we created above, and `otg_type` is set using the name of the files containing the OTG data of interest.
 
 `read_otg_csv()` performs some QC during the data import process. First, `read_otg_csv()` ensures that the column names and specifications in the file being imported matches the expected, which is defined in `get_otg_col_specs()`. If the column names or specifications do not match the expected, `read_otg_csv()` will provide a warning indicating so, but will attempt to proceed. The function also performs one additional QC ensuring that the file being imported contains the expected number of columns and will provide a "fatal error" if not and stop the import process. Throughout the process, you will see which file is being imported and whether the import was successful or not. Finally, `read_otg_csv()` will provide a message if no records are found in a file, which can be totally fine, for example, if a site contained no woody debris, jams, undercuts, etc. In this case, `read_otg_csv()` will just provide a friendly message and proceed.
 
@@ -90,7 +90,7 @@ otg_raw_wood = read_otg_csv(path = otg_path,
 
 ```
 
-During your initial data import process, you may identify files that aren't formatted correctly for import and `read_otg_csv()` will, rightly so, "choke" during import and indicate so. For example, a .csv file may have inadvertently been saved or exported as tab-delimited, or personnel may have unknowingly added or removed a column. In this case, we suggest storing all of the Survey123 site folders in two separate directories. I have been storing two versions, saved separately in folders "0_raw_csvs" and "1_formatted_csvs". Here, I keep the "raw" untouched data in "0_raw_csvs" which I **never** change. The "1_formatted_csvs" folder is where I make formatting changes that I've identified during the import process. It's typically good practice to always store the rawest form of your data that is never changed after data collection for archiving sake; hence, why we are importing data from a "1_formatted_csvs" folder.
+During the initial data import process, you may identify files that aren't formatted correctly for import and `read_otg_csv()` will, rightly so, "choke" during import and indicate so. For example, a .csv file may have inadvertently been saved or exported as tab-delimited, or personnel may have unknowingly added or removed a column. In this case, we suggest storing all of the Survey123 site folders in two separate directories. I have been storing two versions, saved separately in folders "0_raw_csvs" and "1_formatted_csvs". Here, I keep the "raw" untouched data in "0_raw_csvs" which I **never** change. The "1_formatted_csvs" folder is where I make formatting changes that I've identified during the import process. It's typically good practice to always store the rawest form of your data that is never changed after data collection for archiving sake; hence, why we are importing data from a "1_formatted_csvs" folder.
 
 Please note that at any time you may access the help menu and documentation for the package or functions using the following:
 
@@ -105,7 +105,7 @@ help(package = "DASH")
 
 ## `read_otg_csv_wrapper()`: Read in All OTG Data At Once
 
-It would be a bit tedious to import each of our 7 OTG data types (`otg_type`), separately, and later somehow join them together. To remedy this, we've included the function `read_otg_csv_wrapper()` in the [DASH](https://github.com/BiomarkABS/DASH) R package, which can be used to import some or all of the OTG data types at once. The result is a list of tibbles (i.e., simple data frames) each containing data for an `otg_type`. Rather than having the argument `otg_type`, `read_otg_csv_wrapper()` has the argument `otg_type_list` where the user can provide a vector of OTG data types to import.
+It would be a bit tedious to import each of our 7 OTG data types (`otg_type`), separately, and later join them together. To remedy this, we've included the function `read_otg_csv_wrapper()` in the [DASH](https://github.com/BiomarkABS/DASH) R package, which can be used to import some or all of the OTG data types at once. The result is a list of tibbles (i.e., simple data frames) each containing data for an `otg_type`. Rather than having the argument `otg_type`, `read_otg_csv_wrapper()` has the argument `otg_type_list` where the user can provide a vector of OTG data types to import.
 
 Let's instead use `read_otg_csv_wrapper()` to import just our channel unit and wood data, similar to above, except now creating a list of tibbles, rather than two separate objects.
 
@@ -117,7 +117,7 @@ otg_raw = read_otg_csv_wrapper(path = otg_path,
 
 ```
 
-Better yet, let's read in all OTG data types at once, which, by the way, is the default setting for `read_otg_csv_wrapper()`. Note that the function includes an argument `otg_type_names` which can be used to rename each of the tibbles during import, which is much tidier than using the file names to name each tibble (as we did above without `otg_type_names`). If `otg_type_names` is provided by the user, it **must** be the same length as `otg_type_list`.
+Or better yet, let's read in all OTG data types at once, which, by the way, is the default setting for `read_otg_csv_wrapper()`. Note that the function includes an argument `otg_type_names` which can be used to rename each of the tibbles during import, which is much tidier than using the file names to name each tibble (as we did above without `otg_type_names`). If `otg_type_names` is provided by the user, it **must** be the same length as `otg_type_list`.
 
 ```{r read-otg-csv-wrapper, eval = F}
 # "loop over" all data types using read_otg_csv_wrapper()
@@ -152,25 +152,25 @@ head(otg_raw$wood)
 
 ```
 
-Excellent, now let's save our data to an (imaginary) directory for later use. Next, we'll perform quality control (QC) on our OTG data.
+Excellent, now let's save our data to an (imaginary) directory for later use. Next, we'll perform quality control (QC) on that OTG data.
 
 ```{r save-raw-otg, eval = F}
+# save to the otg_path
 save(otg_raw,
-     file = paste0(nas_prefix, "/data/habitat/DASH/OTG/prepped/otg_raw.rda"))
+     file = paste0(otg_path, "otg_raw.rda"))
 
 ```
 
-# Initial QC
+# Initial Data QC
 
-It's now time to perform QC on the imported raw data to identify errors that may have occurred in the field during data collection. The goal is to identify as many potential errors in the data as possible (but perhaps not all!) using functions provided by the [DASH](https://github.com/BiomarkABS/DASH) R package; and save or export a list of those potential errors. The identified errors can then be reviewed by field personnel or someone closely familiar with the data and remedied where possible.
+It's now time to perform QC on the imported raw data to identify errors that may have occurred in the field during data collection. The goal is to identify as many potential errors in the data as possible (but perhaps not all!) using functions provided by the [DASH](https://github.com/BiomarkABS/DASH) R package; and save or export a list of the potential errors. The identified errors can then be reviewed by field personnel or someone closely familiar with the data and remedied where possible.
 
-Please note that during the QC process or while working with the data, you may very well identify potential errors in the data **not** identified by functions provided here. In this case, please feel free to submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the GitHub repo website and we will try to add the functionality to "flag" or identify those potential issues. We are always looking to improve the QC process.
+Please note that during the QC process or while working with the data, you may identify potential errors in the data **not** identified by functions provided in [DASH](https://github.com/BiomarkABS/DASH). In this case, please take the time to submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the site and we will try to add the functionality to "flag" or identify those potential issues in the future. We are always looking to improve the QC process.
 
 Let's start by loading the `otg_raw` object that we previously saved, using the `load()` function:
 
 ```{r fake-load-raw-otg, eval = F}
-load(paste0(nas_prefix,
-            "/data/habitat/DASH/OTG/prepped/otg_raw.rda"))
+load(paste0(otg_path, "otg_raw.rda"))
 
 ```
 
@@ -188,6 +188,7 @@ To QC the OTG data, DASH includes 7 QC functions as follows (including a descrip
     * Does the sum of the fish cover values fall within an expected range?
     * Do the ocular substrate estimates for all slow water channel units sum to 100?
     * Do the riffles with pebble counts have all columns filled in, and if so, do values fall within an expected range?
+    * Is there more than one **ParentGlobalID** for channel units within a site? We expect only one.
 * `qc_wood()`: For `otg_type = "Wood_2.csv"` data.
     * Are there any strange values in the **Wet?**, **Channel Forming?**, or **Ballasted?** columns?
     * Are the length and diameter measurements for any pieces of wood possibly reversed?
@@ -200,6 +201,7 @@ To QC the OTG data, DASH includes 7 QC functions as follows (including a descrip
 * `qc_disch()`: For `otg_type = "Discharge_5.csv"` data.
     * Are any channel units not numeric?
     * Are any channel units negative?
+    * Is there more than one **ParentGlobalID** for channel units within a site? We expect only one.
 * `qc_disch_meas()`: For `otg_type = "DischargeMeasurements_6.csv"` data.
     * Do any of the width, depth, or velocity measurements fall outside of expected values?
 
@@ -207,7 +209,7 @@ In addition to the above, each QC function also 1) identifies whether the column
 
 ## QC One `otg_type` at a Time
 
-We can QC a single `otg_type` at a time using any number of the above QC functions. As an example, let's use `qc_cu()` and `qc_wood()` to QC the `otg_type = "CU_1.csv"` and `otg_type = "Wood_2.csv` data, respectively. The output from all of the QC functions has the same format and so can be easily joined, which we also demonstrate. Many of the QC functions include an argument `cols_to_check_nas` which can be used to define columns where you want to flag `NA`s or <blank> values, which can be useful for columns where you expect every record to have a value. Each QC function with the `cols_to_check_nas` argument has a default which we be used if the user does not define the argument.
+We can QC a single `otg_type` at a time using any number of the above QC functions. As an example, let's use `qc_cu()` and `qc_wood()` to QC the `otg_type = "CU_1.csv"` and `otg_type = "Wood_2.csv` data, respectively. The output from all of the QC functions has the same format and so can be easily joined, which we also demonstrate. Many of the QC functions include an argument `cols_to_check_nas` which can be used to define columns where you want to flag `NA`s or <blank> values, which can be useful for columns where you expect every record to have a value. Each QC function with the `cols_to_check_nas` argument has a default which will be used if the user does not define the argument.
 
 ```{r init-qc, eval = F}
 # QC just the channel unit data using "qc_cu()", define cols_to_check_nas
@@ -239,7 +241,8 @@ Similar to above, let's just QC the `otg_type = "CU_1.csv"` and `otg_type = "Woo
 
 ```{r init-qc-all, eval = F}
 # QC just channel unit and wood data
-init_qc_some = qc_wrapper(cu_df = otg_raw$cu,
+init_qc_some = qc_wrapper(survey_df = otg_raw$survey,
+                          cu_df = otg_raw$cu,
                           wood_df = otg_raw$wood,
                           redirect_output = FALSE)
 
@@ -250,7 +253,7 @@ init_qc = qc_wrapper(survey_df = otg_raw$survey,
                      jam_df = otg_raw$jam,
                      undercut_df = otg_raw$undercut,
                      discharge_df = otg_raw$discharge,
-                     disch_meas_df = otg_raw$discharge_measurements,
+                     discharge_meas_df = otg_raw$discharge_measurements,
                      redirect_output = FALSE)
 
 ```
