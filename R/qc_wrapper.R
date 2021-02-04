@@ -11,6 +11,8 @@
 #' @param jam_df data.frame containing the jam data
 #' @param discharge_df data.frame containing the discharge location data
 #' @param discharge_meas_df data.frame containing the discharge measurement data
+#' @param channel_unit_roll_qc should there be a quality control check on the roll-up
+#' to the channel unit scale, using the `qc_rollup()` function? Default is `FALSE`.
 #' @param redirect_output would you like to redirect the output messages
 #' from `qc_wrapper()` to a file instead of the R terminal? Default = `TRUE`.
 #' If set to `FALSE`, messages will simply be written to console.
@@ -33,6 +35,7 @@ qc_wrapper = function(survey_df = NULL,
                       undercut_df = NULL,
                       discharge_df = NULL,
                       discharge_meas_df = NULL,
+                      channel_unit_roll_qc = FALSE,
                       redirect_output = FALSE,
                       redirect_output_path = "qc_wrapper_output.txt",
                       ...) {
@@ -57,7 +60,7 @@ qc_wrapper = function(survey_df = NULL,
     tibble::add_column(source = "Dummy",
                        .before = 0) %>%
     tibble::add_column(location_id = character(),
-                        .after = Inf) %>%
+                       .after = Inf) %>%
     dplyr::bind_rows(qc_s %>%
                        left_join(survey_df %>%
                                    select(GlobalID,
@@ -208,19 +211,28 @@ qc_wrapper = function(survey_df = NULL,
                                             .before = 0))
   } # end if discharge_meas_df NOT NULL
 
-  # perform some QC on entire channel unit data
-  # qc_roll = qc_rollup(survey_df = survey_df,
-  #                     cu_df = cu_df,
-  #                     jam_df = jam_df,
-  #                     undercut_df = undercut_df,
-  #                     wood_df = wood_df,
-  #                     discharge_df = discharge_df,
-  #                     discharge_meas_df = discharge_meas_df)
-  #
-  # if(nrow(qc_roll$error_df) > 0) {
-  #   tmp = tmp %>%
-  #     bind_rows(qc_roll$error_df)
-  # }
+  if(channel_unit_roll_qc) {
+    # perform some QC on entire channel unit data
+    qc_roll = qc_rollup(survey_df = survey_df,
+                        cu_df = cu_df,
+                        jam_df = jam_df,
+                        undercut_df = undercut_df,
+                        wood_df = wood_df,
+                        discharge_df = discharge_df,
+                        discharge_meas_df = discharge_meas_df)
+
+    if(nrow(qc_roll$error_df) > 0) {
+      tmp = tmp %>%
+        bind_rows(qc_roll$error_df)
+    }
+  }
+
+  # put columns in specific order
+  tmp %<>%
+    select(source:GlobalID,
+           any_of(c("ParentGlobalID",
+                    "location_id")),
+           error_message)
 
   if( redirect_output == T ) { sink() }
 
