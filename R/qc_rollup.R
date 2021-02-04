@@ -1,7 +1,9 @@
 #' @title Quality Control - Channel Unit Rollup
 #'
 #' @description Quality control the channel unit rollup
-#' performed by `otg_to_cu()`
+#' performed by `otg_to_cu()`. This is primarily concerned with
+#' making sure that all pieces of data are connected through the
+#' parent global IDs.
 #'
 #' @author Kevin See
 #'
@@ -10,6 +12,7 @@
 #' @import dplyr
 #' @importFrom magrittr %<>%
 #' @importFrom tibble add_column
+#' @importFrom janitor clean_names
 #' @export
 #' @return a tibble with QC results
 
@@ -19,19 +22,26 @@ qc_rollup = function(survey_df = NULL,
                      undercut_df = NULL,
                      wood_df = NULL,
                      discharge_df = NULL,
-                     discharge_meas_df = NULL,
-                     fix_nas = FALSE,
-                     jam_impute_cols  = c("length_m",
-                                          "width_m",
-                                          "height_m",
-                                          "estimated_number_of_pieces"),
-                     undercut_impute_cols = c("length_m",
-                                              "width_25_percent_m",
-                                              "width_50_percent_m",
-                                              "width_75_percent_m"),
-                     wood_impute_cols = c('length_m',
-                                          'diameter_m'),
-                     ...) {
+                     discharge_meas_df = NULL) {
+
+  # you need at least these 2 files to run the function
+  stopifnot(!is.null(survey_df),
+            !is.null(cu_df))
+
+  # if discharge_meas_df exists, then so should discharge_df, and vice versa
+  if(!is.null(discharge_meas_df) & is.null(discharge_df)) {
+    stop("Discharge measurements exist, but no discharge_df.")
+  }
+  if(is.null(discharge_meas_df) & !is.null(discharge_df)) {
+    stop("If discharge_df exists, then so should discharge_meas_df.")
+  }
+
+  # fix any NULL values in other data.frames
+  if(is.null(wood_df)) wood_df = create_empty_tbl("Wood_2.csv")
+  if(is.null(jam_df)) jam_df = create_empty_tbl("Jam_3.csv")
+  if(is.null(undercut_df)) undercut_df = create_empty_tbl("Undercut_4.csv")
+  # if(is.null(discharge_df)) discharge_df = create_empty_tbl("Discharge_5.csv")
+  # if(is.null(discharge_meas_df)) discharge_meas_df = create_empty_tbl("DischargeMeasurements_6.csv")
 
   # ensure naming conventions are what's expected
   survey_df %<>%
@@ -44,47 +54,12 @@ qc_rollup = function(survey_df = NULL,
     clean_names()
   wood_df %<>%
     clean_names()
-  discharge_df %<>%
-    clean_names()
-  discharge_meas_df %<>%
-    clean_names()
-
-  # rollup each type of data
-  cu_main = rollup_cu(cu_df,
-                      survey_df)
-  cu_jam = rollup_cu_jam(jam_df,
-                         fix_nas = fix_nas,
-                         impute_cols = jam_impute_cols,
-                         ...)
-  cu_undct = rollup_cu_undercut(undercut_df,
-                                fix_nas = fix_nas,
-                                impute_cols = undercut_impute_cols,
-                                ...)
-  cu_wood = rollup_cu_wood(wood_df,
-                           fix_nas = fix_nas,
-                           impute_cols = wood_impute_cols,
-                           ...)
-  cu_disch = rollup_cu_discharge(discharge_df,
-                                 discharge_meas_df) %>%
-    rename(channel_unit_number = discharge_location_bos_tos_cu_number) %>%
-    mutate(across(channel_unit_number,
-                  str_pad,
-                  width = 3,
-                  pad = "0"))
-
-  # # rollup everything at the channel unit scale
-  # cu_rollup = otg_to_cu(survey_df,
-  #                   cu_df,
-  #                   jam_df,
-  #                   undercut_df,
-  #                   wood_df,
-  #                   discharge_df,
-  #                   discharge_meas_df,
-  #                   fix_nas = fix_nas,
-  #                   jam_impute_cols = jam_impute_cols,
-  #                   undercut_impute_cols = undercut_impute_cols,
-  #                   wood_impute_cols = wood_impute_cols,
-  #                   ...)
+  if(!is.null(discharge_df)) {
+    discharge_df %<>%
+      clean_names()
+    discharge_meas_df %<>%
+      clean_names()
+  }
 
   # Initiate qc_tmp
   qc_tmp = qc_tbl() %>%
@@ -135,42 +110,37 @@ qc_rollup = function(survey_df = NULL,
 
   #---------------------------------------------------------
   # any rollup values that didn't get included in cu_df?
-  miss_rollup = cu_wood %>%
-    anti_join(cu_main,
-              by = c('parent_global_id' = 'global_id')) %>%
-    mutate(source = "Wood") %>%
-    left_join(wood_df %>%
-                select(parent_global_id,
-                       global_id,
-                       path_nm) %>%
-                distinct()) %>%
-    select(source, path_nm,
+  miss_rollup = wood_df %>%
+    select(path_nm,
            global_id,
            parent_global_id) %>%
-    bind_rows(cu_jam %>%
-                anti_join(cu_main,
-                          by = c('parent_global_id' = 'global_id')) %>%
-                mutate(source = "Jam") %>%
-                left_join(jam_df %>%
-                            select(parent_global_id,
-                                   global_id,
-                                   path_nm) %>%
-                            distinct()) %>%
-                select(source, path_nm,
+    distinct() %>%
+    anti_join(cu_df %>%
+                select(parent_global_id = global_id),
+              by = c('parent_global_id')) %>%
+    tibble::add_column(source = "Wood",
+                       .before = 0) %>%
+    bind_rows(jam_df %>%
+                select(path_nm,
                        global_id,
-                       parent_global_id)) %>%
-    bind_rows(cu_undct %>%
-                anti_join(cu_main,
-                          by = c('parent_global_id' = 'global_id')) %>%
-                mutate(source = "Undercut") %>%
-                left_join(undercut_df %>%
-                            select(parent_global_id,
-                                   global_id,
-                                   path_nm) %>%
-                            distinct()) %>%
-                select(source, path_nm,
+                       parent_global_id) %>%
+                distinct() %>%
+                anti_join(cu_df %>%
+                            select(parent_global_id = global_id),
+                          by = c('parent_global_id')) %>%
+                tibble::add_column(source = "Jam",
+                                   .before = 0)) %>%
+    bind_rows(undercut_df %>%
+                select(path_nm,
                        global_id,
-                       parent_global_id))
+                       parent_global_id) %>%
+                distinct() %>%
+                anti_join(cu_df %>%
+                            select(parent_global_id = global_id),
+                          by = c('parent_global_id')) %>%
+                tibble::add_column(source = "Undercut",
+                                   .before = 0)) %>%
+    filter(!is.na(parent_global_id))
 
   if( nrow(miss_rollup) > 0 ) {
     miss_parent = miss_rollup %>%
@@ -183,34 +153,122 @@ qc_rollup = function(survey_df = NULL,
                    miss_parent)
   }
 
-  #---------------------------------------------------------
-  # these discharge measurements don't have a channel unit to be assigned to
-  miss_discharge = cu_disch %>%
-    anti_join(cu_main,
-              by = c("parent_global_id",
-                     "channel_unit_number")) %>%
-    mutate(source = "Discharge") %>%
-    left_join(discharge_df %>%
-                select(path_nm,
-                       global_id)) %>%
-    select(source, everything()) %>%
-    left_join(survey_df %>%
-                select(parent_global_id = global_id,
-                       site_name,
-                       survey_date))
+  if(!is.null(discharge_df) & !is.null(discharge_meas_df)) {
 
-  if( nrow(miss_discharge) > 0 ) {
-    qc_miss_discharge = miss_discharge %>%
-      rename(GlobalID = global_id,
-             ParentGlobalID = parent_global_id) %>%
-      mutate(error_message = paste("A discharge measurement from site", site_name, "at channel unit", channel_unit_number,
-                                   "was taken but no channel unit global ID exists to match this parent global ID to.")) %>%
-      select(any_of(names(qc_tmp)))
+    #---------------------------------------------------------
+    # these discharge measurements don't have a discharge global ID to be assigned to
+    miss_disch_meas = discharge_meas_df  %>%
+      select(path_nm,
+             parent_global_id) %>%
+      distinct() %>%
+      anti_join(discharge_df %>%
+                  select(parent_global_id = global_id),
+                by = c('parent_global_id')) %>%
+      tibble::add_column(source = "DischargeMeas",
+                         .before = 0) #%>%
+    # left_join(calc_discharge(discharge_meas_df = discharge_meas_df),
+    #           by = c('parent_global_id')) %>%
+    # left_join(discharge_meas_df %>%
+    #             group_by(path_nm,
+    #                    parent_global_id) %>%
+    #             summarise(n_meas = n_distinct(global_id),
+    #                       .groups = "drop"),
+    #           by = c('parent_global_id'))
 
-    qc_tmp = rbind(qc_tmp,
-                   qc_miss_discharge)
+
+    if( nrow(miss_disch_meas) > 0 ) {
+      qc_miss_disch_meas = miss_disch_meas %>%
+        tibble::add_column(GlobalID = "Multiple") %>%
+        rename(ParentGlobalID = parent_global_id) %>%
+        mutate(error_message = "Discharge measurements were taken, but the parent global ID
+             does not match any global ID in the Discharge_5.csv file.") %>%
+        select(any_of(names(qc_tmp)))
+
+      qc_tmp = rbind(qc_tmp,
+                     qc_miss_disch_meas)
+    }
+
+
+    # these discharge IDs don't have a survey to match up with
+    miss_disch_surv = discharge_df %>%
+      rename(channel_unit_number = discharge_location_bos_tos_cu_number) %>%
+      mutate(across(channel_unit_number,
+                    str_pad,
+                    width = 3,
+                    pad = "0")) %>%
+      select(path_nm,
+             parent_global_id,
+             global_id,
+             # discharge_location_bos_tos_cu_number) %>%
+             channel_unit_number) %>%
+      distinct() %>%
+      anti_join(survey_df %>%
+                  select(parent_global_id = global_id),
+                by = c('parent_global_id')) %>%
+      tibble::add_column(source = "Discharge",
+                         .before = 0)
+
+    if( nrow(miss_disch_surv) > 0 ) {
+      qc_miss_disch_surv = miss_disch_surv %>%
+        rename(GlobalID = global_id,
+               ParentGlobalID = parent_global_id) %>%
+        mutate(error_message = paste("Discharge data was collected here, at channel unit", channel_unit_number,
+                                     "but no survey global ID exists to match to this parent global ID to.")) %>%
+        select(any_of(names(qc_tmp)))
+
+      qc_tmp = rbind(qc_tmp,
+                     qc_miss_disch_surv)
+    }
+
+    # these discharge IDs don't have a channel unit to match up with
+    miss_disch_cu = discharge_df %>%
+      rename(channel_unit_number = discharge_location_bos_tos_cu_number) %>%
+      mutate(across(channel_unit_number,
+                    str_pad,
+                    width = 3,
+                    pad = "0")) %>%
+      select(path_nm,
+             parent_global_id,
+             global_id,
+             # discharge_location_bos_tos_cu_number) %>%
+             channel_unit_number) %>%
+      distinct() %>%
+      anti_join(cu_df %>%
+                  mutate(across(channel_unit_number,
+                                str_pad,
+                                width = 3,
+                                pad = "0")) %>%
+                  select(parent_global_id,
+                         channel_unit_number),
+                by = c('parent_global_id',
+                       "channel_unit_number")) %>%
+      tibble::add_column(source = "Discharge",
+                         .before = 0) %>%
+      left_join(survey_df %>%
+                  select(parent_global_id = global_id,
+                         site_name,
+                         survey_date))
+
+    if( nrow(miss_disch_cu) > 0 ) {
+      qc_miss_disch_cu = miss_disch_cu %>%
+        rename(GlobalID = global_id,
+               ParentGlobalID = parent_global_id) %>%
+        mutate(error_message = paste("A discharge measurement from site", site_name, "at channel unit", channel_unit_number,
+                                     "was taken, but no channel unit parent global ID and channel unit number match.")) %>%
+        select(any_of(names(qc_tmp)))
+
+      qc_tmp = rbind(qc_tmp,
+                     qc_miss_disch_cu)
+    }
+
+    # bind the various missing discharge errors together
+    miss_discharge = miss_disch_meas %>%
+      bind_rows(miss_disch_surv) %>%
+      bind_rows(miss_disch_cu)
+
+  } else {
+    miss_discharge = NULL
   }
-
 
   return(list(error_df = qc_tmp,
               miss_rollup = miss_rollup,
