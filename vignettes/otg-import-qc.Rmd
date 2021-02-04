@@ -90,7 +90,7 @@ otg_raw_wood = read_otg_csv(path = otg_path,
 
 ```
 
-During the initial data import process, you may identify files that aren't formatted correctly for import and `read_otg_csv()` will, rightly so, "choke" during import and indicate so. For example, a .csv file may have inadvertently been saved or exported as tab-delimited, or personnel may have unknowingly added or removed a column. In this case, we suggest storing all of the Survey123 site folders in two separate directories. I have been storing two versions, saved separately in folders "0_raw_csvs" and "1_formatted_csvs". Here, I keep the "raw" untouched data in "0_raw_csvs" which I **never** change. The "1_formatted_csvs" folder is where I make formatting changes that I've identified during the import process. It's typically good practice to always store the rawest form of your data that is never changed after data collection for archiving sake; hence, why we are importing data from a "1_formatted_csvs" folder.
+During the initial data import process, you may identify files that aren't formatted correctly for import and `read_otg_csv()` will, rightly so, "choke" during import and indicate so. For example, a .csv file may have inadvertently been saved or exported as tab-delimited, or personnel may have unknowingly added or removed a column. In this case, we suggest storing all of the Survey123 site folders in two separate directories. I have been storing two versions, saved separately in folders "/0_raw_csvs/" and "/1_formatted_csvs/". Here, I keep the "raw" untouched data in "/0_raw_csvs/" which I **never** change. The "/1_formatted_csvs/" folder is where I make formatting changes that I've identified during the import process. It's typically good practice to always store the rawest form of your data that is never changed after data collection for archiving sake; hence, why we are importing data from a "/1_formatted_csvs/" folder.
 
 Please note that at any time you may access the help menu and documentation for the package or functions using the following:
 
@@ -141,6 +141,8 @@ otg_raw = read_otg_csv_wrapper(path = otg_path,
 
 Congratulations! You now (hopefully) have successfully imported your [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) OTG data using the `read_otg_csv()` or `read_otg_csv_wrapper()` (preferred) functions. Either that, or you're muttering obscenities under your breath, in which case you're welcome to either submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the DASH website or contact the author at the e-mail address provided above.
 
+## Example Data
+
 We've included an example "raw" OTG dataset with the package called `otg_raw` which was imported using `read_otg_csv_wrapper()`. `otg_raw` includes data for just `r nrow(otg_raw$survey)` sites. Let's explore `otg_raw` a bit; you can use `$` to extract elements of a list.
 
 ```{r view-raw-otg}
@@ -161,7 +163,7 @@ save(otg_raw,
 
 ```
 
-# Initial Data QC
+# Data QC
 
 It's now time to perform QC on the imported raw data to identify errors that may have occurred in the field during data collection. The goal is to identify as many potential errors in the data as possible (but perhaps not all!) using functions provided by the [DASH](https://github.com/BiomarkABS/DASH) R package; and save or export a list of the potential errors. The identified errors can then be reviewed by field personnel or someone closely familiar with the data and remedied where possible.
 
@@ -258,36 +260,42 @@ init_qc = qc_wrapper(survey_df = otg_raw$survey,
 
 ```
 
-At this point, it would be a good idea to write your initial QC results to a .csv file. I'd suggest writing the file to
-the "/1_formatted_csvs/" directory containing the data that was QC'd. If you want to get fancy, you can also append today's date to the name of the file so that someone knows the date that the last QC was performed.
+## Save QC Results
+
+At this point, it would be a good idea to write your initial QC results out to a file. I'd suggest writing out the QC results in the "/1_formatted_csvs/" directory containing the data that was QC'd. Following, we provide options to either 1) add it to your `otg_raw` object and re-save that object or 2) write out `init_qc` to its own .csv file. If you want to get fancy, you can also append today's date using the `format()` function to provide information on when the QC was performed.
 
 ```{r save-qc, eval = F}
+# add QC results to otg_raw, and re-save
+otg_raw$init_qc = init_qc
+save(otg_raw,
+     file = paste0(otg_path, "otg_raw.rda"))
+
 # write QC results to .csv
 write_csv(init_qc,
-          paste0(nas_prefix, "/data/habitat/DASH/OTG/1_formatted_csvs/init_qc.csv"))
+          paste0(otg_path, "init_qc.csv"))
 
 # append today's date
 write_csv(init_qc,
-          paste0(nas_prefix,
-                 "/data/habitat/DASH/OTG/1_formatted_csvs/init_qc_",
+          paste0(otg_path, 
+                 "init_qc_",
                  format(Sys.Date(), format = "%Y%m%d"),
-                 ".csv"))
+                 ".csv")
 
 ```
 
-Nice work! You just completed an initial QC on your OTG data and exported the results to a file. Either that, or you're again muttering obscenities at the authors, at which point you're welcome to contact them at the above provided e-mail addresses or submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the repo website. Let's move onto examining those QC results, and in some cases, resolving them.
+Nice work! You just completed an initial QC on your OTG data and exported the results. Either that, or you're again muttering obscenities at the authors, at which point you're welcome to contact them at the above provided e-mail addresses or submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the repo website. Let's move onto examining those QC results, and in some cases, resolving them.
 
-# Examine QC Results
+# Examine and Resolve QC Errors
 
-Of course, a user could examine the initial QC results `init_qc` by opening and reviewing the .csv file written above. However, you might also find it useful to explore the QC results a little further using R. The following section is completely optional, but provides some examples and guidance about how `init_qc` could be examined in R.
+***At this point in the DASH workflow, someone very familiar with the data, perhaps a field technician or coordinator, should review the QC errors, attempt to resolve those where possible, and ideally, make notes about each error regarding how they can or cannot be resolved.*** Notes on how QC errors were resolved, or not, can be useful towards improving data validation (e.g., during field data collection) or quality control steps in the future.
 
-## QC Review
+Similar to above, it is generally best practice to not modify the "raw" data i.e., in our case, do not make changes to the data in the "/1_formatted_csvs/" directory. Instead, it is a good idea to make another copy of your data, we suggest in a "/2_qcd_csvs/" directory. This is where we will make changes to the data to address issues identified during the QC. Retaining the "/1_formatted_csvs/" data "as is" preserves the integrity of the raw data and allows us to fairly easily identify any changes made to the data during the QC process. In addtion, by documenting changes that have been made to the data, we can identify common errors and perhaps add data validation during the data colleciton process to prevent those same errors in the future.
 
-***At this point in the workflow, someone very familiar with the data (preferably a field technician or field coordinator, secondarily a project leader) should likely intervene, review the remaining QC errors that were just written out to file, attempt to resolve those where possible, and ideally, make notes for those QC errors that can't be resolved. In addition, for the QC errors that are resolved, it is useful to provide notes on how they are resolved.*** Notes on how QC errors were resolved (or not) can be useful toward improving data validation (e.g., during field collection) ro quality control steps in the future.
+*Note: We also previously saved a version of the data in a "/0_raw_csvs/" directory, which is actually the most raw version of the data. The data in "/0_raw_csvs/" and "/1_formatted_csvs/" directories only differ in that file formatting issues may have been identified during the data import process and resolved within the "/1_formatted_csvs/ version; however, no data has actually changed.*
 
-Similar to above, it is generally best practice to not modify the "raw" data i.e., in our case, do not make changes to the data in the "/1_formatted_csvs/" directory. Instead, it is a good idea to make another copy of your data (I use "/2_qcd_csvs/") and attempt to resolve identified issues in that data. Doing so preserves the integrity of the raw data in "/1_formatted_csvs/". In this case, someone could then fairly easily identify any changes that were made to the data during the QC process. In addition, by documenting changes that have been made to the data, we can identify common errors and perhaps add data validation during the data collection process to prevent those errors in the future.
+## Review QC Results
 
-*Note: We have also saved a version of the data in a "/0_raw_csvs/" directory, which is actually the "rawest" form of the data from Survey123. The data in the "/0_raw_csvs/" and "/1_formatted_csvs/" directories only differ in that file formatting issues may have been identified during the data import process and resolved in the "/1_formatted_csvs/" version; however, no data has actually changed.
+Of course, a user could examine the initial QC results `init_qc` by opening and reviewing a .csv file, which we showed how to write above. However, you might also find it useful to explore the QC results a little further using R. The following section is entirely optional, but provides some examples and guidance about how `init_qc` could be examined using R.
 
 We can perform and initial review of our QC results using the following:
 
@@ -298,6 +306,7 @@ tabyl(init_qc,
 
 # simply print out the results
 init_qc %>%
+  head() %>%
   print()
 
 ```
