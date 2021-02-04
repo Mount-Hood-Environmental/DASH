@@ -9,7 +9,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{1.0) otg-import-qc}
+  %\VignetteIndexEntry{1.1) otg-rollup-to-cu}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
