@@ -82,7 +82,7 @@ for (yw in yr_wtsd) {
                                   undercut_df = otg_raw$undercut,
                                   discharge_df = otg_raw$discharge,
                                   discharge_meas_df = otg_raw$discharge_measurements,
-                                  redirect_output = F)
+                                  channel_unit_roll_qc = TRUE)
 
   #-----------------------------
   # if you need to copy the files into a QC'd series of folders
@@ -132,7 +132,7 @@ for (yw in yr_wtsd) {
         file.copy(from = paste0(path, x),
                   to = paste0(path_qcd, x))
       })
-  }
+  } # end if copy_to_qcd = TRUE
 
   # save the otg_raw list of dfs, and the initial QC flags
   save(otg_raw,
@@ -334,7 +334,7 @@ for (yw in yr_wtsd) {
                           undercut_df = otg_interim$undercut,
                           discharge_df = otg_interim$discharge,
                           discharge_meas_df = otg_interim$discharge_measurements,
-                          redirect_output = F)
+                          channel_unit_roll_qc = T)
 
   # write interim QC results
   write_csv(qc_interim, paste0(path,
@@ -404,13 +404,10 @@ for (yw in yr_wtsd) {
                         undercut_df = otg_qcd$undercut,
                         discharge_df = otg_qcd$discharge,
                         discharge_meas_df = otg_qcd$discharge_measurements,
-                        redirect_output = F)
+                        channel_unit_roll_qc = T)
 
   # write "final" QC results
-  write_csv(qc_final, paste0(path,
-                             "qc_final_",
-                             format(Sys.Date(), format = "%Y%m%d"),
-                             ".csv"))
+  otg_qcd$qc_results = qc_final
 
   # save as .Rdata object
   save(otg_qcd,
