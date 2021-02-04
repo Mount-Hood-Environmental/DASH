@@ -285,7 +285,7 @@ write_csv(init_qc,
 
 Nice work! You just completed an initial QC on your OTG data and exported the results. Either that, or you're again muttering obscenities at the authors, at which point you're welcome to contact them at the above provided e-mail addresses or submit an [Issue](https://github.com/BiomarkABS/DASH/issues) on the repo website. Let's move onto examining those QC results, and in some cases, resolving them.
 
-# Examine and Resolve QC Errors
+# Examine Resolve QC Errors
 
 ***At this point in the DASH workflow, someone very familiar with the data, perhaps a field technician or coordinator, should review the QC errors, attempt to resolve those where possible, and ideally, make notes about each error regarding how they can or cannot be resolved.*** Notes on how QC errors were resolved, or not, can be useful towards improving data validation (e.g., during field data collection) or quality control steps in the future.
 
@@ -293,7 +293,7 @@ Similar to above, it is generally best practice to not modify the "raw" data i.e
 
 *Note: We also previously saved a version of the data in a "/0_raw_csvs/" directory, which is actually the most raw version of the data. The data in "/0_raw_csvs/" and "/1_formatted_csvs/" directories only differ in that file formatting issues may have been identified during the data import process and resolved within the "/1_formatted_csvs/ version; however, no data has actually changed.*
 
-## Review QC Results
+## Examine QC
 
 Of course, a user could examine the initial QC results `init_qc` by opening and reviewing a .csv file, which we showed how to write above. However, you might also find it useful to explore the QC results a little further using R. The following section is entirely optional, but provides some examples and guidance about how `init_qc` could be examined using R.
 
@@ -306,14 +306,12 @@ tabyl(init_qc,
 
 # simply print out the results
 init_qc %>%
-  head() %>%
+  head(5) %>%
   print()
 
 ```
 
-Here is simply an example of how one could examine a particular type of error. In this case, let's look at the "CU" data and look at those errors where `error_message` contains "Column Maximum Depth". We also join the source data (`otg_raw$cu`) back to the error message to look a little closer. The `dplyr` function `select()` can be used to choose the columns to include in your results.
-
-The following approach can be used to examine many (if not all) of the types of errors identified during the QC process. Alternatively, one could simply examine the QC results file we wrote above.
+Follows is an example of how one could examine a particular type of error. In this case, let's look at the "CU" data and look at those errors where `error_message` contains "Column Maximum Depth". We also join the source data (`otg_raw$cu`) back to the error message to look a little closer. The function `dplyr::select()` can be used to choose the columns to include in your results.
 
 ```{r max-depth-errors}
 # examine channel unit errors where the error_message contains "Column Maximum Depth"
@@ -325,7 +323,7 @@ init_qc %>%
   
 ```
 
-During our initial review of DASH data, we commonly identified the following two "types" of errors: 1) the sum of ocular substrate estimates don't sum to 100 due to a math error in the field and/or 2) the sum of fish cover estimates do not fall within an expected range (note: the sum of fish cover estimates **can** sum to greater than 100). We've included two functions within the package `rescale_values()` and `fix_fish_cover()` that can be used to resolve a large number of the identified errors, respectively. We cover those functions in the following [section][Re-import QC'd Data and Resolve Common Errors].
+During our initial review of DASH data, we commonly identified the following two errors: 1) the sum of ocular substrate estimates don't sum to 100 due to a math or recording error in the field and/or 2) the sum of fish cover estimates do not fall within an expected range (note: the sum of fish cover estimates **can** sum to greater than 100). We've included two functions within the package `rescale_values()` and `fix_fish_cover()` that can be used to resolve these common errors, respectively. We cover those functions in the following [section][Resolve Common Errors].
 
 Examine the ocular substrate errors:
 
@@ -338,7 +336,8 @@ init_qc %>%
   select(source:GlobalID,
          `Channel Unit Type`,
          `Sand/Fines 2mm`:`Boulder 256mm`) %>%
-  mutate(sum_ocular = rowSums(.[5:8], na.rm = T))
+  mutate(sum_ocular = rowSums(.[5:8], na.rm = T)) %>%
+  head(5)
   
 ```
 
@@ -352,14 +351,15 @@ init_qc %>%
   left_join(otg_raw$cu) %>%
   select(source:GlobalID,
          `Overhanging Cover`:`Total No Cover`) %>%
-  mutate(sum_cover = rowSums(.[4:8], na.rm = T))
+  mutate(sum_cover = rowSums(.[4:8], na.rm = T)) %>%
+  head(5)
   
 ```
 
 Here's one last example for exploring a somewhat common error. In this case, let's look at all errors in the undercut data `filter(source == "Undercut")`, join the source data `left_join(otg_raw$undercut)`, and then reduce the number of columns included in the results ``select(path_nm:error_message, `Undercut Number`:`Width 75% (m)`)``. Note in this case we need to place backticks around the variable (column) names "Undercut Number" and "Width 75% (m)" because they contain invalid or special character (e.g., <space>, %, ()).
 
 ```{r undercut-errors}
-# undercut errors; note many of these are flagged bc of a strange "Location" value "Island" which perhaps should be an acceptable value
+# undercut errors; note many of these are flagged bc of a strange "Location" values
 init_qc %>%
   filter(source == "Undercut") %>%
   left_join(otg_raw$undercut) %>%
@@ -368,24 +368,26 @@ init_qc %>%
   
 ```
 
-# Re-import QC'd Data and Resolve Common Errors
+## Resolve QC Errors
+
+Time to resolve errors identified during QC process. We discuss suggested routes for resolving both [uncommon][Uncommon Errors] and [common][Common Errors]. Common errors we've identified to date are related to ocular substrate estimates not summing to 100 and fish cover estimates not summing within an expected range.
+
+### Uncommon Errors
+
+We suggest working on the uncommon errors first. Remember that as you review and work through the QC results, make any modifications to the .csv files within the "/2_qcd_csvs/" directory. 
+
+### Common Errors
+
+After resolving the uncommon errors to the best of your ability, let's resolve the common errors using a couple functions provided in the [DASH](https://github.com/BiomarkABS/DASH) package. We'll first want to import our data from the "/2_qcd_csvs/" directory that contains data that has been modified to address uncommon errors identified during the QC process.
+
+First, let's set a new path `qcd_path` to that data and import that version of the OTG data.
 
 ```{r re-import-qcd-otg, eval = F}
-# As an example, if the Survey123 site folders were in a "2_qcd_csvs" folder on your Desktop
-otg_path = "C:/Users/username/Desktop/2_qcd_csvs/"
-
-# For internal Biomark folks, set nas_prefix based on your operating system and then set otg_path to the NAS
-if(.Platform$OS.type != 'unix') {
-  nas_prefix = "S:"
-} else if(.Platform$OS.type == 'unix') {
-  nas_prefix = "~/../../Volumes/ABS"
-}
-
-# a theoretical path on the NAS
-otg_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2_qcd_csvs/")
+# As an example, a theoretical path to the Biomark NAS
+qcd_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2_qcd_csvs/")
 
 # "loop over" all data types using read_otg_csv_wrapper()
-otg_qcd = read_otg_csv_wrapper(path = otg_path,
+otg_qcd = read_otg_csv_wrapper(path = qcd_path,
                                otg_type_list = c("surveyPoint_0.csv",
                                                  "CU_1.csv",
                                                  "Wood_2.csv",
@@ -403,6 +405,10 @@ otg_qcd = read_otg_csv_wrapper(path = otg_path,
 
 ```
 
+#### Fix ocular substrate estimates
+
+The package includes the function `DASH::rescale_values()` that can be used to rescale a set of values to sum to a given `sum_to = ` value. In our below example, we are going to rescale any case where the values in `col_names` sum between `min_value = 90` and `max_value = 110` so that they `sum_to = 100`. Presumably, errors like this occurs because a simple math or recording error was made in the field. Note the default values for `min_value` and `max_value` are actually set to 80 and 120 by default. Note that the `rescale_values()` function could theoretically be applied to any set of numerical columns in your OTG (or any other!) data.
+
 ```{r fix-oc-ests, eval = F}
 # ocular substrate fixes
 otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
@@ -416,6 +422,10 @@ otg_qcd$cu = rescale_values(data_df = otg_qcd$cu,
 
 ```
 
+#### Fix fish cover estimates
+
+We also include the `DASH::fix_fish_cover()` function which is a more specialized case of `rescale_values()` for fish cover estimates. In this case, `fix_fish_cover` will resolve any case where either fish cover estimates were accidentally recorded as proportions or fish cover estimates in the columns `cover_cols` sum to 90. Recall that fish cover estimates can sum to greater than 100, which is okay (e.g., both canopy and aquatic vegetation both cover a portion of a channel unit). Remember, that you can always use `?fix_fish_cover` to access the help menu for a function.
+
 ```{r fix-fish-cover, eval = F}
 # fish cover fixes
 otg_qcd$cu = fix_fish_cover(cu_df = otg_qcd$cu,
@@ -427,48 +437,50 @@ otg_qcd$cu = fix_fish_cover(cu_df = otg_qcd$cu,
 
 ```
 
+We can then now save our `otg_qcd` object which contains both the changes we made by hand in the .csv files in the "/2_qcd_csvs/" directory plus the changes we made using the `rescale_values` and `fix_fish_cover` functions. Note however that the changes made using these two function are not reflected in your .csvs. If you would like assistance on overwriting your .csvs to reflect these changes, please contact the vignette authors for assistance. Care should be taken when over-writing files.
+
 ```{r save-qcd-otg, eval = F}
-save(otg,
-     file = paste0(nas_prefix, "/data/habitat/DASH/OTG/prepped/otg.rda"))
+save(otg_qcd,
+     file = paste0(qcd_path, "otg_qcd.rda"))
 
 ```
 
-# Final QC
+## Final QC
+
+Now, it is probably good practice to re-run `qc_wrapper()` on the `otg_qcd` to ensure you have correctly resolved errors to the best of your ability.
 
 ```{r fake-load-qcd-otg, eval = F}
-load(paste0(nas_prefix,
-            "/data/habitat/DASH/OTG/prepped/otg.rda"))
+# re-load otg_qcd, if needed
+load(paste0(qcd_path, "otg_qcd.rda"))
 
 ```
 
 ```{r final-qc, eval = F}
-qc_final = qc_wrapper(survey_df = otg$survey,
-                      cu_df = otg$cu,
-                      wood_df = otg$wood,
-                      jam_df = otg$jam,
-                      undercut_df = otg$undercut,
-                      discharge_df = otg$discharge,
-                      disch_meas_df = otg$discharge_measurements)
+# re-run qc_wrapper() on otg_qcd
+qc_final = qc_wrapper(survey_df = otg_qcd$survey,
+                      cu_df = otg_qcd$cu,
+                      wood_df = otg_qcd$wood,
+                      jam_df = otg_qcd$jam,
+                      undercut_df = otg_qcd$undercut,
+                      discharge_df = otg_qcd$discharge,
+                      disch_meas_df = otg_qcd$discharge_measurements)
 
 ```
 
-```{r save-final-qc, eval = F}
-# set path to write to
-qc_final_path = paste0(nas_prefix, "/data/habitat/DASH/OTG/2_qcd_csvs/")
+And finally, let's save our "final" QC results in the directory with the QC'd data.
 
+```{r save-final-qc, eval = F}
 # write QC results to .csv
 write_csv(qc_final,
-          paste0(qc_final_path, "qc_final.csv"))
+          paste0(qcd_path, "qc_final.csv"))
 
-# append today's date, if desired
-write_csv(qc_final,
-          paste0(qc_final_path, 
-                 "qc_final_",
-                 format(Sys.Date(), format = "%Y%m%d"),
-                 ".csv"))
+# alternatively, can be useful to save as a .rds, more on this later...
+save(qc_final, file = paste0(qcd_path, "qc_final.rds"))
 
-# can also be useful to save as a .rds, more on this later...
-save(qc_final, file = paste0(qc_final_path, "qc_final.rds"))
+# one other option, append to otg_qcd list and overwrite
+otg_qcd$qc_results = qc_final
+save(otg_qcd,
+     file = paste0(qcd_path, "otg_qcd.rda"))
 
 ```
 
