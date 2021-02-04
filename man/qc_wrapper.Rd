@@ -12,7 +12,7 @@ qc_wrapper(
   undercut_df = NULL,
   discharge_df = NULL,
   discharge_meas_df = NULL,
-  redirect_output = TRUE,
+  redirect_output = FALSE,
   redirect_output_path = "qc_wrapper_output.txt",
   ...
 )
