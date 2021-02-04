@@ -35,12 +35,10 @@ qc_wrapper(
 to the channel unit scale, using the \code{qc_rollup()} function? Default is \code{FALSE}.}
 
 \item{redirect_output}{would you like to redirect the output messages
-from \code{qc_wrapper()} to a file instead of the R terminal? Default = \code{TRUE}.
-If set to \code{FALSE}, messages will simply be written to console.}
+from \code{qc_wrapper()} to a file instead of the R terminal? Default = \code{FALSE}.}
 
 \item{redirect_output_path}{a path and file name (e.g., .txt or .csv) to
-write the \code{qc_wrapper} output messages to. Default will write
-"qc_wrapper_output.txt" to the current working directory.}
+write the \code{qc_wrapper} output messages to if \code{redirect_output = TRUE}.}
 
 \item{...}{various other inputs to \verb{qc_*} functions, if need to change from default values}
 }

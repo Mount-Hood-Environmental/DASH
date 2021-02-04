@@ -14,11 +14,9 @@
 #' @param channel_unit_roll_qc should there be a quality control check on the roll-up
 #' to the channel unit scale, using the `qc_rollup()` function? Default is `FALSE`.
 #' @param redirect_output would you like to redirect the output messages
-#' from `qc_wrapper()` to a file instead of the R terminal? Default = `TRUE`.
-#' If set to `FALSE`, messages will simply be written to console.
+#' from `qc_wrapper()` to a file instead of the R terminal? Default = `FALSE`.
 #' @param redirect_output_path a path and file name (e.g., .txt or .csv) to
-#' write the `qc_wrapper` output messages to. Default will write
-#' "qc_wrapper_output.txt" to the current working directory.
+#' write the `qc_wrapper` output messages to if `redirect_output = TRUE`.
 #' @param ... various other inputs to `qc_*` functions, if need to change from default values
 #'
 #' @import dplyr
