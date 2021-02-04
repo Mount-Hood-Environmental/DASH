@@ -20,7 +20,7 @@ qc_rollup = function(survey_df = NULL,
                      wood_df = NULL,
                      discharge_df = NULL,
                      discharge_meas_df = NULL,
-                     fix_nas = TRUE,
+                     fix_nas = FALSE,
                      jam_impute_cols  = c("length_m",
                                           "width_m",
                                           "height_m",
@@ -72,19 +72,19 @@ qc_rollup = function(survey_df = NULL,
                   width = 3,
                   pad = "0"))
 
-  # rollup everything at the channel unit scale
-  cu_df = otg_to_cu(survey_df,
-                    cu_df,
-                    jam_df,
-                    undercut_df,
-                    wood_df,
-                    discharge_df,
-                    discharge_meas_df,
-                    fix_nas = fix_nas,
-                    jam_impute_cols = jam_impute_cols,
-                    undercut_impute_cols = undercut_impute_cols,
-                    wood_impute_cols = wood_impute_cols,
-                    ...)
+  # # rollup everything at the channel unit scale
+  # cu_rollup = otg_to_cu(survey_df,
+  #                   cu_df,
+  #                   jam_df,
+  #                   undercut_df,
+  #                   wood_df,
+  #                   discharge_df,
+  #                   discharge_meas_df,
+  #                   fix_nas = fix_nas,
+  #                   jam_impute_cols = jam_impute_cols,
+  #                   undercut_impute_cols = undercut_impute_cols,
+  #                   wood_impute_cols = wood_impute_cols,
+  #                   ...)
 
   # Initiate qc_tmp
   qc_tmp = qc_tbl() %>%
@@ -121,7 +121,7 @@ qc_rollup = function(survey_df = NULL,
            parent_global_id) %>%
     distinct()
 
-  if(nrow(dangling_survey) > 0) {
+  if(nrow(dangling_cu) > 0) {
     dangling_cu %<>%
       rename(GlobalID = global_id,
              ParentGlobalID = parent_global_id) %>%
