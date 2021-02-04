@@ -158,5 +158,6 @@
 #'   \item{path_nm}{the path name to the file where the potential error was identified}
 #'   \item{GlobalID}{the **GlobalID** indicating the row where the potential error was identified}
 #'   \item{error_message}{a message indicating the nature of the potential error}
+#'   \item{location_id}{information on the site name, segment, and channel unit number were error was identified}
 #' }
 "init_qc"
