@@ -18,7 +18,6 @@ library(tidyverse)
 library(beepr)
 library(janitor)
 library(DASH)
-# devtools::load_all()
 
 #-------------------------
 # set NAS prefix, depending on operating system

@@ -1,45 +1,63 @@
-source,path_nm,GlobalID,error_message
-CU,hayden/CU_1.csv,8729bca9-6ad8-4df1-9fae-ac35dfd84b21,Column Maximum Depth (m) is <blank> or NA.
-CU,hayden/CU_1.csv,c3b2f5a6-ceb1-411a-818d-6ff171781c67,"Cover values sum to 90, not between 100 and 130."
-CU,hayden/CU_1.csv,aa739023-804c-482d-8235-13e4d31ef816,"Cover values sum to 150, not between 100 and 130."
-CU,hayden/CU_1.csv,01645c07-fb3d-4d28-87b6-969f592217c9,"Cover values sum to 80, not between 100 and 130."
-CU,hayden/CU_1.csv,8729bca9-6ad8-4df1-9fae-ac35dfd84b21,"Cover values sum to 90, not between 100 and 130."
-CU,hayden/CU_1.csv,6325b845-18ef-4081-8f9e-6e66c08c6a35,"Cover values sum to 90, not between 100 and 130."
-CU,hayden/CU_1.csv,a8c54adc-e1a0-4073-b082-3022e8df0a0d,"Cover values sum to 80, not between 100 and 130."
-CU,hayden/CU_1.csv,48adb0ee-6103-457d-a3e3-f3caeb330a42,"Cover values sum to 90, not between 100 and 130."
-CU,hayden/CU_1.csv,b64d1d9f-681c-4b8d-bfc6-b32a0f71fee7,"Cover values sum to 140, not between 100 and 130."
-CU,hayden/CU_1.csv,c7f7eb99-717e-40fe-90d5-002977f4eec8,"Cover values sum to 90, not between 100 and 130."
-CU,hayden/CU_1.csv,3fbfe514-e17d-4e02-8b83-08d5cf6c3d27,"Cover values sum to 90, not between 100 and 130."
-CU,hayden/CU_1.csv,94cc847d-1348-4288-8ca9-b7cdbd0c9bc0,"Cover values sum to 90, not between 100 and 130."
-CU,hayden/CU_1.csv,81db32e9-1c62-4aa9-b55a-0c859696febe,"Cover values sum to 70, not between 100 and 130."
-CU,hayden/CU_1.csv,6fb4b10f-e9d9-4b9c-916f-7326c4aca37b,"Cover values sum to 90, not between 100 and 130."
-CU,lake/CU_1.csv,37c1f472-c08a-45be-8d26-7d11678328c4,"Cover values sum to 80, not between 100 and 130."
-CU,lake/CU_1.csv,eb6c1f2c-0170-43e0-93ec-c91526f2732f,"Ocular estimates sum to 90, not 100."
-CU,lake/CU_1.csv,ca9c9ad6-6814-4955-b438-af8861d98e83,"Ocular estimates sum to 90, not 100."
-CU,hayden/CU_1.csv,d51dbc98-4bd0-41a1-a710-1090aa5e7e57,Pebble size values for 1 columns within the pebble counts appear to be NA.
-CU,hayden/CU_1.csv,d253ea7b-d1cc-4cf2-bb60-b301d3d16893,Pebble size values for 1 columns within the pebble counts appear to be NA.
-Wood,hayden/Wood_2.csv,0b418c3f-5d6d-4c4e-b268-c51a03dc7ca9,Column Wet? is <blank> or NA.
-Wood,hayden/Wood_2.csv,f7f60e87-1abd-46ed-ab4d-82ff7b764228,Column Ballasted? is <blank> or NA.
-Undercut,lake/Undercut_4.csv,f38f7440-0eab-49d8-a0ef-1b90381dd86e,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,ac368d6e-00cd-4d0d-ac09-1e3a50fed1fd,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,88cb5d87-79bb-4403-8227-c4519be29442,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,459f1efe-0b4d-4473-867e-d911b57de8e9,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,789a05e9-3a28-4a0d-8d0e-cea8ebc6b52f,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,551ab20c-bd9b-4cfb-95d9-3fade1b4cdef,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,115cabc1-25a2-4402-a55b-965c8b8bf0a1,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,34d0664a-a9fd-4428-81af-3a1bb067b299,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,017847a5-f087-4e28-85ea-e0082a3aa528,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,566669b7-b407-4607-9a63-7088a2073b80,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,23f82b52-6f1c-4706-90f5-c824c887d949,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,b211e3df-052f-4519-a4bf-78e67e6f1541,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,25ed0797-62aa-41d6-aab4-9b8f8f5abfff,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,c517e489-d57a-4214-b9f7-f2601a2b3e81,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,c152add6-38f8-4844-b433-423972a7a88e,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,b525ffa4-e007-4e0a-b76f-5df275944b57,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,00ecb00f-8afe-4e85-bdd9-2a49fa5a9c9e,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,2120ed1c-5621-4d05-9eb6-8a46f3e7a6cc,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,e55fcc6d-572c-473e-b42a-83d1875bed07,"Strange value, Island, in Location column"
-Undercut,lake/Undercut_4.csv,81c8c847-caea-4e83-acb1-116eea12f9db,The Length (m) measurement 11 is outside of the expected values of 0 and 10
-Undercut,lake/Undercut_4.csv,ac368d6e-00cd-4d0d-ac09-1e3a50fed1fd,The Length (m) measurement 12 is outside of the expected values of 0 and 10
-Undercut,lake/Undercut_4.csv,9ebe3028-79af-4d77-97ca-04cc539b08cd,The Length (m) measurement 15 is outside of the expected values of 0 and 10
-Discharge,lake/Discharge_5.csv,b0e6ddbb-0630-4c83-9c59-6b7890db96ee,Non-numeric channel unit number
+source,path_nm,GlobalID,error_message,location_id
+CU,hayden/CU_1.csv,8729bca9-6ad8-4df1-9fae-ac35dfd84b21,Column Maximum Depth (m) is <blank> or NA.,Hayden4_2019_001_048
+CU,hayden/CU_1.csv,c3b2f5a6-ceb1-411a-818d-6ff171781c67,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_001
+CU,hayden/CU_1.csv,aa739023-804c-482d-8235-13e4d31ef816,"Cover values sum to 150, not between 100 and 130.",Hayden4_2019_001_037
+CU,hayden/CU_1.csv,01645c07-fb3d-4d28-87b6-969f592217c9,"Cover values sum to 80, not between 100 and 130.",Hayden4_2019_001_047
+CU,hayden/CU_1.csv,8729bca9-6ad8-4df1-9fae-ac35dfd84b21,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_048
+CU,hayden/CU_1.csv,6325b845-18ef-4081-8f9e-6e66c08c6a35,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_049
+CU,hayden/CU_1.csv,a8c54adc-e1a0-4073-b082-3022e8df0a0d,"Cover values sum to 80, not between 100 and 130.",Hayden4_2019_001_051
+CU,hayden/CU_1.csv,48adb0ee-6103-457d-a3e3-f3caeb330a42,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_052
+CU,hayden/CU_1.csv,b64d1d9f-681c-4b8d-bfc6-b32a0f71fee7,"Cover values sum to 140, not between 100 and 130.",Hayden4_2019_001_055
+CU,hayden/CU_1.csv,c7f7eb99-717e-40fe-90d5-002977f4eec8,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_058
+CU,hayden/CU_1.csv,3fbfe514-e17d-4e02-8b83-08d5cf6c3d27,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_060
+CU,hayden/CU_1.csv,94cc847d-1348-4288-8ca9-b7cdbd0c9bc0,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_061
+CU,hayden/CU_1.csv,81db32e9-1c62-4aa9-b55a-0c859696febe,"Cover values sum to 70, not between 100 and 130.",Hayden4_2019_001_062
+CU,hayden/CU_1.csv,6fb4b10f-e9d9-4b9c-916f-7326c4aca37b,"Cover values sum to 90, not between 100 and 130.",Hayden4_2019_001_072
+CU,lake/CU_1.csv,37c1f472-c08a-45be-8d26-7d11678328c4,"Cover values sum to 80, not between 100 and 130.",Lake_2020_006_048
+CU,hayden/CU_1.csv,d51dbc98-4bd0-41a1-a710-1090aa5e7e57,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_003
+CU,hayden/CU_1.csv,4c3a6a45-2752-4f4e-9819-49916f3acccd,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_007
+CU,hayden/CU_1.csv,d253ea7b-d1cc-4cf2-bb60-b301d3d16893,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_009
+CU,hayden/CU_1.csv,e66eb259-b722-469f-89da-878d07c36d47,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_012
+CU,hayden/CU_1.csv,30650033-0786-414c-80ea-f00bdd1e9ba0,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_015
+CU,hayden/CU_1.csv,d2889bc1-c04e-4195-bc68-74f5c642ef51,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_019
+CU,hayden/CU_1.csv,f90bc16c-abbb-4dc5-9a12-27bebbeb1cfd,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_021
+CU,hayden/CU_1.csv,a45bc8ed-1109-48a4-8bd3-24ed8e38e596,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_023
+CU,hayden/CU_1.csv,4eb3504c-4d27-4aca-b36b-c167b162013f,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_026
+CU,hayden/CU_1.csv,2158cf88-7ef6-4068-a041-b7543c07768e,"Ocular estimates sum to 0, not 100.",Hayden4_2019_001_029
+CU,lake/CU_1.csv,eb6c1f2c-0170-43e0-93ec-c91526f2732f,"Ocular estimates sum to 90, not 100.",Lake_2020_001_036
+CU,lake/CU_1.csv,ca9c9ad6-6814-4955-b438-af8861d98e83,"Ocular estimates sum to 90, not 100.",Lake_2020_006_050
+CU,lake/CU_1.csv,a6742727-72d8-4cb7-b032-cb298bd6befe,"Ocular estimates sum to 130, not 100.",Lake_2020_006_070
+CU,hayden/CU_1.csv,d51dbc98-4bd0-41a1-a710-1090aa5e7e57,Pebble size values for 1 columns within the pebble counts appear to be NA.,Hayden4_2019_001_003
+CU,hayden/CU_1.csv,d253ea7b-d1cc-4cf2-bb60-b301d3d16893,Pebble size values for 1 columns within the pebble counts appear to be NA.,Hayden4_2019_001_009
+Wood,hayden/Wood_2.csv,0b418c3f-5d6d-4c4e-b268-c51a03dc7ca9,Column Wet? is <blank> or NA.,Hayden4_2019_001_038
+Wood,hayden/Wood_2.csv,f7f60e87-1abd-46ed-ab4d-82ff7b764228,Column Ballasted? is <blank> or NA.,Hayden4_2019_003_028
+Undercut,lake/Undercut_4.csv,81c8c847-caea-4e83-acb1-116eea12f9db,The Length (m) measurement 11 is outside of the expected values of 0 and 10,Lake_2020_001_040
+Undercut,lake/Undercut_4.csv,ac368d6e-00cd-4d0d-ac09-1e3a50fed1fd,The Length (m) measurement 12 is outside of the expected values of 0 and 10,Lake_2020_006_046
+Undercut,lake/Undercut_4.csv,9ebe3028-79af-4d77-97ca-04cc539b08cd,The Length (m) measurement 15 is outside of the expected values of 0 and 10,Lake_2020_006_059
+Discharge,lake/Discharge_5.csv,b0e6ddbb-0630-4c83-9c59-6b7890db96ee,Non-numeric channel unit number,Lake_2020_46 lsc
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,6476883e-7682-4fc8-8ecf-d26357d4f019,The measurement Station Width (2.1) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,5d7c48cf-8da4-4113-80e6-f53492ab0ad0,The measurement Station Width (2.45) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,df8331e0-3d4d-4931-b9cd-2ce11311fb19,The measurement Station Width (2.85) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,304a0779-27f6-4982-b531-32496fcf5d86,The measurement Station Width (3.2) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,1f4eb5c0-ebec-405d-9e9e-4fbd42898f97,The measurement Station Width (3.55) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,c890b5b2-8260-4d1c-af1c-efeef65e5f3b,The measurement Station Width (3.9) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,7b5b0937-a540-4d11-81a5-937d03fa8df6,The measurement Station Width (4.25) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,bb934c64-e2f6-4433-82be-166daae791ac,The measurement Station Width (4.6) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,f72e85d2-8d22-409d-999a-bb7aa28c5cb2,The measurement Station Width (4.95) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,46955487-01cb-482f-96b7-4719c538bc42,The measurement Station Width (5.3) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,b593c4dc-75fb-456d-915e-5e6a09494ccc,The measurement Station Width (5.65) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,d9f2a948-397d-476b-bf07-3f5738d4fd09,The measurement Station Width (6) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,8fca5a5e-213c-4d56-9934-8f31d7bff6cf,The measurement Station Width (6.35) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,6b47277d-dd6f-4b2e-879a-e6e6c51adeee,The measurement Station Width (2.8) falls outside of the expected values between 0 and 2,Hayden4_2019_3
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,0ff3927b-8bd9-4b36-9a56-71bc9493a28f,The measurement Station Width (2.25) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,a13c3704-286a-467a-aebd-3e54b6bf93b5,The measurement Station Width (2.5) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,829e4e49-54de-4312-8d4f-c29bafabeecc,The measurement Station Width (2.75) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,4ec75938-d327-4c00-806c-f84d4581cfe2,The measurement Station Width (3) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,ede4df1c-f526-4a16-b23e-bfc98ba7fc6e,The measurement Station Width (3.25) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,efa0b512-f36a-4886-974f-043b3e5b592b,The measurement Station Width (3.5) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,b107d481-f306-4c28-af7c-52dfae906e85,The measurement Station Width (3.75) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,b8f0fa61-0a7e-40bf-a2e4-2518789520b0,The measurement Station Width (4) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,2bf9dc7a-dcd2-47e3-ac44-7a0971aff1e4,The measurement Station Width (4.25) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,5f6a4aa5-3624-4e28-8be6-3e5f0eb24731,The measurement Station Width (4.5) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,9542410a-7611-4a4a-8035-b2127dd726b1,The measurement Station Width (4.75) falls outside of the expected values between 0 and 2,Hayden4_2019_72
+DischargeMeasurements,hayden/DischargeMeasurements_6.csv,07e5512a-5fca-4cca-99fd-6cecea9d381c,The measurement Station Width (5) falls outside of the expected values between 0 and 2,Hayden4_2019_72

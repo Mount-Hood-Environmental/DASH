@@ -11,7 +11,7 @@ init_qc = qc_wrapper(survey_df = otg_raw$survey,
                      jam_df = otg_raw$jam,
                      undercut_df = otg_raw$undercut,
                      discharge_df = otg_raw$discharge,
-                     disch_meas_df = otg_raw$discharge_measurements,
+                     discharge_meas_df = otg_raw$discharge_measurements,
                      redirect_output = F)
 
 write_csv(init_qc, "data-raw/init_qc.csv")
