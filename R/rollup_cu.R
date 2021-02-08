@@ -21,12 +21,9 @@ rollup_cu = function(cu_df = NULL,
 
   # prep survey info to attach to CUs
   join_site_df = survey_df %>%
-    #mutate(site_name = gsub("_.*", "", site_name)) %>% # for 2019 surveys with years and spaces on survey names
-    #mutate(site_name = gsub(" ", "", site_name)) %>%
     dplyr::select(global_id,
                   site_name,
-                  survey_date,
-                  survey_time,
+                  survey_datetime = survey_date,
                   survey_crew,
                   conductivity_ms,
                   site_lon = x,
@@ -38,7 +35,6 @@ rollup_cu = function(cu_df = NULL,
     dplyr::select(-(creation_date:editor)) %>%
     dplyr::left_join(join_site_df,
               by = c("parent_global_id" = "global_id")) %>%
-    #select(-parent_global_id) %>%
     dplyr::mutate(channel_unit_number = str_pad(channel_unit_number, 3, pad = "0"),
                   channel_segment_number = str_pad(channel_segment_number, 2, pad = "0")) %>%
     dplyr::mutate(cu_id = paste(site_name,
@@ -48,13 +44,19 @@ rollup_cu = function(cu_df = NULL,
     dplyr::select(parent_global_id,
                   global_id,
                   path_nm,
-                  survey_date,
-                  survey_time,
-                  cu_id,
+                  survey_datetime,
                   site_name,
-                  channel_unit_number,
+                  cu_id,
                   channel_segment_number,
+                  channel_unit_number,
                   channel_unit_type,
+                  maximum_depth_m,
+                  thalweg_exit_depth_m,
+                  width_1,
+                  width_2,
+                  width_3,
+                  width_4,
+                  width_5,
                   everything())
 
   return(return_df)
