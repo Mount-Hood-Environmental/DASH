@@ -13,17 +13,20 @@
 #'
 #' @import dplyr
 #' @importFrom magrittr %<>%
+#' @importFrom janitor clean_names
 #' @export
 #' @return a data.frame summarizing data for channel units
 
 otg_to_cu = function(survey_df = NULL,
                      cu_df = NULL,
+                     wood_df = NULL,
                      jam_df = NULL,
                      undercut_df = NULL,
-                     wood_df = NULL,
                      discharge_df = NULL,
                      discharge_meas_df = NULL,
                      fix_nas = TRUE,
+                     wood_impute_cols = c('length_m',
+                                          'diameter_m'),
                      jam_impute_cols  = c("length_m",
                                           "width_m",
                                           "height_m",
@@ -32,40 +35,46 @@ otg_to_cu = function(survey_df = NULL,
                                               "width_25_percent_m",
                                               "width_50_percent_m",
                                               "width_75_percent_m"),
-                     wood_impute_cols = c('length_m',
-                                          'diameter_m'),
                      ...) {
 
-  # ensure naming conventions are what's expected
+  # if clean_names() has not already been performed on these dfs, run it now...
   survey_df %<>%
-    clean_names()
+    janitor::clean_names()
   cu_df %<>%
-    clean_names()
-  jam_df %<>%
-    clean_names()
-  undercut_df %<>%
-    clean_names()
+    janitor::clean_names()
   wood_df %<>%
-    clean_names()
+    janitor::clean_names()
+  jam_df %<>%
+    janitor::clean_names()
+  undercut_df %<>%
+    janitor::clean_names()
   discharge_df %<>%
-    clean_names()
+    janitor::clean_names()
   discharge_meas_df %<>%
-    clean_names()
+    janitor::clean_names()
 
+  # channel unit rollup
   cu_main = rollup_cu(cu_df,
                       survey_df)
-  cu_jam = rollup_cu_jam(jam_df,
-                         fix_nas = fix_nas,
-                         impute_cols = jam_impute_cols,
-                         ...)
-  cu_undct = rollup_cu_undercut(undercut_df,
-                                fix_nas = fix_nas,
-                                impute_cols = undercut_impute_cols,
-                                ...)
+
+  # wood rollup
   cu_wood = rollup_cu_wood(wood_df,
                            fix_nas = fix_nas,
                            impute_cols = wood_impute_cols,
                            ...)
+
+  # wood jam rollup
+  cu_jam = rollup_cu_jam(jam_df,
+                         fix_nas = fix_nas,
+                         impute_cols = jam_impute_cols,
+                         ...)
+  # undercut rollup
+  cu_undct = rollup_cu_undercut(undercut_df,
+                                fix_nas = fix_nas,
+                                impute_cols = undercut_impute_cols,
+                                ...)
+
+  # discharge rollup
   cu_disch = rollup_cu_discharge(discharge_df,
                                  discharge_meas_df) %>%
     rename(channel_unit_number = discharge_location_bos_tos_cu_number) %>%
@@ -74,7 +83,7 @@ otg_to_cu = function(survey_df = NULL,
                   width = 3,
                   pad = "0"))
 
-  # combine various rollups into a single data.frame
+  # and combine various rollups into a single data.frame
   cu_df = cu_main %>%
     dplyr::left_join(cu_wood,
                      by = c("global_id" = "parent_global_id")) %>%
