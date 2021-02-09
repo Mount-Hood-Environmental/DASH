@@ -26,19 +26,21 @@ rollup_cu_wood = function(wood_df = NULL,
 
   stopifnot(!is.null(wood_df))
 
-  # if any of the impute_cols are character vectors, turn them into factors
+  # get class of each impute_cols
   cols_class = wood_df %>%
-    select(any_of(impute_cols)) %>%
+    dplyr::select(dplyr::any_of(impute_cols)) %>%
     sapply(class)
+
+  # if any impute_cols are character vectors, turn them into factors
   if(sum(cols_class == "character") > 0) {
       wood_df = wood_df %>%
-        mutate_at(vars(any_of(names(cols_class)[cols_class == "character"])),
-                  list(as.factor))
+        dplyr::mutate_at(vars(dplyr::any_of(names(cols_class)[cols_class == "character"])),
+                         list(as.factor))
   }
 
-  # how many missing values are there?
+  # how many missing values are there in impute_cols?
   n_nas = wood_df %>%
-    select(any_of(impute_cols)) %>%
+    dplyr::select(dplyr::any_of(impute_cols)) %>%
     is.na() %>%
     sum()
 
@@ -47,6 +49,7 @@ rollup_cu_wood = function(wood_df = NULL,
 
     cat("Imputing some missing values\n")
 
+    # use default values
     fix_df = impute_missing_values(wood_df,
                                    col_nm_vec = impute_cols,
                                    ...)
@@ -61,15 +64,16 @@ rollup_cu_wood = function(wood_df = NULL,
     dplyr::mutate(piece_area_m2 = diameter_m * length_m,
                   piece_vol_m3 = pi * (diameter_m/2)^2 * length_m) %>%
     dplyr::group_by(parent_global_id) %>%
-    dplyr::summarise(lwd_length_m = sum(length_m),
-                     lwd_diameter_m = sum(diameter_m),
+    dplyr::summarise(lwd_n_pieces = length(parent_global_id),
+                     #lwd_length_m = sum(length_m),
+                     #lwd_diameter_m = sum(diameter_m),
                      lwd_area_m2 = sum(piece_area_m2),
                      lwd_vol_m3 = sum(piece_vol_m3),
-                     lwd_n_pieces = length(parent_global_id),
-                     # I should account for NA records in wet, channel_forming, ballasted here, somehow...TBD
-                     lwd_n_wet = sum(wet == "Yes", na.rm = T),
-                     lwd_n_chn_frm = sum(channel_forming == "Yes", na.rm = T),
-                     lwd_n_ballast = sum(ballasted == "Yes", na.rm = T))
+                     # calculate proportions w/in channel units for wet, channel_forming, and ballasted
+                     # ignore NAs when calculating proportions
+                     lwd_p_wet = sum(wet == "Yes", na.rm = T) / sum(wet == "Yes" | wet == "No", na.rm = T),
+                     lwd_p_chn_frm = sum(channel_forming == "Yes", na.rm = T) / sum(channel_forming == "Yes" | channel_forming == "No", na.rm = T),
+                     lwd_p_ballast = sum(ballasted == "Yes", na.rm = T) / sum(ballasted == "Yes" | ballasted == "No", na.rm = T))
 
   return(return_df)
 
