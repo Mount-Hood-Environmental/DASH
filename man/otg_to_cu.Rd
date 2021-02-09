@@ -7,16 +7,16 @@
 otg_to_cu(
   survey_df = NULL,
   cu_df = NULL,
+  wood_df = NULL,
   jam_df = NULL,
   undercut_df = NULL,
-  wood_df = NULL,
   discharge_df = NULL,
   discharge_meas_df = NULL,
   fix_nas = TRUE,
+  wood_impute_cols = c("length_m", "diameter_m"),
   jam_impute_cols = c("length_m", "width_m", "height_m", "estimated_number_of_pieces"),
   undercut_impute_cols = c("length_m", "width_25_percent_m", "width_50_percent_m",
     "width_75_percent_m"),
-  wood_impute_cols = c("length_m", "diameter_m"),
   ...
 )
 }
@@ -26,14 +26,14 @@ each site/survey}
 
 \item{cu_df}{data.frame of \verb{otg_type =} "CU_1.csv" containing data for each channel unit}
 
+\item{wood_df}{data.frame of \verb{otg_type =} "Wood_2.csv" containing the individual
+wood data to be summarized by channel units}
+
 \item{jam_df}{data.frame of \verb{otg_type =} "Jam_3.csv containing the individual
 jam data to be summarized (rolled up) to the channel unit scale}
 
 \item{undercut_df}{data.frame of \verb{otg_type =} "Undercut_4.csv" containing the individual
 undercut data to be summarized (rolled up) to the channel unit scale}
-
-\item{wood_df}{data.frame of \verb{otg_type =} "Wood_2.csv" containing the individual
-wood data to be summarized by channel units}
 
 \item{discharge_df}{data.frame of \verb{otg_type =} "Discharge_5.csv" containing the survey
 and channel unit number information where discharges were measured}
