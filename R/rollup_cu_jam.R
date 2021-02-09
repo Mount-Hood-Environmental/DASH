@@ -46,10 +46,12 @@ rollup_cu_jam = function(jam_df = NULL,
     is.na() %>%
     sum()
 
+  if( fix_nas == TRUE & n_nas == 0 ) cat("No missing values in impute_cols of jam_df\n")
+
   # fix missing values in individual jams
   if( fix_nas == TRUE & n_nas > 0) {
 
-    cat("Imputing some missing values\n")
+    cat("Imputing some missing values in jam_df\n")
 
     fix_df = impute_missing_values(jam_df,
                                    col_nm_vec = impute_cols,

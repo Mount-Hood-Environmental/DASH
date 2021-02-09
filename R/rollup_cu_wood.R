@@ -44,10 +44,12 @@ rollup_cu_wood = function(wood_df = NULL,
     is.na() %>%
     sum()
 
+  if( fix_nas == TRUE & n_nas == 0 ) cat("No missing values in impute_cols of wood_df\n")
+
   # fix missing length and diameter values
   if( fix_nas == TRUE & n_nas > 0 ) {
 
-    cat("Imputing some missing values\n")
+    cat("Imputing some missing values in wood_df\n")
 
     # use default values
     fix_df = impute_missing_values(wood_df,
