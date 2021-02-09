@@ -24,27 +24,27 @@ calc_discharge <- function(discharge_meas_df) {
   stopifnot(!is.null(discharge_meas_df))
 
   return_df = discharge_meas_df %>%
-    select(parent_global_id,
-           global_id,
-           station_width,
-           station_depth,
-           station_velocity) %>%
-    group_by(parent_global_id) %>%
+    dplyr::select(parent_global_id,
+                  global_id,
+                  station_width,
+                  station_depth,
+                  station_velocity) %>%
+    dplyr::group_by(parent_global_id) %>%
     # determine which is the first and last station at a site
-    mutate(station = 1:n()) %>%
-    mutate(min_stat = min(station),
-           max_stat = max(station)) %>%
+    dplyr::mutate(station = 1:n()) %>%
+    dplyr::mutate(min_stat = min(station),
+                  max_stat = max(station)) %>%
     # compute station width
-    mutate(stat_width_i = if_else(station == min_stat,
-                                  (lead(station_width) - station_width) / 2,
-                                  if_else(station == max_stat,
-                                          station_width / 2,
-                                          (station_width + lead(station_width)) / 2))) %>%
+    dplyr::mutate(stat_width_i = if_else(station == min_stat,
+                                         (lead(station_width) - station_width) / 2,
+                                         if_else(station == max_stat,
+                                                 station_width / 2,
+                                                 (station_width + lead(station_width)) / 2))) %>%
     # calculate discharge at each station
-    mutate(stat_disch = stat_width_i * station_depth * station_velocity) %>%
+    dplyr::mutate(stat_disch = stat_width_i * station_depth * station_velocity) %>%
     # sum discharge across all stations at a site
-    summarise(discharge_cms = sum(stat_disch),
-              .groups = "drop")
+    dplyr::summarise(discharge_cms = sum(stat_disch),
+                     .groups = "drop")
 
   return(return_df)
 }

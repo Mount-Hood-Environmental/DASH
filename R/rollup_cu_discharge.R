@@ -22,11 +22,11 @@ rollup_cu_discharge = function(discharge_df = NULL,
   disch_tmp = calc_discharge(discharge_meas_df = discharge_meas_df)
 
   return_df = discharge_df %>%
-    select(global_id,
-           parent_global_id,
-           discharge_location_bos_tos_cu_number) %>%
-    left_join(disch_tmp,
-              by = c("global_id" = "parent_global_id"))
+    dplyr::select(global_id,
+                  parent_global_id,
+                  discharge_location_bos_tos_cu_number) %>%
+    dplyr::left_join(disch_tmp,
+                     by = c("global_id" = "parent_global_id"))
 
   return(return_df)
 
