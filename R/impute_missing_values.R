@@ -17,6 +17,7 @@
 #' @importFrom randomForestSRC impute
 #' @importFrom missForest missForest
 #' @importFrom forcats fct_drop
+#' @importFrom tibble as_tibble
 #' @export
 #' @return a data.frame with the same dimensions as the original, but with no missing values
 
@@ -40,24 +41,24 @@ impute_missing_values = function(data_df = NULL,
   if(method == "randomForestSRC") {
     set.seed(my_seed)
     imputed_data = data_df %>%
-      select(any_of(col_nm_vec)) %>%
+      dplyr::select(dplyr::any_of(col_nm_vec)) %>%
       as.data.frame() %>%
       randomForestSRC::impute(data = .,
                               ntree = ntree,
                               ...) %>%
-      as_tibble()
+      tibble::as_tibble()
 
     data_return = data_df %>%
-      select(-any_of(names(imputed_data))) %>%
-      bind_cols(imputed_data) %>%
-      select(any_of(names(data_df)))
-  }
+      dplyr::select(-dplyr::any_of(names(imputed_data))) %>%
+      dplyr::bind_cols(imputed_data) %>%
+      dplyr::select(dplyr::any_of(names(data_df)))
+  } # end if randomForestSRC
 
   # imputed missing data with missForest package
   if(method == 'missForest') {
     set.seed(my_seed)
     imputed_data = data_df %>%
-      select(any_of(col_nm_vec)) %>%
+      dplyr::select(dplyr::any_of(col_nm_vec)) %>%
       as.data.frame() %>%
       missForest::missForest(xmis = .,
                              # variablewise = T,
@@ -68,22 +69,22 @@ impute_missing_values = function(data_df = NULL,
 
     # pull out non-imputed data, combine with imputed data
     data_return = data_df %>%
-      select(-any_of(names(imputed_data$ximp))) %>%
-      bind_cols(imputed_data$ximp) %>%
-      select(any_of(names(data_df)))
-  }
+      dplyr::select(-dplyr::any_of(names(imputed_data$ximp))) %>%
+      dplyr::bind_cols(imputed_data$ximp) %>%
+      dplyr::select(dplyr::any_of(names(data_df)))
+  } # end if missForest
 
   # imputed missing data with Hmisc package
   if(method == 'Hmisc') {
     set.seed(my_seed)
     areg_data = data_df %>%
-      select(any_of(col_nm_vec)) %>%
+      dplyr::select(dplyr::any_of(col_nm_vec)) %>%
       as.data.frame()
 
     for(i in which(sapply(areg_data, class) == 'factor')) {
       areg_data = areg_data %>%
-        mutate_at(vars(all_of(i)),
-                  list(forcats::fct_drop))
+        dplyr::mutate_at(vars(dplyr::all_of(i)),
+                         list(forcats::fct_drop))
     }
 
     areg_data = areg_data %>%
@@ -94,13 +95,14 @@ impute_missing_values = function(data_df = NULL,
                         ...)
 
     imputed_data = data_df %>%
-      select(any_of(col_nm_vec))
+      dplyr::select(dplyr::any_of(col_nm_vec))
+
     for(colNm in col_nm_vec) {
       if(!colNm %in% names(areg_data$imputed) |
          is.null(areg_data$imputed[[colNm]])) next
-      if(class(pull(imputed_data, colNm)) == "factor") {
-        imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = levels(pull(imputed_data, colNm))[apply(areg_data$imputed[[colNm]], 1, median)]
-      } else if(class(pull(imputed_data, colNm)) == "integer") {
+      if(class(dplyr::pull(imputed_data, colNm)) == "factor") {
+        imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = levels(dplyr::pull(imputed_data, colNm))[apply(areg_data$imputed[[colNm]], 1, median)]
+      } else if(class(dplyr::pull(imputed_data, colNm)) == "integer") {
         imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = as.integer(round(rowMeans(areg_data$imputed[[colNm]])))
       } else {
         imputed_data[as.numeric(rownames(areg_data$imputed[[colNm]])), colNm] = rowMeans(areg_data$imputed[[colNm]])
@@ -109,10 +111,11 @@ impute_missing_values = function(data_df = NULL,
 
     # pull out non-imputed data, combine with imputed data
     data_return = data_df %>%
-      select(-any_of(names(imputed_data))) %>%
-      bind_cols(imputed_data) %>%
-      select(any_of(names(data_df)))
-  }
+      dplyr::select(-dplyr::any_of(names(imputed_data))) %>%
+      dplyr::bind_cols(imputed_data) %>%
+      dplyr::select(dplyr::any_of(names(data_df)))
+
+  } # end if Hmisc
 
   # return imputed data set
   return(data_return)
