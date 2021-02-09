@@ -189,7 +189,6 @@ if(r_code_fixes) {
                                                        "discharge",
                                                        "discharge_measurements"))
 
-
     # ocular substrate fixes
     otg_temp$cu = rescale_values(data_df = otg_temp$cu,
                                  col_names = c("Sand/Fines 2mm",

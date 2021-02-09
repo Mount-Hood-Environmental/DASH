@@ -52,6 +52,7 @@ impute_missing_values = function(data_df = NULL,
       dplyr::select(-dplyr::any_of(names(imputed_data))) %>%
       dplyr::bind_cols(imputed_data) %>%
       dplyr::select(dplyr::any_of(names(data_df)))
+
   } # end if randomForestSRC
 
   # imputed missing data with missForest package
@@ -72,6 +73,7 @@ impute_missing_values = function(data_df = NULL,
       dplyr::select(-dplyr::any_of(names(imputed_data$ximp))) %>%
       dplyr::bind_cols(imputed_data$ximp) %>%
       dplyr::select(dplyr::any_of(names(data_df)))
+
   } # end if missForest
 
   # imputed missing data with Hmisc package
