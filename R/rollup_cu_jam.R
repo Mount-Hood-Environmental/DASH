@@ -27,19 +27,22 @@ rollup_cu_jam = function(jam_df = NULL,
 
   stopifnot(!is.null(jam_df))
 
-  # if any of the impute_cols are character vectors, turn them into factors
-  cols_class = jam_df %>%
-    select(any_of(impute_cols)) %>%
-    sapply(class)
-  if(sum(cols_class == "character") > 0) {
-    jam_df = jam_df %>%
-      mutate_at(vars(any_of(names(cols_class)[cols_class == "character"])),
-                list(as.factor))
-  }
+  # not necessary for jams, shouldn't be any character vectors
+  # # get class of each impute_cols
+  # cols_class = jam_df %>%
+  #   dplyr::select(dplyr::any_of(impute_cols)) %>%
+  #   sapply(class)
+  #
+  # # if any impute_cols are character vectors, turn them into factors
+  # if(sum(cols_class == "character") > 0) {
+  #   jam_df = jam_df %>%
+  #     dplyr::mutate_at(vars(dplyr::any_of(names(cols_class)[cols_class == "character"])),
+  #                      list(as.factor))
+  # }
 
-  # how many missing values are there?
+  # how many missing values are there in impute_cols?
   n_nas = jam_df %>%
-    select(any_of(impute_cols)) %>%
+    dplyr::select(dplyr::any_of(impute_cols)) %>%
     is.na() %>%
     sum()
 
@@ -55,8 +58,8 @@ rollup_cu_jam = function(jam_df = NULL,
     # make the estimated number of pieces an integer again
     if(class(fix_df$estimated_number_of_pieces) != "integer") {
       fix_df = fix_df %>%
-        mutate_at(vars(estimated_number_of_pieces),
-                  list(~ as.integer(round(.))))
+        dplyr::mutate_at(vars(estimated_number_of_pieces),
+                         list(~ as.integer(round(.))))
     }
 
     jam_df = fix_df
@@ -69,12 +72,12 @@ rollup_cu_jam = function(jam_df = NULL,
                   vol_m3 = length_m * width_m * height_m) %>%
     dplyr::group_by(parent_global_id) %>%
     dplyr::summarise(jam_n = length(parent_global_id),
-                     jam_length_m = sum(length_m),
-                     jam_width_m = sum(width_m),
-                     jam_height_m = sum(height_m),
+                     jam_est_n_pieces = sum(estimated_number_of_pieces),
+                     #jam_length_m = sum(length_m),
+                     #jam_width_m = sum(width_m),
+                     #jam_height_m = sum(height_m),
                      jam_area_m2 = sum(area_m2),
-                     jam_vol_m3 = sum(vol_m3),
-                     jam_est_n_pieces = sum(estimated_number_of_pieces))
+                     jam_vol_m3 = sum(vol_m3))
 
   return(return_df)
 
