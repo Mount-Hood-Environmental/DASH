@@ -27,26 +27,31 @@ rollup_cu_undercut = function(undercut_df = NULL,
 
   stopifnot(!is.null(undercut_df))
 
-  # if any of the impute_cols are character vectors, turn them into factors
-  cols_class = undercut_df %>%
-    dplyr::select(any_of(impute_cols)) %>%
-    sapply(class)
-  if(sum(cols_class == "character") > 0) {
-    undercut_df = undercut_df %>%
-      dplyr::mutate_at(vars(any_of(names(cols_class)[cols_class == "character"])),
-                       list(as.factor))
-  }
+  # shouldn't be necessary for undercuts, shouldn't be any character vectors
+  # # get class of each impute_cols
+  # cols_class = undercut_df %>%
+  #   dplyr::select(dplyr::any_of(impute_cols)) %>%
+  #   sapply(class)
+  #
+  # # if any impute_cols are character vectors, turn them into factors
+  # if(sum(cols_class == "character") > 0) {
+  #   undercut_df = undercut_df %>%
+  #     dplyr::mutate_at(vars(dplyr::any_of(names(cols_class)[cols_class == "character"])),
+  #                      list(as.factor))
+  # }
 
   # how many missing values in individual undercuts
   n_nas = undercut_df %>%
-    dplyr::select(any_of(impute_cols)) %>%
+    dplyr::select(dplyr::any_of(impute_cols)) %>%
     is.na() %>%
     sum()
+
+  if( fix_nas == TRUE & n_nas == 0 ) cat("No missing values in impute_cols of undercut_df\n")
 
   # fix missing values in individual undercuts
   if( fix_nas == TRUE & n_nas > 0) {
 
-    cat("Imputing some missing values\n")
+    cat("Imputing some missing values in undercut_df\n")
 
     fix_df = impute_missing_values(undercut_df,
                                    col_nm_vec = impute_cols,
@@ -59,7 +64,8 @@ rollup_cu_undercut = function(undercut_df = NULL,
   # now start data rollup
   return_df = undercut_df %>%
     dplyr::select(-(creation_date:editor)) %>%
-    dplyr::mutate(area_m2 = length_m * ((width_25_percent_m + width_50_percent_m + width_75_percent_m) / 3)) %>%
+    dplyr::mutate(avg_width_m = (width_25_percent_m + width_50_percent_m + width_75_percent_m) / 3) %>%
+    dplyr::mutate(area_m2 = length_m * avg_width_m) %>%
     dplyr::group_by(parent_global_id) %>%
     dplyr::summarise(undct_n = length(parent_global_id),
                      undct_length_m = sum(length_m),
