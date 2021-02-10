@@ -96,6 +96,20 @@ otg_to_cu = function(survey_df = NULL,
     dplyr::relocate(any_of(c("conductivity_ms", "site_lat", "site_lon", "survey_crew", "channel_unit_notes")),
                     .after = last_col())
 
+  # convert what should be true 0s from NA to 0
+  cu_df = cu_df %>%
+    mutate_at(vars(lwd_n_pieces,
+                   lwd_area_m2,
+                   lwd_vol_m3,
+                   jam_n,
+                   jam_est_n_pieces,
+                   jam_area_m2,
+                   jam_vol_m3,
+                   undct_n,
+                   undct_length_m,
+                   undct_area_m),
+              replace_na, 0)
+
   return(cu_df)
 
 }

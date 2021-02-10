@@ -77,6 +77,7 @@ rollup_cu_wood = function(wood_df = NULL,
                      lwd_p_chn_frm = sum(channel_forming == "Yes", na.rm = T) / sum(channel_forming == "Yes" | channel_forming == "No", na.rm = T),
                      lwd_p_ballast = sum(ballasted == "Yes", na.rm = T) / sum(ballasted == "Yes" | ballasted == "No", na.rm = T))
 
+
   return(return_df)
 
 } # end rollup_cu_wood()
