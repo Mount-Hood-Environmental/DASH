@@ -92,7 +92,9 @@ otg_to_cu = function(survey_df = NULL,
     dplyr::left_join(cu_undct,
                      by = c("global_id" = "parent_global_id")) %>%
     dplyr::left_join(cu_disch %>%
-                       select(-global_id))
+                       select(-global_id)) %>%
+    dplyr::relocate(any_of(c("conductivity_ms", "site_lat", "site_lon", "survey_crew", "channel_unit_notes")),
+                    .after = last_col())
 
   return(cu_df)
 
