@@ -14,6 +14,7 @@
 #' @import dplyr
 #' @importFrom magrittr %<>%
 #' @importFrom janitor clean_names
+#' @importFrom tidyr replace_na
 #' @export
 #' @return a data.frame summarizing data for channel units
 
