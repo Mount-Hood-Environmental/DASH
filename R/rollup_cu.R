@@ -10,6 +10,7 @@
 #' each site/survey
 #'
 #' @import dplyr
+#' @importFrom stringr str_remove_all
 #' @export
 #' @return a data.frame summarizing data for channel units
 
@@ -35,6 +36,7 @@ rollup_cu = function(cu_df = NULL,
     dplyr::select(-(creation_date:editor)) %>%
     dplyr::left_join(join_site_df,
               by = c("parent_global_id" = "global_id")) %>%
+    dplyr::mutate(site_name = stringr::str_remove_all(site_name, pattern = fixed(" "))) %>%
     dplyr::mutate(channel_unit_number = str_pad(channel_unit_number, 3, pad = "0"),
                   channel_segment_number = str_pad(channel_segment_number, 2, pad = "0")) %>%
     dplyr::mutate(cu_id = paste(site_name,
