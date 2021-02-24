@@ -67,15 +67,6 @@ rm(otg_qcd_paths, otg_list)
 # trim off qc_results
 otg = within(otg, rm(qc_results))
 
-# and clean site_names
-otg$survey = otg$survey %>%
-  mutate(across(site_name,
-                ~str_replace(., "_.*", "")),
-         across(site_name,
-                ~str_remove_all(., " ")))
-tabyl(otg$survey,
-      site_name)
-
 #-------------------------
 # roll up OTG data to CU scale, no data imputation
 #-------------------------
