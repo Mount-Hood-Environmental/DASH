@@ -79,16 +79,74 @@ write_csv(cu_hr_sf,
           paste0(nas_prefix,
                  "/data/habitat/DASH/channel_units/compiled/cu_hr_sf_raw.csv"))
 
+rm(hr_df)
+# At this point, I copy/pasted the above file, did a thorough review/QC on the new file, and
+# made several changes
+
+#------------------------
+# read in the new cu points, overwriting cu_pts
 #-------------------------
+cu_pts = read_csv(paste0(nas_prefix,
+                         "/data/habitat/DASH/channel_units/compiled/dash_cu_points_1920.csv"))
+
+cu_sf = cu_pts %>%
+  mutate(geometry = gsub('[c()]', '', geometry)) %>%
+  separate(col = geometry,
+           into = c('lon', 'lat'),
+           sep = '\\,') %>%
+  mutate_at('lon', as.double) %>%
+  mutate_at('lat', as.double) %>%
+  st_as_sf(coords = c('lon', 'lat'),
+           crs = 4326)
+
+st_write(cu_sf,
+         dsn = paste0(nas_prefix, "/data/habitat/DASH/channel_units/compiled/dash_cu_points_1920.shp"))
+
+#------------------------
 # grab most recent OTG data to assist w review
-#-------------------------
+#------------------------
 otg = read_rds(paste0(nas_prefix,
                       "/data/habitat/DASH/OTG/prepped/dash_1920_cu_no_impute.rds"))
 
+#------------------------
+# join some of cu_pts and otg for further QC
+#------------------------
+cu_join = cu_pts %>%
+  select(site_name,
+         year,
+         cu_type,
+         seg_num,
+         cu_num,
+         hab_reach) %>%
+  mutate(site_name = str_remove_all(site_name, " ")) %>%
+  mutate(cu_id = paste0(site_name,
+                        "_",
+                        str_pad(seg_num, 2, pad = "0"),
+                        "_",
+                        str_pad(cu_num, 3, pad = "0"))) %>%
+  distinct()
+
+otg_join = otg %>%
+  select(site_name,
+         cu_id,
+         channel_unit_type,
+         channel_segment_number,
+         channel_unit_number)
+
 #-------------------------
-# begin data cleaning
+# join above data frames
 #-------------------------
-tabyl(otg$site_name)
+otg_cu_df = otg_join %>%
+  full_join(cu_join,
+            by = "cu_id",
+            suffix = c(".otg", ".cu"))
+
+#-------------------------
+# write for review
+#-------------------------
+# write_csv(otg_cu_df,
+#           paste0(nas_prefix,
+#                  "/data/habitat/DASH/channel_units/compiled/otg_cu_df_20210308.csv"))
 
 
 
