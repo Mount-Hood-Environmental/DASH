@@ -100,7 +100,8 @@ cu_sf = cu_pts %>%
            crs = 4326)
 
 st_write(cu_sf,
-         dsn = paste0(nas_prefix, "/data/habitat/DASH/channel_units/compiled/dash_cu_points_1920.shp"))
+         dsn = paste0(nas_prefix, "/data/habitat/DASH/channel_units/compiled/dash_cu_points_1920.shp"),
+         append = T)
 
 #------------------------
 # grab most recent OTG data to assist w review
