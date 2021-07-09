@@ -46,6 +46,12 @@ yr_wtsd = c("2019/lemhi",
             "2020/lemhi",
             "2020/secesh")
 
+# add 2018 data
+yr_wtsd = c("2018/lemhi",
+            "2018/pahsimeroi",
+            "2018/upper_salmon",
+            yr_wtsd)
+
 #-----------------------------
 # LOOP 1: import raw OTG data; loop over year_watershed combinations
 #-----------------------------
