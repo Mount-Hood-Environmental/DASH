@@ -5,7 +5,7 @@
 # unit data spatial
 #
 # Created: December 8, 2020
-# Last Modified: December 9, 2020
+# Last Modified: July 9, 2021
 #
 # Notes:
 
@@ -32,23 +32,43 @@ if(.Platform$OS.type != 'unix') {
   nas_prefix = "~/../../Volumes/ABS"
 }
 
+# for using a local copy
+nas_prefix = "~/Desktop"
+
 #-------------------------
 # read in centerlines
 #-------------------------
+# cl_path = paste0(nas_prefix,
+#                  "/data/habitat/DASH/centerlines/2019")
+
 cl_path = paste0(nas_prefix,
-                 "/data/habitat/DASH/centerlines/2019")
+                 "/data/habitat/DASH/centerlines")
 
 cl_list = list.files(path = cl_path,
-                     pattern = "^cl_join.shp$",
+                     pattern = "centerlines.shp$",
                      recursive = T) %>%
-  paste(cl_path, ., sep = "/") %>%
   as.list() %>%
+  rlang::set_names(nm = function(x) str_remove(x, "/centerlines.shp$")) %>%
+  map(.f = function(x) {
+    paste(cl_path, x, sep = "/")
+  }) %>%
   map(.f = function(x) {
     read_sf(x) %>%
       dplyr::mutate(path_nm = stringr::str_remove(x, cl_path)) %>%
+      janitor::clean_names() %>%
       select(path_nm,
              everything())
+  }) %>%
+  map(.f = function(x) {
+    if(sum(!col_nms %in% names(x)) > 0) {
+      for(col_nm in col_nms[!col_nms %in% names(x)]) {
+        x[,col_nm] = NA_character_
+      }
+    }
+    x %>%
+      select(any_of(col_nms))
   })
+
 
 cl_sf = NULL
 for(i in 1:length(cl_list)) {
@@ -67,6 +87,60 @@ cl_sf = cl_sf %>%
 
 rm(cl_list)
 
+#-------------------------------------
+# determine what habitat reach each channel unit is part of (and type of channel unit)
+hr_path = paste0(nas_prefix,
+                 "/data/habitat/DASH/habitat_reaches")
+
+hab_rch = list.files(path = hr_path,
+                     pattern = "_HR_",
+                     recursive = T) %>%
+  as.list() %>%
+  rlang::set_names(nm = function(x) {
+    str_split(x, "/", simplify = T)[,3] %>%
+      str_remove(".csv$")
+      }) %>%
+  map(.f = function(x) {
+    paste(hr_path, x, sep = "/")
+  }) %>%
+  # map(.f = read_csv)
+  map_df(.id = "ID",
+         .f = function(x) {
+           read_csv(x) %>%
+             mutate(across(c(CU_Number, Reach_Num),
+                           as.numeric))
+           }) %>%
+  mutate(year = str_extract(Site_ID, "_[:digit:]+"),
+         year = str_remove(year, "^_"),
+         site_num = str_extract(Site_ID, "[:digit:]+_"),
+         site_num = str_remove(site_num, "_"),
+         site_nm = str_extract(Site_ID, "[:alpha:]+")) %>%
+  mutate(across(c(year, site_num),
+                as.numeric)) %>%
+  mutate(site_nm = forcats::fct_relabel(site_nm,
+                               .fun = make_clean_names,
+                               case = "title"),
+         site_nm = forcats::fct_recode(site_nm,
+                                        "EF Bohannon" = "Ef Bohannon")) %>%
+  mutate(site_name = paste(site_nm, site_num, sep = " "),
+         site_name = str_remove(site_name, " NA$")) %>%
+  select(-site_num, -site_nm)
+
+unique(cl_sf$site_name)[!unique(cl_sf$site_name) %in% unique(hab_rch$site_name)]
+unique(hab_rch$site_name)[!unique(hab_rch$site_name) %in% unique(cl_sf$site_name)]
+
+cl_sf %>%
+  left_join(hab_rch %>%
+              select(site_name,
+                     year,
+                     cu_num = CU_Number,
+                     seg_num = Seg_Number,
+                     reach_num = Reach_Num) %>%
+              distinct(),
+            by = c("year", "site_name", "cu_num")) %>%
+  filter(object_id %in% object_id[duplicated(object_id)])
+
+#-------------------------------------
 # save raw compiled centerlines
 st_write(cl_sf,
          dsn = paste0(cl_path, "/compiled/centerlines_raw.gpkg"))
