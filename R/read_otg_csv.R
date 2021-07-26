@@ -99,9 +99,15 @@ read_otg_csv = function(path = ".",
                   })
 
   # DELETE ANY ROWS WHERE "GlobalID" is NA...
-  tmp_df = tmp_df %>%
-    dplyr::filter(!is.na(GlobalID))
+  if("GlobalID" %in% names(tmp_df)) {
+    tmp_df = tmp_df %>%
+      dplyr::filter(!is.na(GlobalID))
+  }
 
-  return(tmp_df)
+  if(nrow(tmp_df) == 0) {
+    return(NULL)
+  } else {
+    return(tmp_df)
+  }
 
 } # end read_otg_csv()
