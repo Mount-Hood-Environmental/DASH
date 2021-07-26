@@ -29,7 +29,8 @@ Imports:
     tidyr (>= 1.1.2),
     utils (>= 4.0.2),
     tibble (>= 3.0.3),
-    compare (>= 0.2-6)
+    compare (>= 0.2-6),
+    stringr (>= 1.4.0)
 Suggests: 
     tools (>= 4.0.2),
     diffr (>= 0.1),
