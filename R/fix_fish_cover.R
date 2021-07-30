@@ -65,10 +65,14 @@ fix_fish_cover <- function(cu_df = NULL,
     dplyr::select(-sum_values)
 
   # and create the return df
-  return_df = cu_df %>%
-    dplyr::select(-all_of(cover_cols)) %>%
-    dplyr::left_join(fix_df) %>%
-    dplyr::select(all_of(names(cu_df)))
+  if(nrow(fix_df) == 0) {
+    return_df = cu_df
+  } else {
+    return_df = cu_df %>%
+      dplyr::select(-all_of(cover_cols)) %>%
+      dplyr::left_join(fix_df) %>%
+      dplyr::select(all_of(names(cu_df)))
+  }
 
   return(return_df)
 
