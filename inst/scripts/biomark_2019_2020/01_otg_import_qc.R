@@ -143,9 +143,11 @@ for (yw in yr_wtsd) {
   # save the otg_raw list of dfs, and the initial QC flags
   save(otg_raw,
        file = paste0(nas_prefix,
-                     "data/habitat/DASH/OTG/",
+                     "/data/habitat/DASH/OTG/",
                      yw,
                      "/1_formatted_csvs/otg_raw.rda"))
+
+  rm(otg_raw, path)
 
   # after last loop, sound an alarm
   if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
