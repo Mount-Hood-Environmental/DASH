@@ -45,20 +45,12 @@ read_otg_csv = function(path = ".",
                       readr::spec()
 
                     #####
-                    # CHECK 1: check if tmp_specs match the expected from get_otg_col_specs()
-                    # chk = identical(otg_col_specs, tmp_specs)
-                    # a "looser" version of identical() to allow for differing attributes
-                    chk = compare::compare(otg_col_specs, tmp_specs, allowAll = T)[[1]]
-                    if(chk == FALSE) warning(paste("Column specifications in", otg_type, "file from", x$folder_nm, "survey folder do not match those defined in get_otg_col_specs().", "\n",
-                                                   all.equal(otg_col_specs, tmp_specs), "\n"))
-
-                    #####
-                    # CHECK 2: check if column names match
+                    # CHECK 1: check if column names match
                     chk = identical(names(otg_col_specs$cols), names(tmp_specs$cols))
                     if(chk == FALSE) cat(paste("Column names in", otg_type, "file from", x$folder_nm, "survey folder do not match the expected names defined in get_otg_col_specs(). Check file format. Continuing...", "\n"))
 
                     #####
-                    # CHECK 3: check if number of columns match
+                    # CHECK 2: check if number of columns match
                     chk = identical(length(otg_col_specs$cols), length(tmp_specs$cols))
                     if(chk == FALSE) stop(paste("Fatal Error: Number of columns in", otg_type, "file from", x$folder_nm, "survey folder is unexpected."))
 
@@ -66,25 +58,27 @@ read_otg_csv = function(path = ".",
                     tmp = try(suppressWarnings(readr::read_csv(paste0(path, x$path_nm),
                                                                col_types = otg_col_specs)))
 
-                    # change the format of Survey Date from character to date/time
+                    # change the format of `Survey Start Date Time`, HiddenStart, and HiddenEnd to date_time
                     if(otg_type == "surveyPoint_0.csv" & nrow(tmp) > 0) {
                       tmp = tmp %>%
-                        mutate(`Survey Date` = stringr::str_split(`Survey Date`, " ", simplify = T)[,1],
-                               `Survey Date` = lubridate::mdy(`Survey Date`),
-                               `Survey Date` = lubridate::ymd_hms(paste(`Survey Date`, `Survey Time`)))
+                        mutate(`Survey Start Date Time` = lubridate::mdy_hms(`Survey Start Date Time`),
+                               HiddenStart = lubridate::mdy_hms(HiddenStart),
+                               HiddenEnd = lubridate::mdy_hms(HiddenEnd),
+                               CreationDate = lubridate::mdy_hms(CreationDate),
+                               EditDate = lubridate::mdy_hms(EditDate))
                     }
 
-                    # extract the date portion for CreationDate and EditDate
-                    if(nrow(tmp) > 0 & sum(c("CreationDate", "EditDate") %in% names(tmp)) > 0) {
-                      tmp = tmp %>%
-                        mutate(across(any_of(c("CreationDate", "EditDate")),
-                                      ~ stringr::str_split(., " ", simplify = T)[,1])) %>%
-                        mutate(across(any_of(c("CreationDate", "EditDate")),
-                                      lubridate::mdy))
-                    }
+                    # # extract just the date portion for CreationDate and EditDate
+                    # if(nrow(tmp) > 0 & sum(c("CreationDate", "EditDate") %in% names(tmp)) > 0) {
+                    #   tmp = tmp %>%
+                    #     mutate(across(any_of(c("CreationDate", "EditDate")),
+                    #                   ~ stringr::str_split(., " ", simplify = T)[,1])) %>%
+                    #     mutate(across(any_of(c("CreationDate", "EditDate")),
+                    #                   lubridate::mdy))
+                    # }
 
                     #####
-                    # CHECK 4
+                    # CHECK 3
                     if(chk == FALSE | class(tmp)[1] == "try-error") {
                       cat(paste("Problem reading in", otg_type, "file from", x$folder_nm, "survey. Returning NULL and moving on...", "\n"))
                       return(NULL)
