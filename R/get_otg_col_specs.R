@@ -67,7 +67,7 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
 
   # Channel Unit
   if(otg_type == "CU_1.csv") {
-    col_types = readr:colls(
+    col_types = readr::cols(
       ObjectID = readr::col_integer(),
       GlobalID = readr::col_character(),
       `Channel Segment Number` = readr::col_integer(),
