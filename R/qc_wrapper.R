@@ -53,7 +53,7 @@ qc_wrapper = function(survey_df = NULL,
   if( !is.null(discharge_df) )      qc_d1 = qc_disch(discharge_df,...)           else qc_d1 = qc_tbl()
   if( !is.null(discharge_meas_df) ) qc_d2 = qc_disch_meas(discharge_meas_df,...) else qc_d2 = qc_tbl()
 
-  # combin results
+  # combine results
   tmp = qc_tbl() %>%
     tibble::add_column(source = "Dummy",
                        .before = 0) %>%

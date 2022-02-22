@@ -41,16 +41,20 @@ copy_to_qcd = FALSE
 # set some arguments/parameters
 #-----------------------------
 # create a vector to directories containing the raw data, formatted for import
-yr_wtsd = c("2019/lemhi",
-            "2019/nf_salmon",
-            "2020/lemhi",
-            "2020/secesh")
-
-# add 2018 data
+# 2018 & 2021 data (updated data collection forms)
 yr_wtsd = c("2018/lemhi",
             "2018/pahsimeroi",
             "2018/upper_salmon",
-            yr_wtsd)
+            "2021/big_lost",
+            "2021/mf_salmon",
+            "2021/nf_salmon")
+
+# 2019 & 2020 data are in old data collection format
+yr_wtsd = c(yr_wtsd,
+            "2019/lemhi",
+            "2019/nf_salmon",
+            "2020/lemhi",
+            "2020/secesh")
 
 #-----------------------------
 # LOOP 1: import raw OTG data; loop over year_watershed combinations
@@ -59,7 +63,7 @@ for (yw in yr_wtsd) {
 
   # set path for yr_wtsd
   path = paste0(nas_prefix,
-                "/data/habitat/DASH/OTG/",
+                "/Public Data/data/habitat/DASH/OTG/",
                 yw,
                 "/1_formatted_csvs/")
 
@@ -70,15 +74,13 @@ for (yw in yr_wtsd) {
                                                    "Wood_2.csv",
                                                    "Jam_3.csv",
                                                    "Undercut_4.csv",
-                                                   "Discharge_5.csv",
-                                                   "DischargeMeasurements_6.csv"),
+                                                   "Discharge_5.csv"),
                                  otg_type_names = c("survey",
                                                     "cu",
                                                     "wood",
                                                     "jam",
                                                     "undercut",
-                                                    "discharge",
-                                                    "discharge_measurements"))
+                                                    "discharge"))
 
   # QC all data types for each yr_wtsd
   otg_raw$qc_results = qc_wrapper(survey_df = otg_raw$survey,
