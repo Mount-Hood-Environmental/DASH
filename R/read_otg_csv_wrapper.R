@@ -25,11 +25,10 @@ read_otg_csv_wrapper = function(path = ".",
                                                   "Wood_2.csv",
                                                   "Jam_3.csv",
                                                   "Undercut_4.csv",
-                                                  "Discharge_5.csv",
-                                                  "DischargeMeasurements_6.csv"),
+                                                  "Discharge_5.csv"),
                                 otg_type_names = NULL) {
 
-  # if otg_type_names if NOT NULL, verify it is the same length as otg_type_list
+  # if otg_type_names is NOT NULL, verify it is the same length as otg_type_list
   if(!is.null(otg_type_names)) {
     chk = identical(length(otg_type_list), length(otg_type_names))
     if(chk == FALSE) stop("If argument otg_type_names is not NULL, otg_type_list and otg_type_names MUST be of the same length. Stopping execution")
