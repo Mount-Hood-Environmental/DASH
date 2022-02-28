@@ -180,8 +180,7 @@ qc_wrapper = function(survey_df = NULL,
                                             `Site Name`),
                                    by = c("ParentGlobalID" = "GlobalID")) %>%
                          tidyr::unite("location_id",
-                                      `Site Name`,
-                                      loc) %>%
+                                      `Site Name`) %>%
                          dplyr::select(-ParentGlobalID) %>%
                          tibble::add_column(source = "Discharge",
                                             .before = 0))
