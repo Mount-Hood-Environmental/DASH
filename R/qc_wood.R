@@ -15,12 +15,13 @@
 #' @return a tibble with QC results
 
 qc_wood = function(qc_df = NULL,
-                   cols_to_check_nas = c("Large Wood Number",
+                   cols_to_check_nas = c("GlobalID",
                                          "Length (m)",
                                          "Diameter (m)",
                                          "Wet?",
                                          "Channel Forming?",
-                                         "Ballasted?")) {
+                                         "Ballasted?",
+                                         "ParentGlobalID")) {
 
   # set otg_type
   otg_type = "Wood_2.csv"
@@ -81,15 +82,13 @@ qc_wood = function(qc_df = NULL,
 
   #####
   # CHECK 5:  Are the number, length, or diameter values outside of expected values?
-  cat("Checking whether large wood number, length, and diameter fall within expected values? \n")
+  cat("Checking whether length and diameter fall within expected values? \n")
 
   # set expected values
-  exp_values = tibble(name = c("Large Wood Number",
-                               "Length (m)",
+  exp_values = tibble(name = c("Length (m)",
                                "Diameter (m)"),
                       min = c(0),
-                      max = c(1000,
-                              30,
+                      max = c(30,
                               3))
 
   # do measured values fall outside of expected values
