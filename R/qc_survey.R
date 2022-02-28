@@ -15,8 +15,12 @@
 #' @return a tibble with QC results
 
 qc_survey = function(qc_df = NULL,
-                     cols_to_check_nas = c("Survey Date",
-                                           "Survey Time")) {
+                     cols_to_check_nas = c("Stream Name",
+                                           "Site Name",
+                                           "Survey Start Date Time",
+                                           "Survey Crew",
+                                           "Water Temp (C)",
+                                           "Conductivity (ms)")) {
   stopifnot(!is.null(qc_df))
 
   # set otg_type
