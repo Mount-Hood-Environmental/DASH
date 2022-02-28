@@ -6,8 +6,8 @@
 \usage{
 qc_wood(
   qc_df = NULL,
-  cols_to_check_nas = c("Large Wood Number", "Length (m)", "Diameter (m)", "Wet?",
-    "Channel Forming?", "Ballasted?")
+  cols_to_check_nas = c("GlobalID", "Length (m)", "Diameter (m)", "Wet?",
+    "Channel Forming?", "Ballasted?", "ParentGlobalID")
 )
 }
 \arguments{

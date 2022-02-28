@@ -4,7 +4,11 @@
 \alias{qc_survey}
 \title{Quality Control - Survey Data}
 \usage{
-qc_survey(qc_df = NULL, cols_to_check_nas = c("Survey Date", "Survey Time"))
+qc_survey(
+  qc_df = NULL,
+  cols_to_check_nas = c("Stream Name", "Site Name", "Survey Start Date Time",
+    "Survey Crew", "Water Temp (C)", "Conductivity (ms)")
+)
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}

@@ -11,7 +11,6 @@ qc_wrapper(
   jam_df = NULL,
   undercut_df = NULL,
   discharge_df = NULL,
-  discharge_meas_df = NULL,
   channel_unit_roll_qc = FALSE,
   redirect_output = FALSE,
   redirect_output_path = "qc_wrapper_output.txt",
@@ -29,8 +28,6 @@ qc_wrapper(
 
 \item{discharge_df}{data.frame containing the discharge location data}
 
-\item{discharge_meas_df}{data.frame containing the discharge measurement data}
-
 \item{channel_unit_roll_qc}{should there be a quality control check on the roll-up
 to the channel unit scale, using the \code{qc_rollup()} function? Default is \code{FALSE}.}
 
@@ -41,6 +38,8 @@ from \code{qc_wrapper()} to a file instead of the R terminal? Default = \code{FA
 write the \code{qc_wrapper} output messages to if \code{redirect_output = TRUE}.}
 
 \item{...}{various other inputs to \verb{qc_*} functions, if need to change from default values}
+
+\item{discharge_meas_df}{data.frame containing the discharge measurement data}
 }
 \value{
 a tibble with combined QC results

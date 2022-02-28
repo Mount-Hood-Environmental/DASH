@@ -50,7 +50,7 @@ qc_wrapper = function(survey_df = NULL,
   if( !is.null(wood_df) )           qc_w = qc_wood(wood_df,...)                  else qc_w = qc_tbl()
   if( !is.null(jam_df) )            qc_j = qc_jam(jam_df,...)                    else qc_j = qc_tbl()
   if( !is.null(undercut_df) )       qc_u = qc_undercut(undercut_df,...)          else qc_u = qc_tbl()
-  if( !is.null(discharge_df) )      qc_d1 = qc_disch(discharge_df,...)           else qc_d = qc_tbl()
+  if( !is.null(discharge_df) )      qc_d = qc_disch(discharge_df,...)            else qc_d = qc_tbl()
   #if( !is.null(discharge_meas_df) ) qc_d2 = qc_disch_meas(discharge_meas_df,...) else qc_d2 = qc_tbl()
 
   # combine results

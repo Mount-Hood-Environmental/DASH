@@ -7,7 +7,7 @@
 read_otg_csv_wrapper(
   path = ".",
   otg_type_list = c("surveyPoint_0.csv", "CU_1.csv", "Wood_2.csv", "Jam_3.csv",
-    "Undercut_4.csv", "Discharge_5.csv", "DischargeMeasurements_6.csv"),
+    "Undercut_4.csv", "Discharge_5.csv"),
   otg_type_names = NULL
 )
 }
