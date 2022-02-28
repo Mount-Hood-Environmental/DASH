@@ -15,12 +15,13 @@
 #' @return a tibble with QC results
 
 qc_undercut = function(qc_df = NULL,
-                       cols_to_check_nas = c("Undercut Number",
+                       cols_to_check_nas = c("GlobalID",
                                              "Location",
                                              "Length (m)",
                                              "Width 25% (m)",
                                              "Width 50% (m)",
-                                             "Width 75% (m)")) {
+                                             "Width 75% (m)",
+                                             "ParentGlobalID")) {
 
   # set otg_type
   otg_type = "Undercut_4.csv"
@@ -56,17 +57,15 @@ qc_undercut = function(qc_df = NULL,
 
   #####
   # CHECK 4:  Are the number, length and width values outside of expected values?
-  cat("Checking whether undercut number, length and width fall within expected values? \n")
+  cat("Checking whether undercut length and width fall within expected values? \n")
 
   # set expected values
-  exp_values = tibble(name = c("Undercut Number",
-                               "Length (m)",
+  exp_values = tibble(name = c("Length (m)",
                                "Width 25% (m)",
                                "Width 50% (m)",
                                "Width 75% (m)"),
                       min = c(0),
                       max = c(10,
-                              10,
                               1.5,
                               1.5,
                               1.5))
@@ -75,11 +74,10 @@ qc_undercut = function(qc_df = NULL,
   # do measured values fall outside of expected values
   val_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID,
-                  c("Undercut Number",
-                     "Length (m)",
-                     "Width 25% (m)",
-                     "Width 50% (m)",
-                     "Width 75% (m)")) %>%
+                  c("Length (m)",
+                    "Width 25% (m)",
+                    "Width 50% (m)",
+                    "Width 75% (m)")) %>%
     tidyr::pivot_longer(cols = -c(path_nm, GlobalID)) %>%
     dplyr::left_join(exp_values) %>%
     rowwise() %>%
