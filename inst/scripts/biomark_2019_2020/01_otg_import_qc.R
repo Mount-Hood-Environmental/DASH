@@ -50,11 +50,11 @@ yr_wtsd = c("2018/lemhi",
             "2021/nf_salmon")
 
 # 2019 & 2020 data are in old data collection format
-yr_wtsd = c(yr_wtsd,
-            "2019/lemhi",
-            "2019/nf_salmon",
-            "2020/lemhi",
-            "2020/secesh")
+# yr_wtsd = c(yr_wtsd,
+#             "2019/lemhi",
+#             "2019/nf_salmon",
+#             "2020/lemhi",
+#             "2020/secesh")
 
 #-----------------------------
 # LOOP 1: import raw OTG data; loop over year_watershed combinations
@@ -100,7 +100,7 @@ for (yw in yr_wtsd) {
 
     # where will QC'd files go
     path_qcd = paste0(nas_prefix,
-                      "/data/habitat/DASH/OTG/",
+                      "/Public Data/data/habitat/DASH/OTG/",
                       yw,
                       "/2_qcd_csvs/")
 
