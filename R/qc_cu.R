@@ -29,7 +29,7 @@ qc_cu = function(qc_df = NULL,
                                        "Maximum Depth (m)",
                                        "Thalweg Exit Depth (m)",
                                        "TOS",
-                                       "BOS"
+                                       "BOS",
                                        "ParentGlobalID"),
                  valid_cus = c("Pool", "Run", "Riffle", "OCA", "Rapid+", "SSC"),
                  ted_min = 0,
