@@ -45,7 +45,7 @@ qc_cu = function(qc_df = NULL,
                  ocular_columns = c("Sand/Fines <2mm (%)",
                                     "Gravel 2-64mm (%)",
                                     "Cobble 64-256mm (%)",
-                                    "Boulder 256mm (%)"),
+                                    "Boulder >256mm (%)"),
                  peb_min = 0.06,
                  peb_max = 1024) {
 
