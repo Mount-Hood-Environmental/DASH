@@ -89,7 +89,7 @@ for (yw in yr_wtsd) {
                                   jam_df = otg_raw$jam,
                                   undercut_df = otg_raw$undercut,
                                   discharge_df = otg_raw$discharge,
-                                  discharge_meas_df = otg_raw$discharge_measurements,
+                                  #discharge_meas_df = otg_raw$discharge_measurements,
                                   channel_unit_roll_qc = TRUE)
 
   #-----------------------------
