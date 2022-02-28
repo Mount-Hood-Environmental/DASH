@@ -155,7 +155,7 @@ qc_rollup = function(survey_df = NULL,
                    miss_parent)
   }
 
-  if(!is.null(discharge_df) & !is.null(discharge_meas_df)) {
+  # if(!is.null(discharge_df) & !is.null(discharge_meas_df)) {
 
     #---------------------------------------------------------
     # these discharge measurements don't have a discharge global ID to be assigned to
