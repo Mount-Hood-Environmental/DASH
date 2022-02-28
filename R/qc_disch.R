@@ -18,7 +18,7 @@ qc_disch = function(qc_df = NULL,
                     cols_to_check_nas = c("GlobalID",
                                           "Tape Distance (m)",
                                           "Station Depth (m)",
-                                          "Station Velocity (m)",
+                                          "Station Velocity (m/s)",
                                           "ParentGlobalID")) {
 
   # set otg_type
