@@ -14,12 +14,12 @@
 #' @export
 #' @return a tibble with QC results
 
-qc_disch = function(qc_df = NULL,
-                    cols_to_check_nas = c("GlobalID",
-                                          "Tape Distance (m)",
-                                          "Station Depth (m)",
-                                          "Station Velocity (m/s)",
-                                          "ParentGlobalID")) {
+qc_discharge = function(qc_df = NULL,
+                        cols_to_check_nas = c("GlobalID",
+                                              "Tape Distance (m)",
+                                              "Station Depth (m)",
+                                              "Station Velocity (m/s)",
+                                              "ParentGlobalID")) {
 
   # set otg_type
   otg_type = "Discharge_5.csv"
@@ -87,5 +87,5 @@ qc_disch = function(qc_df = NULL,
   # return qc results
   return(qc_tmp)
 
-} # end qc_disch()
+} # end qc_discharge()
 
