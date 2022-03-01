@@ -88,8 +88,8 @@ qc_cu = function(qc_df = NULL,
   cat("Are all channel unit numbers within each survey unique? \n")
 
   cu_num = qc_df %>%
-    dplyr::select(path_nm, `Channel Unit Number`) %>%
-    dplyr::group_by(path_nm) %>%
+    dplyr::select(ParentGlobalID, `Channel Unit Number`) %>%
+    dplyr::group_by(ParentGlobalID) %>%
     dplyr::count(`Channel Unit Number`) %>%
     dplyr::filter(n != 1) %>%
     dplyr::mutate(GlobalID = "multiple rows",
