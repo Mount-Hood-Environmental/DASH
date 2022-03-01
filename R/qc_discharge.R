@@ -50,7 +50,7 @@ qc_discharge = function(qc_df = NULL,
   cat("Checking whether tape distance, depth, and velocity values fall within expected values? \n")
 
   # set expected values
-  exp_values = matric(c(tape_range,
+  exp_values = matrix(c(tape_range,
                         depth_range,
                         vel_range),
                       byrow = T,
