@@ -66,16 +66,14 @@ qc_cu = function(qc_df = NULL,
   # CHECK 2: Are there NAs in these columns?
   tmp = check_na(qc_df,
                  cols_to_check_nas)
-  #if( nrow(tmp) > 0 ) qc_tmp = rbind(qc_tmp, tmp)
   qc_tmp = rbind(qc_tmp, tmp)
 
   #####
   # CHECK 3: Are the channel unit types all valid?
-  cat("Checking whether all channel unit types are valid. \n")
+  cat("Checking whether channel unit types are valid. \n")
 
   cu_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, `Channel Unit Type`) %>%
-    #rbind("bad_cu") %>% # for testing
     dplyr::filter(!`Channel Unit Type` %in% valid_cus) %>%
     dplyr::mutate(error_message = paste0(`Channel Unit Type`, " is an invalid channel unit type.")) %>%
     dplyr::select(-`Channel Unit Type`)
@@ -106,8 +104,29 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 5: Are the thalweg exit depth values within a reasonable range?
-  cat("Do the thalweg exit depth values fall within a reasonable range btw", ted_min, "and", ted_max, "? \n")
+  # CHECK 5: Are maximum depth values within an expected range?
+  cat("Do maximum depth values fall within an expected range btw", md_min, "and", md_max, "? \n")
+
+  md_chk = qc_df %>%
+    dplyr::select(path_nm, GlobalID, `Maximum Depth (m)`) %>%
+    dplyr::mutate(md_chk = between(`Maximum Depth (m)`,
+                                   md_min,
+                                   md_max)) %>%
+    dplyr::filter(md_chk == FALSE) %>%
+    dplyr::mutate(error_message = paste0("Maximum depth of ", `Maximum Depth (m)`,
+                                         " falls outside of expected values or is NA.")) %>%
+    dplyr::select(-`Maximum Depth (m)`,
+                  -md_chk)
+
+  if( nrow(md_chk) == 0 ) cat("All maximum depth values seem reasonable. \n")
+  if( nrow(md_chk) > 0 ) {
+    cat("Some maximum depth values either fall outside expected values or are NA. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, md_chk)
+  }
+
+  #####
+  # CHECK 6: Are thalweg exit depth values within an expected range?
+  cat("Do thalweg exit depth values fall within an expected range btw", ted_min, "and", ted_max, "? \n")
 
   ted_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID,
@@ -132,35 +151,12 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 6: Are the maximum depth values within a reasonable range?
-  cat("Do the maximum depth values fall within a reasonable range btw", md_min, "and", md_max, "? \n")
-
-  md_chk = qc_df %>%
-    dplyr::select(path_nm, GlobalID, `Maximum Depth (m)`) %>%
-    dplyr::mutate(md_chk = between(`Maximum Depth (m)`,
-                                   md_min,
-                                   md_max)) %>%
-    dplyr::filter(md_chk == FALSE) %>%
-    dplyr::mutate(error_message = paste0("Maximum depth of ", `Maximum Depth (m)`,
-                                          " falls outside of expected values or is NA.")) %>%
-    dplyr::select(-`Maximum Depth (m)`,
-                  -md_chk)
-
-  if( nrow(md_chk) == 0 ) cat("All maximum depth values seem reasonable. \n")
-  if( nrow(md_chk) > 0 ) {
-    cat("Some maximum depth values either fall outside expected values or are NA. Adding to QC results. \n")
-    qc_tmp = rbind(qc_tmp, md_chk)
-  }
-
-  #####
-  # CHECK 7: Do cover column values sum to 100?
-  # What is the maximum value that cover estimates can sum to?
+  # CHECK 7: Do cover column values sum to btw 100 and cov_max?
   cat("Do all fish cover columns sum btw 100 and", cov_max, "? \n")
 
   cov_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, all_of(cover_columns)) %>%
     replace(is.na(.), 0) %>%
-    #dplyr::mutate(cover_sum = round(rowSums(.[3:(2+length(cover_columns))]))) %>%
     dplyr::mutate(cover_sum = rowSums(.[3:(2+length(cover_columns))])) %>%
     dplyr::select(-all_of(cover_columns)) %>%
     dplyr::filter(!between(cover_sum, 100, cov_max)) %>%
@@ -177,7 +173,7 @@ qc_cu = function(qc_df = NULL,
   # CHECK 8: Do all channel units have ocular estimates and do they sum to 100?
   cat("Do ocular estimates for all channel units exist and sum to 100? \n")
 
-  oc_cus = c("Pool", "Run", "Riffle", "OCA", "SSC")
+  oc_cus = valid_cus
   oc_chk = qc_df %>%
     dplyr::select(path_nm, GlobalID, `Channel Unit Type`, all_of(ocular_columns)) %>%
     dplyr::filter(`Channel Unit Type` %in% oc_cus) %>%
@@ -247,7 +243,6 @@ qc_cu = function(qc_df = NULL,
   #####
   # CHECK 11: Is there more than one ParentGlobalID for channel units within a survey?
   # We expect only 1.
-
   cat("Checking for multiple ParentGlobalIDs. \n")
 
   id_chk = qc_df %>%
