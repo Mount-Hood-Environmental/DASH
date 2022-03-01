@@ -26,7 +26,7 @@ get_file_nms = function(path = ".") {
   # }
 
   # return error if path contains no folders
-  if(length(folder_nms) == 0) stop("No folders were found in path")
+  if(length(folder_nms) == 0) stop("No folders were found in path.")
 
   # create list folder
   folders = as.list(folder_nms)
