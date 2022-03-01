@@ -11,7 +11,7 @@ get_otg_col_specs(
 }
 \arguments{
 \item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
-the initiation of the function a character vector of the file name e.g., "surveyPoint_0.csv",
+the initiation of the function a character vector of the file names e.g., "surveyPoint_0.csv",
 "CU_1.csv", etc.}
 }
 \value{
@@ -19,7 +19,9 @@ an object of class \code{col_spec}
 }
 \description{
 Get/set column specifications for on-the-ground (OTG) data
-collected using the DASH protocol.
+collected using the DASH protocol. The function does not work for DASH data
+collecting in 2019 & 2020, which were collected using an old data collection
+form.
 }
 \author{
 Mike Ackerman

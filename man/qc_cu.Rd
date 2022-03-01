@@ -7,8 +7,7 @@
 qc_cu(
   qc_df = NULL,
   cols_to_check_nas = c("Channel Segment Number", "Channel Unit Number",
-    "Channel Unit Type", "Maximum Depth (m)", "Thalweg Exit Depth (m)", "TOS", "BOS",
-    "ParentGlobalID"),
+    "Channel Unit Type", "Maximum Depth (m)", "Thalweg Exit Depth (m)", "TOS", "BOS"),
   valid_cus = c("Pool", "Run", "Riffle", "OCA", "Rapid+", "SSC"),
   ted_min = 0,
   ted_max = 2,

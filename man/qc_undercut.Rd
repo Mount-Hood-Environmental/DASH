@@ -6,8 +6,8 @@
 \usage{
 qc_undercut(
   qc_df = NULL,
-  cols_to_check_nas = c("GlobalID", "Location", "Length (m)", "Width 25\% (m)",
-    "Width 50\% (m)", "Width 75\% (m)", "ParentGlobalID")
+  cols_to_check_nas = c("Location", "Length (m)", "Width 25\% (m)", "Width 50\% (m)",
+    "Width 75\% (m)")
 )
 }
 \arguments{

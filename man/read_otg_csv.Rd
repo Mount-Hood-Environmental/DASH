@@ -7,7 +7,7 @@
 read_otg_csv(
   path = ".",
   otg_type = c("surveyPoint_0.csv", "CU_1.csv", "Wood_2.csv", "Jam_3.csv",
-    "Undercut_4.csv", "Discharge_5.csv", "DischargeMeasurements_6.csv")
+    "Undercut_4.csv", "Discharge_5.csv")
 )
 }
 \arguments{
@@ -15,7 +15,7 @@ read_otg_csv(
 folders (no files), and each of those folders should only contain files (no folders).}
 
 \item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
-the initiation of the function a character vector of the file name e.g., "surveyPoint_0.csv",
+the initiation of the function a character vector of the file names e.g., "surveyPoint_0.csv",
 "CU_1.csv", etc.}
 }
 \value{
