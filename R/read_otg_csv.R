@@ -83,8 +83,6 @@ read_otg_csv = function(path = ".",
                         mutate(`Survey Start Date Time` = lubridate::mdy_hms(`Survey Start Date Time`),
                                HiddenStart = lubridate::mdy_hms(HiddenStart),
                                HiddenEnd = lubridate::mdy_hms(HiddenEnd),
-                               #CreationDate = lubridate::mdy_hms(CreationDate),
-                               #EditDate = lubridate::mdy_hms(EditDate)
                                )
                     }
 
