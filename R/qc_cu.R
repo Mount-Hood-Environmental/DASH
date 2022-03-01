@@ -44,7 +44,7 @@ qc_cu = function(qc_df = NULL,
                                     "Gravel 2-64mm (%)",
                                     "Cobble 64-256mm (%)",
                                     "Boulder >256mm (%)"),
-                 peb_min = 0.06,
+                 peb_min = 0.03,
                  peb_max = 1024) {
 
   # set otg_type
@@ -227,7 +227,7 @@ qc_cu = function(qc_df = NULL,
                                    peb_max)) %>%
     dplyr::filter(peb_chk == FALSE) %>%
     dplyr::mutate(error_message = paste0("Pebble size of ", stringr::str_remove(measurement, " \\(mm\\)$"),
-                                         "is ", value,
+                                         " is ", value,
                                          " which does not fall between ", peb_min, " and ", peb_max, ".")) %>%
     dplyr::select(-measurement,
                   -value,
