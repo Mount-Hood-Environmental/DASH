@@ -15,13 +15,11 @@
 #' @return a tibble with QC results
 
 qc_wood = function(qc_df = NULL,
-                   cols_to_check_nas = c("GlobalID",
-                                         "Length (m)",
+                   cols_to_check_nas = c("Length (m)",
                                          "Diameter (m)",
                                          "Wet?",
                                          "Channel Forming?",
-                                         "Ballasted?",
-                                         "ParentGlobalID")) {
+                                         "Ballasted?")) {
 
   # set otg_type
   otg_type = "Wood_2.csv"
