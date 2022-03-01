@@ -7,6 +7,9 @@
 #'
 #' @param qc_df The survey data frame to be QC'd
 #' @inheritParams check_na
+#' @param tape_range numeric vector of minimum and maximum acceptable values for tape distance
+#' @param depth_range numeric vector of minimum and maximum acceptable values for station depth
+#' @param vel_range numeric vector of minimum and maximum acceptable values for station velocity
 #'
 #' @import dplyr
 #' @importFrom tidyr pivot_longer
@@ -17,7 +20,10 @@
 qc_discharge = function(qc_df = NULL,
                         cols_to_check_nas = c("Tape Distance (m)",
                                               "Station Depth (m)",
-                                              "Station Velocity (m/s)")) {
+                                              "Station Velocity (m/s)"),
+                        tape_range = c(0, 25),
+                        depth_range = c(0, 3),
+                        vel_range = c(-1, 5)) {
 
   # set otg_type
   otg_type = "Discharge_5.csv"
@@ -40,50 +46,46 @@ qc_discharge = function(qc_df = NULL,
   if( !is.null(tmp) ) qc_tmp = rbind(qc_tmp, tmp)
 
   #####
-  # CHECK 3: any channel units not numeric?
-  # na_cu = qc_df %>%
-  #   dplyr::filter(!`Discharge Location (BOS, TOS, CU #)` %in% c('TOS', 'BOS')) %>%
-  #   dplyr::mutate_at(vars(`Discharge Location (BOS, TOS, CU #)`),
-  #                    list(as.numeric)) %>%
-  #   dplyr::filter(is.na(`Discharge Location (BOS, TOS, CU #)`)) %>%
-  #   dplyr::mutate(error_message = "Non-numeric channel unit number") %>%
-  #   dplyr::select(all_of(names(qc_tmp)))
-  # if( nrow(na_cu) > 0 ) qc_tmp = rbind(qc_tmp, na_cu)
+  # CHECK 3: Are the tape distance, depth, and velocity values outside of expected values?
+  cat("Checking whether tape distance, depth, and velocity values fall within expected values? \n")
 
-  #####
-  # CHECK 4: any channel units negative?
-  # neg_cu = qc_df %>%
-  #   dplyr::filter(!`Discharge Location (BOS, TOS, CU #)` %in% c('TOS', 'BOS')) %>%
-  #   dplyr::mutate_at(vars(`Discharge Location (BOS, TOS, CU #)`),
-  #                    list(as.numeric)) %>%
-  #   dplyr::filter(`Discharge Location (BOS, TOS, CU #)` <= 0) %>%
-  #   dplyr::mutate(error_message = "Non-numeric channel unit number") %>%
-  #   dplyr::select(all_of(names(qc_tmp)))
-  # if( nrow(neg_cu) > 0 ) qc_tmp = rbind(qc_tmp, neg_cu)
+  # set expected values
+  exp_values = matric(c(tape_range,
+                        depth_range,
+                        vel_range),
+                      byrow = T,
+                      ncol = 2,
+                      dimnames = list(c("Tape Distance",
+                                        "Station Depth",
+                                        "Station Velocity"),
+                                      c("min",
+                                        "max"))) %>%
+    as_tibble(rownames = "name")
 
-  #####
-  # CHECK 5: Is there more than one ParentGlobalID for channel units within a survey?
-  # We expect only 1.
+  # do measured values fall outside of expected values
+  val_chk = qc_df %>%
+    dplyr::select(path_nm,
+                  GlobalID,
+                  `Tape Distance (m)`,
+                  `Station Depth (m)`,
+                  `Station Velocity (m/s)`) %>%
+    tidyr::pivot_longer(cols = starts_with(c("Tape", "Station"))) %>%
+    dplyr::left_join(exp_values) %>%
+    rowwise() %>%
+    dplyr::mutate(in_range = dplyr::between(value,
+                                            min,
+                                            max)) %>%
+    dplyr::filter(!in_range) %>%
+    dplyr::mutate(error_message = paste0("The measurement ", name, " (", value, ") falls outside of the expected values between ", min, " and ", max)) %>%
+    dplyr::select(all_of(names(qc_tmp)))
 
-  # cat("Checking for multiple ParentGlobalIDs. \n")
-  #
-  # id_chk = qc_df %>%
-  #   dplyr::select(path_nm, ParentGlobalID) %>%
-  #   dplyr::group_by(path_nm) %>%
-  #   dplyr::summarise(count = n_distinct(ParentGlobalID)) %>%
-  #   dplyr::filter(count > 1) %>%
-  #   dplyr::mutate(GlobalID = "multiple rows",
-  #                 error_message = paste0("File ", path_nm, " contains multiple ParentGlobalIDs; expect only one.")) %>%
-  #   dplyr::select(-count)
-  #
-  # if( nrow(id_chk) == 0 ) cat("ParentGlobalIDs appear good! \n")
-  # if( nrow(id_chk) > 0 ) {
-  #   cat("Some files contain multiple ParentGlobalIDs when expecting only one. Adding to QC results. \n")
-  #   qc_tmp = rbind(qc_tmp, id_chk)
-  # }
+  if( nrow(val_chk) == 0 ) cat("All discharge measurement values fall within expected values. \n")
+  if( nrow(val_chk) > 0 ) {
+    cat("Discharge measurement values found outside of expected values. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, val_chk)
+  }
 
   # return qc results
   return(qc_tmp)
 
 } # end qc_discharge()
-
