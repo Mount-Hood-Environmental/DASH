@@ -21,27 +21,17 @@ qc_rollup = function(survey_df = NULL,
                      jam_df = NULL,
                      undercut_df = NULL,
                      wood_df = NULL,
-                     discharge_df = NULL,
-                     discharge_meas_df = NULL) {
+                     discharge_df = NULL) {
 
   # you need at least these 2 files to run the function
   stopifnot(!is.null(survey_df),
             !is.null(cu_df))
 
-  # # if discharge_meas_df exists, then so should discharge_df, and vice versa
-  # if(!is.null(discharge_meas_df) & is.null(discharge_df)) {
-  #   stop("Discharge measurements exist, but no discharge_df.")
-  # }
-  # if(is.null(discharge_meas_df) & !is.null(discharge_df)) {
-  #   stop("If discharge_df exists, then so should discharge_meas_df.")
-  # }
-
   # fix any NULL values in other data.frames
   if(is.null(wood_df)) wood_df = create_empty_tbl("Wood_2.csv")
   if(is.null(jam_df)) jam_df = create_empty_tbl("Jam_3.csv")
   if(is.null(undercut_df)) undercut_df = create_empty_tbl("Undercut_4.csv")
-  # if(is.null(discharge_df)) discharge_df = create_empty_tbl("Discharge_5.csv")
-  # if(is.null(discharge_meas_df)) discharge_meas_df = create_empty_tbl("DischargeMeasurements_6.csv")
+  if(is.null(discharge_df)) discharge_df = create_empty_tbl("Discharge_5.csv")
 
   # ensure naming conventions are what's expected
   survey_df %<>%
@@ -56,12 +46,6 @@ qc_rollup = function(survey_df = NULL,
     clean_names()
   discharge_df  %<>%
     clean_names()
-  # if(!is.null(discharge_df)) {
-  #   discharge_df %<>%
-  #     clean_names()
-  #   discharge_meas_df %<>%
-  #     clean_names()
-  # }
 
   # Initiate qc_tmp
   qc_tmp = qc_tbl() %>%

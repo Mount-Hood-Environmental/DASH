@@ -51,7 +51,6 @@ qc_wrapper = function(survey_df = NULL,
   if( !is.null(jam_df) )            qc_j = qc_jam(jam_df,...)                    else qc_j = qc_tbl()
   if( !is.null(undercut_df) )       qc_u = qc_undercut(undercut_df,...)          else qc_u = qc_tbl()
   if( !is.null(discharge_df) )      qc_d = qc_discharge(discharge_df,...)        else qc_d = qc_tbl()
-  #if( !is.null(discharge_meas_df) ) qc_d2 = qc_disch_meas(discharge_meas_df,...) else qc_d2 = qc_tbl()
 
   # combine results
   tmp = qc_tbl() %>%
@@ -185,27 +184,6 @@ qc_wrapper = function(survey_df = NULL,
                          tibble::add_column(source = "Discharge",
                                             .before = 0))
   } # end if discharge_df NOT NULL
-
-  # if( !is.null(discharge_meas_df) ) {
-  #   tmp = tmp %>%
-  #     dplyr::bind_rows(qc_d2 %>%
-  #                        left_join(discharge_meas_df %>%
-  #                                    select(GlobalID,
-  #                                           disch_id = ParentGlobalID)) %>%
-  #                        left_join(discharge_df %>%
-  #                                    select(disch_id = GlobalID,
-  #                                           surv_id = ParentGlobalID,
-  #                                           loc = `Discharge Location (BOS, TOS, CU #)`)) %>%
-  #                        left_join(survey_df %>%
-  #                                    select(surv_id = GlobalID,
-  #                                           `Site Name`)) %>%
-  #                        tidyr::unite("location_id",
-  #                                     `Site Name`,
-  #                                     loc) %>%
-  #                        dplyr::select(-disch_id, -surv_id) %>%
-  #                        tibble::add_column(source = "DischargeMeasurements",
-  #                                           .before = 0))
-  # } # end if discharge_meas_df NOT NULL
 
   if(channel_unit_roll_qc) {
     # perform some QC on entire channel unit data

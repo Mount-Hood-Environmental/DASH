@@ -35,7 +35,6 @@ qc_wood = function(qc_df = NULL,
   check_col_names(qc_df = qc_df,
                   otg_type = otg_type)
 
-
   #####
   # CHECK 2: Are there NAs in these columns?
   tmp = check_na(qc_df,
