@@ -15,11 +15,9 @@
 #' @return a tibble with QC results
 
 qc_discharge = function(qc_df = NULL,
-                        cols_to_check_nas = c("GlobalID",
-                                              "Tape Distance (m)",
+                        cols_to_check_nas = c("Tape Distance (m)",
                                               "Station Depth (m)",
-                                              "Station Velocity (m/s)",
-                                              "ParentGlobalID")) {
+                                              "Station Velocity (m/s)")) {
 
   # set otg_type
   otg_type = "Discharge_5.csv"
