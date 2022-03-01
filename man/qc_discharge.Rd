@@ -6,14 +6,23 @@
 \usage{
 qc_discharge(
   qc_df = NULL,
-  cols_to_check_nas = c("GlobalID", "Tape Distance (m)", "Station Depth (m)",
-    "Station Velocity (m/s)", "ParentGlobalID")
+  cols_to_check_nas = c("Tape Distance (m)", "Station Depth (m)",
+    "Station Velocity (m/s)"),
+  tape_range = c(0, 25),
+  depth_range = c(0, 3),
+  vel_range = c(-1, 5)
 )
 }
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
 
 \item{cols_to_check_nas}{columns to check for NAs in}
+
+\item{tape_range}{numeric vector of minimum and maximum acceptable values for tape distance}
+
+\item{depth_range}{numeric vector of minimum and maximum acceptable values for station depth}
+
+\item{vel_range}{numeric vector of minimum and maximum acceptable values for station velocity}
 }
 \value{
 a tibble with QC results
