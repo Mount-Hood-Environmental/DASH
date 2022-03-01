@@ -21,9 +21,7 @@ read_otg_csv = function(path = ".",
                                      "Wood_2.csv",
                                      "Jam_3.csv",
                                      "Undercut_4.csv",
-                                     "Discharge_5.csv"
-                                     #"DischargeMeasurements_6.csv"
-                                     )) {
+                                     "Discharge_5.csv")) {
 
   # files list of the otg_type
   file_list = get_file_nms(path) %>%
@@ -68,21 +66,12 @@ read_otg_csv = function(path = ".",
                                       lubridate::mdy))
                     }
 
-                    # extract just the date portion for CreationDate and EditDate
-                    if(nrow(tmp) > 0 & sum(c("CreationDate", "EditDate") %in% names(tmp)) > 0) {
-                        tmp = tmp %>%
-                          mutate(across(any_of(c("CreationDate", "EditDate")),
-                                        ~ stringr::str_split(., " ", simplify = T)[,1])) %>%
-                          mutate(across(any_of(c("CreationDate", "EditDate")),
-                                        lubridate::mdy))
-                   }
-
                     # # change the format of `Survey Start Date Time`, HiddenStart, and HiddenEnd to POSIXct date_time
                     if(otg_type == "surveyPoint_0.csv" & nrow(tmp) > 0) {
                       tmp = tmp %>%
-                        mutate(`Survey Start Date Time` = lubridate::mdy_hms(`Survey Start Date Time`),
-                               HiddenStart = lubridate::mdy_hms(HiddenStart),
-                               HiddenEnd = lubridate::mdy_hms(HiddenEnd),
+                        mutate(`Survey Start Date Time` = as.POSIXct(`Survey Start Date Time`, format = "%m/%d/%Y %I:%M"),
+                               HiddenStart = as.POSIXct(HiddenStart, format = "%m/%d/%Y %I:%M"),
+                               HiddenEnd = as.POSIXct(HiddenEnd, format = "%m/%d/%Y %I:%M")
                                )
                     }
 
