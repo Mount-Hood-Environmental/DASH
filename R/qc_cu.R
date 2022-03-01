@@ -18,7 +18,7 @@
 #' @param peb_min minimum acceptable size for pebble size (mm)
 #' @param peb_max maximum acceptable size for pebble size (mm)
 #'
-#' @import dplyr
+#' @import dplyr stringr
 #' @export
 #' @return a tibble with QC results
 
@@ -227,7 +227,7 @@ qc_cu = function(qc_df = NULL,
                                    peb_min,
                                    peb_max)) %>%
     dplyr::filter(peb_chk == FALSE) %>%
-    dplyr::mutate(error_message = paste0("Pebble size of ", str_remove(measurement, " \\(mm\\)$"),
+    dplyr::mutate(error_message = paste0("Pebble size of ", stringr::str_remove(measurement, " \\(mm\\)$"),
                                          "is ", value,
                                          " which does not fall between ", peb_min, " and ", peb_max, ".")) %>%
     dplyr::select(-measurement,

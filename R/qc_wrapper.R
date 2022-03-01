@@ -23,6 +23,7 @@
 #' @importFrom tibble add_column
 #' @importFrom readr write_csv
 #' @importFrom tidyr unite
+#' @importFrom stringr str_pad
 #' @export
 #' @return a tibble with combined QC results
 
@@ -72,7 +73,7 @@ qc_wrapper = function(survey_df = NULL,
                                              by = c("ParentGlobalID" = "GlobalID")) %>%
                                    dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
                                                                  `Channel Unit Number`),
-                                                               str_pad,
+                                                               stringr::str_pad,
                                                                width = 3,
                                                                pad = "0")) %>%
                                    tidyr::unite("location_id",
@@ -97,7 +98,7 @@ qc_wrapper = function(survey_df = NULL,
                                                by = c("ParentGlobalID" = "GlobalID")) %>%
                                      dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
                                                                    `Channel Unit Number`),
-                                                                 str_pad,
+                                                                 stringr::str_pad,
                                                                  width = 3,
                                                                  pad = "0")) %>%
                                      tidyr::unite("location_id",
@@ -125,7 +126,7 @@ qc_wrapper = function(survey_df = NULL,
                                                by = c("ParentGlobalID" = "GlobalID")) %>%
                                      dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
                                                                    `Channel Unit Number`),
-                                                                 str_pad,
+                                                                 stringr::str_pad,
                                                                  width = 3,
                                                                  pad = "0")) %>%
                                      tidyr::unite("location_id",
@@ -153,7 +154,7 @@ qc_wrapper = function(survey_df = NULL,
                                                by = c("ParentGlobalID" = "GlobalID")) %>%
                                      dplyr::mutate(dplyr::across(c(`Channel Segment Number`,
                                                                    `Channel Unit Number`),
-                                                                 str_pad,
+                                                                 stringr::str_pad,
                                                                  width = 3,
                                                                  pad = "0")) %>%
                                      tidyr::unite("location_id",
