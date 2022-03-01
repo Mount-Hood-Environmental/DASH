@@ -71,8 +71,7 @@ read_otg_csv = function(path = ".",
                       tmp = tmp %>%
                         mutate(`Survey Start Date Time` = as.POSIXct(`Survey Start Date Time`, format = "%m/%d/%Y %I:%M"),
                                HiddenStart = as.POSIXct(HiddenStart, format = "%m/%d/%Y %I:%M"),
-                               HiddenEnd = as.POSIXct(HiddenEnd, format = "%m/%d/%Y %I:%M")
-                               )
+                               HiddenEnd = as.POSIXct(HiddenEnd, format = "%m/%d/%Y %I:%M"))
                     }
 
                     #####
