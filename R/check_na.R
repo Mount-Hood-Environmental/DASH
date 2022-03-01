@@ -22,8 +22,6 @@ check_na = function(qc_df = NULL,
   cat("Checking for unexpected NAs in cols_to_check_nas: ")
   cat(cols_to_check_nas, sep = ", "); cat("\n")
 
-  # cols_to_check = c("Survey Time", "Survey Date") # for testing
-
   # check for NA in cols_to_check
   na_chk = qc_df %>%
     dplyr::select(any_of(c("path_nm", data_id)), all_of(cols_to_check_nas)) %>%
@@ -32,9 +30,6 @@ check_na = function(qc_df = NULL,
     tidyr::gather(key = "col_name",
                   value = "value",
                   any_of(cols_to_check_nas)) %>%
-    # tidyr::pivot_longer(cols = any_of(cols_to_check_nas),
-    #                     names_to = "col_name",
-    #                     values_to = "value") %>%
     dplyr::filter(is.na(value)) %>%
     dplyr::mutate(error_message = paste0("Column ", col_name, " is <blank> or NA.")) %>%
     dplyr::select(-col_name, -value)
