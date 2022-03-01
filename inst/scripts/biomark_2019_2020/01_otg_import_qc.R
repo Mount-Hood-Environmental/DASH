@@ -1,10 +1,11 @@
 # Authors: Mike Ackerman & Kevin See
 #
-# Purpose: A script to import and QC all of the 2019 & 2020 on-the-ground (OTG)
-# DASH data collected using Survey123.
+# Purpose: A script to import and QC all of the 2018 & 2021 on-the-ground (OTG)
+# DASH data collected using Survey123. This script will NOT work on the 2019 &
+# 2020 OTG data, which was collected using old data collection forms.
 #
 # Created: July 15, 2020
-#   Last Modified: January 25, 2021
+#   Last Modified: February 28, 2022
 #
 # Notes:
 
@@ -22,20 +23,8 @@ library(DASH)
 #-------------------------
 # set NAS prefix, depending on operating system
 #-------------------------
-if(.Platform$OS.type != 'unix') {
-  nas_prefix = "S:"
-} else if(.Platform$OS.type == 'unix') {
-  nas_prefix = "~/../../Volumes/ABS"
-}
-
-#-----------------------------
-# Do you need to copy initial formatted files to a QC'd folder?
-#-----------------------------
-# if copy_to_qcd is set to TRUE, the files contained in the /1_formatted_csvs/
-# folder will be copied into a /2_qcd_csvs/ folder to have QC edits made.
-# If /2_qcd_csvs/ folders already exist, this will overwrite what's in there.
-# So please set to TRUE only the first time running this script!
-copy_to_qcd = FALSE
+if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
+# need additional statements if someone has an alternative OS.type
 
 #-----------------------------
 # set some arguments/parameters
@@ -49,13 +38,6 @@ yr_wtsd = c("2018/lemhi",
             "2021/mf_salmon",
             "2021/nf_salmon")
 
-# 2019 & 2020 data are in old data collection format
-# yr_wtsd = c(yr_wtsd,
-#             "2019/lemhi",
-#             "2019/nf_salmon",
-#             "2020/lemhi",
-#             "2020/secesh")
-
 #-----------------------------
 # LOOP 1: import raw OTG data; loop over year_watershed combinations
 #-----------------------------
@@ -63,7 +45,7 @@ for (yw in yr_wtsd) {
 
   # set path for yr_wtsd
   path = paste0(nas_prefix,
-                "/Public Data/data/habitat/DASH/OTG/",
+                "Public Data/data/habitat/DASH/OTG/",
                 yw,
                 "/1_formatted_csvs/")
 
@@ -89,63 +71,12 @@ for (yw in yr_wtsd) {
                                   jam_df = otg_raw$jam,
                                   undercut_df = otg_raw$undercut,
                                   discharge_df = otg_raw$discharge,
-                                  #discharge_meas_df = otg_raw$discharge_measurements,
                                   channel_unit_roll_qc = TRUE)
-
-  #-----------------------------
-  # if you need to copy the files into a QC'd series of folders
-  # this should only happen the first time you run this script
-  #-----------------------------
-  if(copy_to_qcd) {
-
-    # where will QC'd files go
-    path_qcd = paste0(nas_prefix,
-                      "/Public Data/data/habitat/DASH/OTG/",
-                      yw,
-                      "/2_qcd_csvs/")
-
-    # create /2_qcd_csvs/ folder
-    if(!dir.exists(path_qcd)) {
-      dir.create(path_qcd)
-    }
-
-    # create folders for each survey
-    survy_fldrs = otg_raw %>%
-      map_df(.id = 'source',
-             .f = function(x) {
-               x %>%
-                 select(path_nm) %>%
-                 distinct()
-             }) %>%
-      mutate(fldr_nm = str_split(path_nm, "/", simplify = T)[,1]) %>%
-      pull(fldr_nm) %>%
-      unique()
-    for(i in 1:length(survy_fldrs)) {
-      if(!dir.exists(paste0(path_qcd, survy_fldrs[i]))) {
-        dir.create(paste0(path_qcd, survy_fldrs[i]))
-      }
-    }
-
-    # copy csvs into appropriate QC folder
-    otg_raw %>%
-      map_df(.id = 'source',
-             .f = function(x) {
-               x %>%
-                 select(path_nm) %>%
-                 distinct()
-             }) %>%
-      pull(path_nm) %>%
-      as.list() %>%
-      walk(.f = function(x) {
-        file.copy(from = paste0(path, x),
-                  to = paste0(path_qcd, x))
-      })
-  } # end if copy_to_qcd = TRUE
 
   # save the otg_raw list of dfs, and the initial QC flags
   save(otg_raw,
        file = paste0(nas_prefix,
-                     "/data/habitat/DASH/OTG/",
+                     "Public Data/data/habitat/DASH/OTG/",
                      yw,
                      "/1_formatted_csvs/otg_raw.rda"))
 
@@ -155,6 +86,8 @@ for (yw in yr_wtsd) {
   if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
 
 } # end import raw, QC, and save loop
+
+
 
 #-----------------------------
 # LOOP 1.5: re-import "QC" .csvs, fix common mistakes w/ below code, overwrite .csvs
