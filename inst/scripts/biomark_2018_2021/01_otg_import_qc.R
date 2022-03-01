@@ -87,17 +87,15 @@ for (yw in yr_wtsd) {
 
 } # end import raw, QC, and save loop
 
-
-
 #-----------------------------
-# LOOP 2: iterative loop: import "QC" .csvs, run QC, write QC results,
-# fix problems in said "QC" .csvs, rinse and repeat...
+# LOOP 2: iterative loop: import "QC'd" .csvs, run QC, write QC results,
+# fix problems in said "QC'd" .csvs, rinse and repeat...
 #-----------------------------
 for (yw in yr_wtsd) {
 
   # set path for yr_wtsd, except QC'd data
   path = paste0(nas_prefix,
-                "/data/habitat/DASH/OTG/",
+                "Public Data/data/habitat/DASH/OTG/",
                 yw,
                 "/2_qcd_csvs/")
 
@@ -107,15 +105,13 @@ for (yw in yr_wtsd) {
                                                        "Wood_2.csv",
                                                        "Jam_3.csv",
                                                        "Undercut_4.csv",
-                                                       "Discharge_5.csv",
-                                                       "DischargeMeasurements_6.csv"),
+                                                       "Discharge_5.csv"),
                                      otg_type_names = c("survey",
                                                         "cu",
                                                         "wood",
                                                         "jam",
                                                         "undercut",
-                                                        "discharge",
-                                                        "discharge_measurements"))
+                                                        "discharge"))
 
   # perform QC on the qc'd data
   qc_interim = qc_wrapper(survey_df = otg_interim$survey,
@@ -124,7 +120,6 @@ for (yw in yr_wtsd) {
                           jam_df = otg_interim$jam,
                           undercut_df = otg_interim$undercut,
                           discharge_df = otg_interim$discharge,
-                          discharge_meas_df = otg_interim$discharge_measurements,
                           channel_unit_roll_qc = T)
 
   # write interim QC results
