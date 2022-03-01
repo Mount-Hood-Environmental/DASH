@@ -31,7 +31,7 @@ read_otg_csv_wrapper = function(path = ".",
   # if otg_type_names is NOT NULL, verify it is the same length as otg_type_list
   if(!is.null(otg_type_names)) {
     chk = identical(length(otg_type_list), length(otg_type_names))
-    if(chk == FALSE) stop("If argument otg_type_names is not NULL, otg_type_list and otg_type_names MUST be of the same length. Stopping execution")
+    if(chk == FALSE) stop("If argument otg_type_names is not NULL, otg_type_list and otg_type_names MUST be of the same length. Stopping execution.")
   }
 
   # create empty list
