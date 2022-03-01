@@ -21,8 +21,9 @@ read_otg_csv = function(path = ".",
                                      "Wood_2.csv",
                                      "Jam_3.csv",
                                      "Undercut_4.csv",
-                                     "Discharge_5.csv",
-                                     "DischargeMeasurements_6.csv")) {
+                                     "Discharge_5.csv"
+                                     #"DischargeMeasurements_6.csv"
+                                     )) {
 
   # files list of the otg_type
   file_list = get_file_nms(path) %>%
