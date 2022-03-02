@@ -5,7 +5,7 @@
 # 2020 OTG data, which was collected using old data collection forms.
 #
 # Created: July 15, 2020
-#   Last Modified: February 28, 2022
+#   Last Modified: March 2, 2022
 #
 # Notes:
 
@@ -162,7 +162,7 @@ for (yw in yr_wtsd) {
 
   # set path for yr_wtsd, except QC'd data
   path = paste0(nas_prefix,
-                "/data/habitat/DASH/OTG/",
+                "Public Data/data/habitat/DASH/OTG/",
                 yw,
                 "/2_qcd_csvs/")
 
@@ -172,15 +172,13 @@ for (yw in yr_wtsd) {
                                                    "Wood_2.csv",
                                                    "Jam_3.csv",
                                                    "Undercut_4.csv",
-                                                   "Discharge_5.csv",
-                                                   "DischargeMeasurements_6.csv"),
+                                                   "Discharge_5.csv"),
                                  otg_type_names = c("survey",
                                                     "cu",
                                                     "wood",
                                                     "jam",
                                                     "undercut",
-                                                    "discharge",
-                                                    "discharge_measurements"))
+                                                    "discharge"))
 
   # perform QC on the "final" OTG data
   qc_final = qc_wrapper(survey_df = otg_qcd$survey,
@@ -189,7 +187,6 @@ for (yw in yr_wtsd) {
                         jam_df = otg_qcd$jam,
                         undercut_df = otg_qcd$undercut,
                         discharge_df = otg_qcd$discharge,
-                        discharge_meas_df = otg_qcd$discharge_measurements,
                         channel_unit_roll_qc = T)
 
   # write "final" QC results
@@ -198,7 +195,7 @@ for (yw in yr_wtsd) {
   # save as .Rdata object
   save(otg_qcd,
        file = paste0(nas_prefix,
-                     "/data/habitat/DASH/OTG/",
+                     "Public Data/data/habitat/DASH/OTG/",
                      yw,
                      "/prepped/otg_qcd.rda"))
 
