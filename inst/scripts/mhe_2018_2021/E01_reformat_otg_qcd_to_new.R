@@ -101,7 +101,10 @@ otg$survey = otg$survey %>%
                            "Summit Creek"),
          HiddenStart = NA,
          HiddenEnd = NA,
-         `Water Temp (C)` = NA) %>%
+         `Water Temp (C)` = NA,
+         `Survey Date` = as.character(`Survey Date`),
+         `CreationDate` = as.character(`CreationDate`),
+         `EditDate` = as.character(`EditDate`)) %>%
   rename(`Survey Start Date Time` = `Survey Date`) %>%
   select(path_nm,
          ObjectID,
@@ -135,7 +138,9 @@ otg$cu = otg$cu %>%
                                            `Sand/Fines 2mm`,
                                            `Gravel 2-64mm`,
                                            `Cobble 64-256mm`,
-                                           `Boulder 256mm`))) %>%
+                                           `Boulder 256mm`)),
+         `CreationDate` = as.character(`CreationDate`),
+         `EditDate` = as.character(`EditDate`)) %>%
   rename(`Overhanging (%)` = `Overhanging Cover`,
          `Aquatic Vegetation (%)` = `Aquatic Vegetation`,
          `Woody Debris (%)` = `Woody Debris Cover`,
@@ -182,11 +187,20 @@ otg$cu = otg$cu %>%
 
 # wood
 otg$wood = otg$wood %>%
-  select(-`Large Wood Number`)
+  select(-`Large Wood Number`) %>%
+  mutate(`CreationDate` = as.character(`CreationDate`),
+         `EditDate` = as.character(`EditDate`))
+
+# jam
+otg$jam = otg$jam %>%
+  mutate(`CreationDate` = as.character(`CreationDate`),
+         `EditDate` = as.character(`EditDate`))
 
 # undercut
 otg$undercut = otg$undercut %>%
-  select(-`Undercut Number`)
+  select(-`Undercut Number`) %>%
+  mutate(`CreationDate` = as.character(`CreationDate`),
+         `EditDate` = as.character(`EditDate`))
 
 # discharge
 otg$discharge = otg$discharge_measurements %>%
@@ -194,7 +208,9 @@ otg$discharge = otg$discharge_measurements %>%
   mutate(`Tape Distance (m)` = cumsum(`Station Width`)) %>%
   rename(`Station Depth (m)` = `Station Depth`,
          `Station Velocity (m/s)` = `Station Velocity`) %>%
-  mutate(path_nm = str_replace(path_nm, "DischargeMeasurements_6", "Discharge_5")) %>%
+  mutate(path_nm = str_replace(path_nm, "DischargeMeasurements_6", "Discharge_5"),
+         `CreationDate` = as.character(`CreationDate`),
+         `EditDate` = as.character(`EditDate`)) %>%
   select(path_nm,
          ObjectID,
          GlobalID,
@@ -210,7 +226,9 @@ otg$discharge = otg$discharge_measurements %>%
 # remove discharge_measurements
 otg$discharge_measurements = NULL
 
+# save results
 saveRDS(otg,
         file = paste0(nas_prefix,
                       "Public Data/data/habitat/DASH/OTG/prepped/otg_qcd_1920_new_format.rds"))
 
+# END SCRIPT

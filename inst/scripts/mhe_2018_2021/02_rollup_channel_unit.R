@@ -1,9 +1,9 @@
-# Authors: Kevin See & Mike Ackerman
+# Authors: Mike Ackerman
 #
 # Purpose: rollup OTG data to channel unit scale
 #
-# Created: December 9, 2020
-# Last Modified: February 4, 2021
+# Created: March 2, 2022
+# Last Modified:
 #
 # Notes:
 
@@ -14,58 +14,20 @@ rm(list = ls())
 # load necessary libraries
 #-----------------------------
 library(tidyverse)
-library(magrittr)
-library(janitor)
-library(sf)
-library(lubridate)
 library(DASH)
 
 #-------------------------
 # set NAS prefix, depending on operating system
 #-------------------------
-if(.Platform$OS.type != 'unix') {
-  nas_prefix = "S:"
-} else if(.Platform$OS.type == 'unix') {
-  nas_prefix = "~/../../Volumes/ABS"
-}
+if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
+# need additional statements if someone has an alternative OS.type
 
 #-------------------------
-# load QC'd OTG data
+# load all OTG data
 #-------------------------
-otg_path = paste0(nas_prefix,
-                  "/data/habitat/DASH/OTG")
+otg_all = readRDS(file = paste0(nas_prefix,
+                                "Public Data/data/habitat/DASH/OTG/prepped/otg_all_18to21.rds"))
 
-# list of otg_qcd.rda files in otg_path; take advantage of fact that 2018 data doesn't contain those
-otg_qcd_paths = list.files(path = otg_path,
-                           pattern = "^otg_qcd.rda$",
-                           recursive = T) %>%
-  paste(otg_path, ., sep = "/") %>%
-  as.list()
-
-# load each of otg_qcd_paths
-otg_list = otg_qcd_paths %>%
-  map(.f = function(x) {
-    load(x) %>%
-      get() %>%
-      map(clean_names)
-  })
-
-# combine elements of otg_list into otg
-for(i in 1:length(otg_list)) {
-  if(i == 1) {
-    otg = otg_list[[1]]
-  } else {
-    otg = suppressMessages(purrr::map2(otg,
-                                       otg_list[[i]],
-                                       dplyr::full_join))
-  }
-}
-
-# clean up
-rm(otg_qcd_paths, otg_list)
-
-# trim off qc_results
-otg = within(otg, rm(qc_results))
 
 #-------------------------
 # roll up OTG data to CU scale, no data imputation
