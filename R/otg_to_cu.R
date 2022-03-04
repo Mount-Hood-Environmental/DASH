@@ -24,7 +24,6 @@ otg_to_cu = function(survey_df = NULL,
                      jam_df = NULL,
                      undercut_df = NULL,
                      discharge_df = NULL,
-                     discharge_meas_df = NULL,
                      fix_nas = TRUE,
                      wood_impute_cols = c('length_m',
                                           'diameter_m'),
@@ -50,8 +49,6 @@ otg_to_cu = function(survey_df = NULL,
   undercut_df %<>%
     janitor::clean_names()
   discharge_df %<>%
-    janitor::clean_names()
-  discharge_meas_df %<>%
     janitor::clean_names()
 
   # channel unit rollup
