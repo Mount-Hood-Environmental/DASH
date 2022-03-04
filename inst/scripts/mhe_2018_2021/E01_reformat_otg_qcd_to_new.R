@@ -348,7 +348,10 @@ otg$cu = otg$cu %>%
     TRUE ~ BOS
   ))
 
-
+# standardize pebble sizes; replace all 1024 as 874 which is new as of new data collection form
+otg$cu = otg$cu %>%
+  mutate(across(starts_with("Pebble"),
+                ~if_else(. == 1024, 874, as.numeric(.))))
 
 # save results
 saveRDS(otg,
