@@ -23,9 +23,11 @@ rollup_cu = function(cu_df = NULL,
   # prep survey info to attach to CUs
   join_site_df = survey_df %>%
     dplyr::select(global_id,
+                  stream_name,
                   site_name,
-                  survey_datetime = survey_date,
+                  survey_start_date_time,
                   survey_crew,
+                  water_temp_c,
                   conductivity_ms,
                   site_lon = x,
                   site_lat = y)
@@ -36,30 +38,33 @@ rollup_cu = function(cu_df = NULL,
     dplyr::select(-(creation_date:editor)) %>%
     dplyr::left_join(join_site_df,
               by = c("parent_global_id" = "global_id")) %>%
-    dplyr::mutate(site_name = stringr::str_remove_all(site_name, pattern = fixed(" "))) %>%
     dplyr::mutate(channel_unit_number = str_pad(channel_unit_number, 3, pad = "0"),
                   channel_segment_number = str_pad(channel_segment_number, 2, pad = "0")) %>%
-    dplyr::mutate(cu_id = paste(site_name,
+    dplyr::mutate(cu_id = paste(stringr::str_remove_all(site_name, pattern = fixed(" ")),
                                 channel_segment_number,
                                 channel_unit_number,
                                 sep = "_")) %>%
     dplyr::select(parent_global_id,
                   global_id,
                   path_nm,
-                  survey_datetime,
+                  stream_name,
                   site_name,
+                  survey_start_date_time,
+                  survey_crew,
+                  site_lon,
+                  site_lat,
+                  site_water_temp_c = water_temp_c,
+                  site_conductivity_ms = conductivity_ms,
                   cu_id,
                   channel_segment_number,
                   channel_unit_number,
                   channel_unit_type,
+                  tos,
+                  bos,
                   maximum_depth_m,
                   thalweg_exit_depth_m,
-                  width_1,
-                  width_2,
-                  width_3,
-                  width_4,
-                  width_5,
-                  everything())
+                  everything(),
+                  channel_unit_notes)
 
   return(return_df)
 
