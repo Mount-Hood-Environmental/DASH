@@ -5,20 +5,20 @@
 #'
 #' @author Mike Ackerman, Kevin See, Richie Carmichael
 #'
-#' @param cu_df data.frame of `otg_type =` "CU_1.csv" containing data for each channel unit
 #' @param survey_df data.frame of `otg_type =` "surveyPoint_0.csv" containing information for
 #' each site/survey
+#' @param cu_df data.frame of `otg_type =` "CU_1.csv" containing data for each channel unit
 #'
 #' @import dplyr
 #' @importFrom stringr str_remove_all
 #' @export
 #' @return a data.frame summarizing data for channel units
 
-rollup_cu = function(cu_df = NULL,
-                     survey_df = NULL) {
+rollup_cu = function(survey_df = NULL,
+                     cu_df = NULL) {
 
-  stopifnot(!is.null(cu_df))
   stopifnot(!is.null(survey_df))
+  stopifnot(!is.null(cu_df))
 
   # prep survey info to attach to CUs
   join_site_df = survey_df %>%
@@ -27,10 +27,10 @@ rollup_cu = function(cu_df = NULL,
                   site_name,
                   survey_start_date_time,
                   survey_crew,
-                  water_temp_c,
-                  conductivity_ms,
                   site_lon = x,
-                  site_lat = y)
+                  site_lat = y,
+                  water_temp_c,
+                  conductivity_ms)
 
   # join site info to cus and do some cleaning
   return_df = cu_df %>%
@@ -63,8 +63,9 @@ rollup_cu = function(cu_df = NULL,
                   bos,
                   maximum_depth_m,
                   thalweg_exit_depth_m,
-                  everything(),
-                  channel_unit_notes)
+                  channel_unit_notes,
+                  everything()) %>%
+    dplyr::relocate(channel_unit_notes, .after = last_col())
 
   return(return_df)
 
