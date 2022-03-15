@@ -81,7 +81,7 @@ otg_list[[3]]$jam = tibble("path_nm" = as.character(),
                            "ParentGlobalID" = as.character(),
                            "CreationDate" = as.character(),
                            "Creator" = as.character(),
-                           "Edit Date" = as.character(),
+                           "EditDate" = as.character(),
                            "Editor" = as.character())
 otg_list[[2]] = otg_list[[2]][c("survey", "cu", "wood", "jam", "undercut", 'discharge', "qc_results")]
 otg_list[[3]] = otg_list[[3]][c("survey", "cu", "wood", "jam", "undercut", 'discharge', "qc_results")]
