@@ -31,6 +31,20 @@ otg = readRDS(file = paste0(nas_prefix,
 # remove the qc_results data frame from otg
 otg$qc_results = NULL
 
+# let's run clean_names on everything before moving on... This is additionally done in otg_to_cu()
+otg$survey %<>%
+  janitor::clean_names()
+otg$cu %<>%
+  janitor::clean_names()
+otg$wood %<>%
+  janitor::clean_names()
+otg$jam %<>%
+  janitor::clean_names()
+otg$undercut %<>%
+  janitor::clean_names()
+otg$discharge %<>%
+  janitor::clean_names()
+
 #-------------------------
 # roll up OTG data to CU scale, no data imputation
 #-------------------------
@@ -41,15 +55,6 @@ otg_cu = otg_to_cu(survey_df = otg$survey,
                    undercut_df = otg$undercut,
                    discharge_df = otg$discharge,
                    fix_nas = FALSE)
-
-# cu_rllup = otg_to_cu(survey_df = otg$survey,
-#                      cu_df = otg$cu,
-#                      wood_df = otg$wood,
-#                      jam_df = otg$jam,
-#                      undercut_df = otg$undercut,
-#                      discharge_df = otg$discharge,
-#                      discharge_meas_df = otg$discharge_measurements,
-#                      fix_nas = FALSE)
 
 # save non-imputed, prepped data
 write_csv(cu_rllup,
