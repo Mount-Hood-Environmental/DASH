@@ -12,7 +12,6 @@
 #' case the `NA` values will be imputed using function `impute_missing_values()`
 #' @param impute_cols character vector of column names that should be imputed, if `fix_nas == TRUE`
 #' @param ... other arguments to `impute_missing_values()`
-
 #'
 #' @import dplyr
 #' @export
@@ -63,20 +62,21 @@ rollup_cu_wood = function(wood_df = NULL,
   # now start data rollup
   return_df = wood_df %>%
     dplyr::select(-(creation_date:editor)) %>%
-    dplyr::mutate(piece_area_m2 = diameter_m * length_m,
-                  piece_vol_m3 = pi * (diameter_m/2)^2 * length_m) %>%
+    dplyr::mutate(piece_area_m2 = length_m * diameter_m,
+                  piece_vol_m3 = length_m * (diameter_m/2)^2 * pi) %>%
     dplyr::group_by(parent_global_id) %>%
-    dplyr::summarise(lwd_n_pieces = length(parent_global_id),
-                     #lwd_length_m = sum(length_m),
-                     #lwd_diameter_m = sum(diameter_m),
+    dplyr::summarise(lwd_n = length(parent_global_id),
                      lwd_area_m2 = sum(piece_area_m2),
                      lwd_vol_m3 = sum(piece_vol_m3),
-                     # calculate proportions w/in channel units for wet, channel_forming, and ballasted
-                     # ignore NAs when calculating proportions
-                     lwd_p_wet = sum(wet == "Yes", na.rm = T) / sum(wet == "Yes" | wet == "No", na.rm = T),
-                     lwd_p_chn_frm = sum(channel_forming == "Yes", na.rm = T) / sum(channel_forming == "Yes" | channel_forming == "No", na.rm = T),
-                     lwd_p_ballast = sum(ballasted == "Yes", na.rm = T) / sum(ballasted == "Yes" | ballasted == "No", na.rm = T))
-
+                     lwd_n_wet = length(parent_global_id[wet == "Yes"]),
+                     lwd_area_m2_wet = sum(piece_area_m2[wet == "Yes"]),
+                     lwd_vol_m3_wet = sum(piece_vol_m3[wet == "Yes"]),
+                     lwd_n_cf = length(parent_global_id[channel_forming == "Yes"]),
+                     lwd_area_m2_cf = sum(piece_area_m2[channel_forming == "Yes"]),
+                     lwd_vol_m3_cf = sum(piece_vol_m3[channel_forming == "Yes"]),
+                     lwd_n_bal = length(parent_global_id[ballasted == "Yes"]),
+                     lwd_area_m2_bal = sum(piece_area_m2[ballasted == "Yes"]),
+                     lwd_vol_m3_bal = sum(piece_vol_m3[ballasted == "Yes"]))
 
   return(return_df)
 
