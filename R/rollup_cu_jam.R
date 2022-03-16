@@ -75,9 +75,6 @@ rollup_cu_jam = function(jam_df = NULL,
     dplyr::group_by(parent_global_id) %>%
     dplyr::summarise(jam_n = length(parent_global_id),
                      jam_est_n_pieces = sum(estimated_number_of_pieces),
-                     #jam_length_m = sum(length_m),
-                     #jam_width_m = sum(width_m),
-                     #jam_height_m = sum(height_m),
                      jam_area_m2 = sum(area_m2),
                      jam_vol_m3 = sum(vol_m3))
 
