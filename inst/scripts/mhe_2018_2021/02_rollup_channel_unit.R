@@ -14,6 +14,7 @@ rm(list = ls())
 # load necessary libraries
 #-----------------------------
 library(tidyverse)
+library(magrittr)
 library(DASH)
 
 #-------------------------
