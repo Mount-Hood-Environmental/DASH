@@ -52,8 +52,8 @@ otg_to_cu = function(survey_df = NULL,
     janitor::clean_names()
 
   # channel unit rollup
-  cu_main = rollup_cu(cu_df,
-                      survey_df)
+  cu_main = rollup_cu(survey_df,
+                      cu_df)
 
   # wood rollup
   cu_wood = rollup_cu_wood(wood_df,
@@ -74,12 +74,7 @@ otg_to_cu = function(survey_df = NULL,
 
   # discharge rollup
   cu_disch = rollup_cu_discharge(discharge_df,
-                                 discharge_meas_df) %>%
-    rename(channel_unit_number = discharge_location_bos_tos_cu_number) %>%
-    mutate(across(channel_unit_number,
-                  str_pad,
-                  width = 3,
-                  pad = "0"))
+                                 ...)
 
   # and combine various rollups into a single data.frame
   cu_df = cu_main %>%
@@ -89,10 +84,10 @@ otg_to_cu = function(survey_df = NULL,
                      by = c("global_id" = "parent_global_id")) %>%
     dplyr::left_join(cu_undct,
                      by = c("global_id" = "parent_global_id")) %>%
-    dplyr::left_join(cu_disch %>%
-                       select(-global_id)) %>%
-    dplyr::relocate(any_of(c("conductivity_ms", "site_lat", "site_lon", "survey_crew", "channel_unit_notes")),
-                    .after = last_col())
+    dplyr::left_join(cu_disch,
+                     by = c("global_id" = "parent_global_id"))
+
+  # CONTINUE HERE
 
   # convert what should be true 0s from NA to 0
   cu_df = cu_df %>%
