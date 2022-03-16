@@ -5,8 +5,6 @@
 #'
 #' @author Mike Ackerman, Kevin See, and Richie Carmichael
 #'
-#' @param discharge_df data.frame of `otg_type =` "Discharge_5.csv" containing the survey
-#' and channel unit number information where discharges were measured
 #' @inheritParams calc_discharge
 #'
 #' @import dplyr

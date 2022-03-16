@@ -4,21 +4,18 @@
 \alias{rollup_cu_discharge}
 \title{Rollup Channel Unit Discharge Data}
 \usage{
-rollup_cu_discharge(discharge_df = NULL, discharge_meas_df = NULL)
+rollup_cu_discharge(discharge_df = NULL)
 }
 \arguments{
-\item{discharge_df}{data.frame of \verb{otg_type =} "Discharge_5.csv" containing the survey
-and channel unit number information where discharges were measured}
-
-\item{discharge_meas_df}{input data.frame of \verb{otg_type =} "DischargeMeasurements_6.csv"
+\item{discharge_df}{input data.frame of \verb{otg_type =} "DischargeMeasurements_6.csv"
 containing the station width, depth, and velocity data to estimate discharge}
 }
 \value{
 a data.frame summarizing discharge measurements at the channel unit scale
 }
 \description{
-Summarize discharge data (e.g., from \verb{otg_type =} "Discharge_5.csv" and
-"DischargeMeasurements_6.csv") for channel units where discharge was measured
+Summarize discharge data (e.g., from \verb{otg_type =} "Discharge_5.csv") for
+channel units where discharge was measured
 }
 \author{
 Mike Ackerman, Kevin See, and Richie Carmichael

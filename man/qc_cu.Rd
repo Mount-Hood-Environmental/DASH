@@ -7,7 +7,7 @@
 qc_cu(
   qc_df = NULL,
   cols_to_check_nas = c("Channel Segment Number", "Channel Unit Number",
-    "Channel Unit Type", "Maximum Depth (m)", "Thalweg Exit Depth (m)", "TOS", "BOS"),
+    "Channel Unit Type", "Maximum Depth (m)", "TOS", "BOS"),
   valid_cus = c("Pool", "Run", "Riffle", "OCA", "Rapid+", "SSC"),
   ted_min = 0,
   ted_max = 2,
@@ -18,7 +18,7 @@ qc_cu(
   cov_max = 130,
   ocular_columns = c("Sand/Fines <2mm (\%)", "Gravel 2-64mm (\%)",
     "Cobble 64-256mm (\%)", "Boulder >256mm (\%)"),
-  peb_min = 0.06,
+  peb_min = 0.03,
   peb_max = 1024
 )
 }
