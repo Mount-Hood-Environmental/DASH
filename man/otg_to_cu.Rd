@@ -11,7 +11,6 @@ otg_to_cu(
   jam_df = NULL,
   undercut_df = NULL,
   discharge_df = NULL,
-  discharge_meas_df = NULL,
   fix_nas = TRUE,
   wood_impute_cols = c("length_m", "diameter_m"),
   jam_impute_cols = c("length_m", "width_m", "height_m", "estimated_number_of_pieces"),
@@ -37,9 +36,6 @@ undercut data to be summarized (rolled up) to the channel unit scale}
 
 \item{discharge_df}{data.frame of \verb{otg_type =} "Discharge_5.csv" containing the survey
 and channel unit number information where discharges were measured}
-
-\item{discharge_meas_df}{input data.frame of \verb{otg_type =} "DischargeMeasurements_6.csv"
-containing the station width, depth, and velocity data to estimate discharge}
 
 \item{fix_nas}{if any of the length, width, height, or estimated number of pieces measurements
 for an individual jam is missing i.e.,\code{NA}, would you like to fill them in? Default is \code{TRUE}, in which

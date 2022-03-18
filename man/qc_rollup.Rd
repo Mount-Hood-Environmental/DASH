@@ -10,8 +10,7 @@ qc_rollup(
   jam_df = NULL,
   undercut_df = NULL,
   wood_df = NULL,
-  discharge_df = NULL,
-  discharge_meas_df = NULL
+  discharge_df = NULL
 )
 }
 \arguments{
@@ -31,9 +30,6 @@ wood data to be summarized by channel units}
 
 \item{discharge_df}{data.frame of \verb{otg_type =} "Discharge_5.csv" containing the survey
 and channel unit number information where discharges were measured}
-
-\item{discharge_meas_df}{input data.frame of \verb{otg_type =} "DischargeMeasurements_6.csv"
-containing the station width, depth, and velocity data to estimate discharge}
 }
 \value{
 a tibble with QC results
