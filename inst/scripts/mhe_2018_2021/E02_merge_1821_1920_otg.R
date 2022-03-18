@@ -117,10 +117,6 @@ for(i in 1:length(otg_all_list)) {
   }
 }
 
-#-------------------------
-# let's do some exploring/cleaning of otg_all
-#-------------------------
-
 # save results
 saveRDS(otg_all,
         file = paste0(nas_prefix,
