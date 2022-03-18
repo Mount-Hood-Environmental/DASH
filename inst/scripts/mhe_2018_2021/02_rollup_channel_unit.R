@@ -14,6 +14,7 @@ rm(list = ls())
 # load necessary libraries
 #-----------------------------
 library(tidyverse)
+library(magrittr)
 library(DASH)
 
 #-------------------------
@@ -27,6 +28,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 #-------------------------
 otg = readRDS(file = paste0(nas_prefix,
                             "Public Data/data/habitat/DASH/OTG/prepped/otg_all_18to21.rds"))
+otg = readRDS(file = "C:/Users/mikea/Downloads/otg_all_18to21.rds")
 
 # remove the qc_results data frame from otg
 otg$qc_results = NULL
