@@ -3,9 +3,8 @@
 # Purpose: Join the 2019/2020 data (old format) to 2018/2021 data (new format)
 # and then rollup OTG data to channel-unit scale
 #
-#
 # Created: March 2, 2022
-# Last Modified:
+# Last Modified: March 23, 2022
 #
 # Notes:
 
