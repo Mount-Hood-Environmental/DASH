@@ -68,6 +68,9 @@ rollup_cu_undercut = function(undercut_df = NULL,
     dplyr::mutate(area_m2 = length_m * avg_width_m) %>%
     dplyr::group_by(parent_global_id) %>%
     dplyr::summarise(undct_n = length(parent_global_id),
+                     undct_n_left = length(parent_global_id[location == "Left_Bank"]),
+                     undct_n_right = length(parent_global_id[location == "Right_Bank"]),
+                     undct_n_islnd = length(parent_global_id[location == "Island"]),
                      undct_length_m = sum(length_m),
                      undct_area_m = sum(area_m2))
 
