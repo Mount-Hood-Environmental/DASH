@@ -87,20 +87,9 @@ otg_to_cu = function(survey_df = NULL,
     dplyr::left_join(cu_disch,
                      by = c("global_id" = "parent_global_id"))
 
-  # CONTINUE HERE
-
   # convert what should be true 0s from NA to 0
   cu_df = cu_df %>%
-    mutate_at(vars(lwd_n_pieces,
-                   lwd_area_m2,
-                   lwd_vol_m3,
-                   jam_n,
-                   jam_est_n_pieces,
-                   jam_area_m2,
-                   jam_vol_m3,
-                   undct_n,
-                   undct_length_m,
-                   undct_area_m),
+    mutate_at(vars(lwd_n:undct_area_m),
               replace_na, 0)
 
   return(cu_df)
