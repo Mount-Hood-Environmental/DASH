@@ -5,7 +5,7 @@
 #          the newest DASH data collection forms
 #
 # Created: March 2, 2022
-# Last Modified:
+# Last Modified: March 24, 2022
 #
 # Notes:
 
@@ -349,9 +349,53 @@ otg$cu = otg$cu %>%
   ))
 
 # standardize pebble sizes; replace all 1024 as 874 which is new as of new data collection form
-otg$cu = otg$cu %>%
+otg$cu %<>%
   mutate(across(starts_with("Pebble"),
                 ~if_else(. == 1024, 874, as.numeric(.))))
+
+# fill in some missing values
+otg$cu %<>%
+  group_by(path_nm, `Channel Unit Type`) %>%
+  # fish cover
+  mutate_at(vars(`Overhanging (%)`:`Cover Sum (%)`),
+            ~ replace_na(., mean(., na.rm = TRUE))) %>%
+  # maximum and thalweg exit depths
+  mutate_at(vars(`Maximum Depth (m)`:`Thalweg Exit Depth (m)`),
+            ~ replace_na(., mean(., na.rm = TRUE))) %>%
+  # change some widths for all non-SSCs to NA
+  ungroup() %>%
+  mutate_at(
+    vars(`Width 1 (m)`:`Width 5 (m)`),
+    funs(case_when(
+      `Channel Unit Type` != "SSC" ~ NA_real_,
+      TRUE ~ .
+    ))
+  )
+
+oc_tmp = otg$cu %>%
+  filter(`Channel Unit Type` == "Riffle" & is.na(`Sand/Fines <2mm (%)`)) %>%
+  rowwise() %>%
+  mutate(`Sand/Fines <2mm (%)` = sum(c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) > 0 & c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) <= 2),
+         `Gravel 2-64mm (%)` = sum(c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) > 2 & c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) <= 64),
+         `Cobble 64-256mm (%)` = sum(c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) > 64 & c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) <= 256),
+         `Boulder >256mm (%)` = sum(c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) > 256)) %>%
+  adorn_percentages(col = c(`Sand/Fines <2mm (%)`:`Boulder >256mm (%)`)) %>%
+  mutate(`Ocular Sum (%)` = sum(c_across(`Sand/Fines <2mm (%)`:`Boulder >256mm (%)`))) %>%
+  mutate_at(vars(`Sand/Fines <2mm (%)`:`Ocular Sum (%)`),
+            .funs = funs(. * 100))
+
+cu_tmp = anti_join(otg$cu,
+                   oc_tmp,
+                   by = c("path_nm",
+                          "GlobalID",
+                          "Channel Unit Number")) %>%
+  bind_rows(oc_tmp)
+otg$cu = cu_tmp
+
+# remaining
+# 1. fill in missing ocular estimate
+#    - first use riffle pebble counts where available, then use mutate_at & replace_na as above
+# 3. fill in all remaining missing values using drone imagery?
 
 # save results
 saveRDS(otg,

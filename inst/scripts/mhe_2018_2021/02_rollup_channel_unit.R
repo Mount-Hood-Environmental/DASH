@@ -209,39 +209,35 @@ write_rds(otg_cu_imp,
                  otg_path,
                  "prepped/dash_18to21_cu_imputed.rds"))
 
-####################
-# END 3/23/2022
-####################
-
-# START HERE
-
 #-------------------------
 # REMAINING ERRORS
 #-------------------------
 
 # The following errors still need to be addressed, largely in the 2019/2020 data
 
-# 1. Missing fish cover - overhanging_percent:total_no_cover_percent
-# 2. Missing ocular estimates - sand_fines_2mm_percent:boulder_256mm_percent
+
+# 1. Missing ocular estimates - sand_fines_2mm_percent:boulder_256mm_percent
 #       - Does it make sense to use information from pebble counts for riffles (where available)
-# 3. Missing SSC widths: width_1_m:width_5_m
-# 4. Non-SSCs that have widths
-# 5. Missing maximum and thalweg exit depths
+# 2. Missing SSC widths: width_1_m:width_5_m
+
+####################
+# END 3/23/2022
+####################
 
 #######################################
 # FISH COVER: overhanging_percent:total_no_cover_percent
-cover_imp = otg_cu_imp %>%
+miss_cover = otg_cu_imp %>%
   select(path_nm,
+         global_id,
          channel_segment_number,
          channel_unit_number,
          channel_unit_type,
          overhanging_percent:total_no_cover_percent) %>%
-  # assign each CU as mainstem or side_channel
   mutate(segment_type = ifelse(channel_segment_number == "01",
                                "mainstem",
                                "side_channel")) %>%
   select(-channel_segment_number) %>%
-  mutate(impute_obs = case_when(
+  mutate(miss_obs = case_when(
     is.na(overhanging_percent) ~ "1",
     is.na(aquatic_vegetation_percent) ~ "1",
     is.na(woody_debris_percent) ~ "1",
@@ -249,13 +245,36 @@ cover_imp = otg_cu_imp %>%
     is.na(total_no_cover_percent) ~ "1",
     TRUE ~ "0") %>%
       as.factor()
-    ) %>%
-  filter(impute_obs == 1)
+    )
 
-write_csv(cover_imp,
-          paste0(nas_prefix,
-                 otg_path,
-                 "prepped/missing_cover.csv"))
+# View records w/ missing values
+miss_cover %>%
+  filter(miss_obs == 1)
+
+# write records with missing values
+miss_cover %>%
+  filter(miss_obs == 1) %>%
+  write_csv(paste0(nas_prefix,
+                   otg_path,
+                   "prepped/missing_cover.csv"))
+
+# impute NAs, using defaults
+miss_cover = impute_missing_values(miss_cover,
+                                   col_nm_vec = c("path_nm",
+                                                  "channel_unit_type",
+                                                  "overhanging_percent",
+                                                  "aquatic vegetation percent",
+                                                  "woody debris percent",
+                                                  "artificial percent",
+                                                  "total_no_cover_percent",
+                                                  "segment_type"),
+                                   my_seed = 7,
+                                   ntree = 1000,
+                                   nk = 4)
+
+# values after impute
+miss_cover %>%
+  filter(miss_obs == 1)
 
 #######################################
 # OCULAR: sand_fines_2mm_percent:boulder_256_percent
@@ -313,31 +332,6 @@ write_csv(sc_width_imp,
           paste0(nas_prefix,
                  otg_path,
                  "prepped/missing_side_channel_widths.csv"))
-
-#######################################
-# NON-SSC W WIDTHS: width_1_m:width_5_m
-non_sc_w_widths = otg_cu_imp %>%
-  select(path_nm,
-         channel_segment_number,
-         channel_unit_number,
-         channel_unit_type,
-         width_1_m:width_5_m) %>%
-  mutate(segment_type = ifelse(channel_segment_number == "01",
-                               "mainstem",
-                               "side_channel")) %>%
-  select(-channel_segment_number) %>%
-  filter(!channel_unit_type == "SSC") %>%
-  mutate(error = case_when(
-    !is.na(width_1_m) ~ "1",
-    TRUE ~ "0") %>%
-      as.factor()
-  ) %>%
-  filter(error == 1)
-
-write_csv(non_sc_w_widths,
-          paste0(nas_prefix,
-                 otg_path,
-                 "prepped/non_ssc_w_widths.csv"))
 
 #######################################
 # maximum_depth_m, thalweg_exit_depth_m
