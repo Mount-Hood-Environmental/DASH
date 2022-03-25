@@ -433,7 +433,7 @@ otg$cu %<>%
     TRUE ~ `Thalweg Exit Depth (m)`))
 
 # 16 SSCs with missing widths
-tmp = otg$cu %>% # REPLACE THIS WHEN DONE
+otg$cu %<>%
   #----
   mutate(`Width 1 (m)` = case_when(
     path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ 0.83,
@@ -600,51 +600,51 @@ tmp = otg$cu %>% # REPLACE THIS WHEN DONE
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.9,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.9,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.79,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.79,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 1.17,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 14 ~ 1.17,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.86,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.86,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.94,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.94,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.03,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.03,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 0.84,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ 0.84,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.06,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.06,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.04,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.04,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.11,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.11,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.32,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.32,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.90,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.90,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.06,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.06,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.97,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.97,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 0.8,
+    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 53 ~ 0.8,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
@@ -664,495 +664,29 @@ tmp = otg$cu %>% # REPLACE THIS WHEN DONE
     TRUE ~ `Width 5 (m)`)) %>%
   # also found this error while filling in missing SSC widths; channel unit was mis-classified as SSC
   mutate(`Channel Segment Number` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ 1,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ 1L,
     TRUE ~ `Channel Segment Number`)) %>%
   mutate(`Channel Unit Type` = case_when(
     path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ "Run",
-    TRUE ~ `Channel Unit Type`)) %>%
+    TRUE ~ `Channel Unit Type`))
 
-# 37 records with missing ocular estimates
-tmp = otg$cu %>% # REPLACE THIS WHEN DONE
-  #----
+# 1 record with missing ocular estimates
+otg$cu %<>%
   mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 318 ~ NA,
+    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 30,
     TRUE ~ `Sand/Fines <2mm (%)`)) %>%
   mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 318 ~ NA,
+    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 40,
     TRUE ~ `Gravel 2-64mm (%)`)) %>%
   mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 318 ~ NA,
+    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 20,
     TRUE ~ `Cobble 64-256mm (%)`)) %>%
   mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 318 ~ NA,
+    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 10,
     TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 240 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 240 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 240 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 240 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 22 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 22 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 22 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 22 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 23 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 23 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 23 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 23 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 94 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 94 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 94 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 94 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 161 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 161 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 161 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 161 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 181 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 181 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 181 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 181 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 265 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 265 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 265 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 265 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 35 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 35 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 35 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 35 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Kenney1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 37 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Kenney1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 37 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Kenney1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 37 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Kenney1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 37 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 13 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 111 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 111 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 111 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 111 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 105 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 105 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 105 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 105 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 86 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 86 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 86 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 86 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 41 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 41 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 41 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 41 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 45 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 45 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 45 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 45 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 69 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 69 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 69 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 69 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 75 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 75 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 75 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "LowerLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 75 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 67 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 67 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 67 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 67 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 107 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 107 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 107 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 107 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 142 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 142 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 142 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 142 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 189 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 189 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 189 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 189 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 90 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 90 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 90 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "BigSprings1_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 90 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 79 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 79 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 79 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 79 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 87 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 48 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 48 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 48 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 48 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Canyon_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 158 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 158 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 158 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 158 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 183 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 183 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 183 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 183 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`)) %>%
-  #----
-  mutate(`Sand/Fines <2mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 85 ~ NA,
-    TRUE ~ `Sand/Fines <2mm (%)`)) %>%
-  mutate(`Gravel 2-64mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 85 ~ NA,
-    TRUE ~ `Gravel 2-64mm (%)`)) %>%
-  mutate(`Cobble 64-256mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 85 ~ NA,
-    TRUE ~ `Cobble 64-256mm (%)`)) %>%
-  mutate(`Boulder >256mm (%)` = case_when(
-    path_nm == "Grouse_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 85 ~ NA,
-    TRUE ~ `Boulder >256mm (%)`))
+  mutate(`Ocular Sum (%)` = case_when(
+    path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 100,
+    TRUE ~ `Ocular Sum (%)`))
 
 # save results
 saveRDS(otg,
