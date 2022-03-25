@@ -436,260 +436,239 @@ otg$cu %<>%
 tmp = otg$cu %>% # REPLACE THIS WHEN DONE
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ NA,
+    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ 0.83,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ NA,
+    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ 1.16,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ NA,
+    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ 1.58,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ NA,
+    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ 1.46,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ NA,
+    path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ 2.76,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ NA,
+    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ 0.60,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ NA,
+    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ 0.65,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ NA,
+    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ 0.63,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ NA,
+    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ 0.63,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ NA,
+    path_nm == "Bohannon1_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 72 ~ 0.79,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ 0.60,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ 0.90,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ 1.42,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ 1.31,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 121 ~ 1.49,
+    TRUE ~ `Width 5 (m)`)) %>%
+  #----
+  mutate(`Width 5 (m)` = case_when(
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 126 ~ 2.34,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 126 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ 0.79,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 126 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ 0.93,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 126 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ 0.96,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 126 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ 1.02,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 126 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ 1.15,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ 1.40,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ 0.82,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ 1.36,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ 2,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 146 ~ NA,
+    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ 1.92,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
+    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ 1.00,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
+    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ 0.91,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
+    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ 0.88,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
+    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ 0.88,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "Hawley_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 166 ~ NA,
+    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ 0.74,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ 0.85,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ 1.08,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ 0.87,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ 0.93,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "Kenney2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 168 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ 0.71,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ 3.21,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ 0.59,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ 6.77,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ 3.62,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ 2.34,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ 2.55,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ 0.82,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ 2.89,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ 2.27,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 170 ~ NA,
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ 3.36,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ NA,
+    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ 2.76,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ NA,
+    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ 2.78,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ NA,
+    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ 2.34,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ NA,
+    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ 2.88,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 303 ~ NA,
+    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ 2.95,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.9,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.79,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 1.17,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.86,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 310 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ 0.94,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.03,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 0.84,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.06,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.04,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "UpperLemhi2_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 54 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ 1.11,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.32,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.90,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.06,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 1.97,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 14 ~ NA,
+    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ 0.8,
     TRUE ~ `Width 5 (m)`)) %>%
   #----
   mutate(`Width 1 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
+    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ 0.80,
     TRUE ~ `Width 1 (m)`)) %>%
   mutate(`Width 2 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
+    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ 1.54,
     TRUE ~ `Width 2 (m)`)) %>%
   mutate(`Width 3 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
+    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ 0.64,
     TRUE ~ `Width 3 (m)`)) %>%
   mutate(`Width 4 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
+    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ 0.73,
     TRUE ~ `Width 4 (m)`)) %>%
   mutate(`Width 5 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 15 ~ NA,
+    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ 0.87,
     TRUE ~ `Width 5 (m)`)) %>%
-  #----
-  mutate(`Width 1 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Width 1 (m)`)) %>%
-  mutate(`Width 2 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Width 2 (m)`)) %>%
-  mutate(`Width 3 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Width 3 (m)`)) %>%
-  mutate(`Width 4 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Width 4 (m)`)) %>%
-  mutate(`Width 5 (m)` = case_when(
-    path_nm == "UpperLemhi3_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 53 ~ NA,
-    TRUE ~ `Width 5 (m)`)) %>%
-  #----
-  mutate(`Width 1 (m)` = case_when(
-    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ NA,
-    TRUE ~ `Width 1 (m)`)) %>%
-  mutate(`Width 2 (m)` = case_when(
-    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ NA,
-    TRUE ~ `Width 2 (m)`)) %>%
-  mutate(`Width 3 (m)` = case_when(
-    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ NA,
-    TRUE ~ `Width 3 (m)`)) %>%
-  mutate(`Width 4 (m)` = case_when(
-    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ NA,
-    TRUE ~ `Width 4 (m)`)) %>%
-  mutate(`Width 5 (m)` = case_when(
-    path_nm == "Summit_Survey123_2020/CU_1.csv" & `Channel Unit Number` == 18 ~ NA,
-    TRUE ~ `Width 5 (m)`))
+  # also found this error while filling in missing SSC widths; channel unit was mis-classified as SSC
+  mutate(`Channel Segment Number` = case_when(
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ 1,
+    TRUE ~ `Channel Segment Number`)) %>%
+  mutate(`Channel Unit Type` = case_when(
+    path_nm == "LittleSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 57 ~ "Run",
+    TRUE ~ `Channel Unit Type`)) %>%
 
 # 37 records with missing ocular estimates
 tmp = otg$cu %>% # REPLACE THIS WHEN DONE
