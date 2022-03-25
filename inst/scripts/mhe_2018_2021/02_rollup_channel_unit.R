@@ -258,24 +258,6 @@ miss_cover %>%
                    otg_path,
                    "prepped/missing_cover.csv"))
 
-# impute NAs, using defaults
-miss_cover = impute_missing_values(miss_cover,
-                                   col_nm_vec = c("path_nm",
-                                                  "channel_unit_type",
-                                                  "overhanging_percent",
-                                                  "aquatic vegetation percent",
-                                                  "woody debris percent",
-                                                  "artificial percent",
-                                                  "total_no_cover_percent",
-                                                  "segment_type"),
-                                   my_seed = 7,
-                                   ntree = 1000,
-                                   nk = 4)
-
-# values after impute
-miss_cover %>%
-  filter(miss_obs == 1)
-
 #######################################
 # OCULAR: sand_fines_2mm_percent:boulder_256_percent
 ocular_imp = otg_cu_imp %>%
