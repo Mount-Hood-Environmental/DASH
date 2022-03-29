@@ -1,11 +1,10 @@
-# Authors: Kevin See
+# Authors: Mike Ackerman and Kevin See
 #
-# Purpose: A script to join OTG data to
-# spatial centerlines, making the OTG channel
-# unit data spatial
+# Purpose: A script to join the OTG data to the spatial
+# centerlines, making the OTG channel unit data spatial.
 #
-# Created: December 8, 2020
-# Last Modified: July 20, 2021
+# Initially created: December 8, 2020
+#   Modified: March 29, 2022
 #
 # Notes:
 
@@ -15,40 +14,42 @@ rm(list = ls())
 #-----------------------------
 # load necessary libraries
 #-----------------------------
-library(dplyr)
-library(purrr)
+library(tidyverse)
+library(magrittr)
 library(stringr)
-library(janitor)
-library(sf)
-#library(DASH)
-devtools::load_all()
+library(rlang)
+library(purrr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
 #-------------------------
-if(.Platform$OS.type != 'unix') {
-  nas_prefix = "S:"
-} else if(.Platform$OS.type == 'unix') {
-  nas_prefix = "~/../../Volumes/ABS"
-}
+if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
+# need additional statements if someone has an alternative OS.type
 
 #-------------------------
 # read in centerlines
 #-------------------------
 cl_path = paste0(nas_prefix,
-                 "/data/habitat/DASH/centerlines/")
+                 "Public Data/data/habitat/DASH/centerlines/")
 
 col_nms = c("path_nm",
             "id",
-            "year",
             "site_name",
+            "year",
             "cu_num",
             "geometry")
+
 cl_list = list.files(path = cl_path,
                      pattern = "centerlines.shp$",
-                     recursive = T) %>%
+                     recursive = TRUE) %>%
   as.list() %>%
   rlang::set_names(nm = function(x) str_remove(x, "/centerlines.shp$")) %>%
+  map(.f = function(x) {
+    paste(cl_path, x, sep = "/")
+  })
+
+
+
   map(.f = function(x) {
     paste(cl_path, x, sep = "/")
   }) %>%
