@@ -19,6 +19,7 @@ library(magrittr)
 library(stringr)
 library(rlang)
 library(purrr)
+library(sf)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -30,16 +31,10 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # read in centerlines
 #-------------------------
 cl_path = paste0(nas_prefix,
-                 "Public Data/data/habitat/DASH/centerlines/")
+                 "Public Data/data/habitat/DASH/centerlines")
 
-col_nms = c("path_nm",
-            "id",
-            "site_name",
-            "year",
-            "cu_num",
-            "geometry")
-
-cl_list = list.files(path = cl_path,
+# get path name to all centerlines.shp files
+cl_files = list.files(path = cl_path,
                      pattern = "centerlines.shp$",
                      recursive = TRUE) %>%
   as.list() %>%
@@ -48,11 +43,15 @@ cl_list = list.files(path = cl_path,
     paste(cl_path, x, sep = "/")
   })
 
+# the columns we're interested in from the centerlines.shp files
+col_nms = c("path_nm",
+            "site_name",
+            "year",
+            "cu_num",
+            "geometry")
 
-
-  map(.f = function(x) {
-    paste(cl_path, x, sep = "/")
-  }) %>%
+# read in all cl_files
+cl_list = cl_files %>%
   map(.f = function(x) {
     read_sf(x) %>%
       dplyr::mutate(path_nm = stringr::str_remove(x, cl_path)) %>%
@@ -67,43 +66,44 @@ cl_list = list.files(path = cl_path,
       }
     }
     x %>%
-      select(any_of(col_nms)) %>%
-      mutate(across(id,
-                    as.numeric))
+      select(any_of(col_nms))
   })
 
+# merge cl_list into a single sf object
 cl_sf = map_df(cl_list,
-                .f = identity)
-
-# cl_sf2 = do.call(rbind, cl_list)
-
-cl_sf = cl_sf %>%
-  # filter out centerlines in "misc" folders
-  filter(str_detect(path_nm, "misc", negate = T)) %>%
+                .f = identity) %>%
+  # add an object_id column
   mutate(object_id = 1:n()) %>%
   select(object_id,
          path_nm,
          everything())
 
-rm(cl_list, col_nms)
+# a little cleaning
+rm(cl_files, cl_list, col_nms)
 
-# look for duplicated channel units
+# any duplicate channel units within the centerlines
 dup_cus = cl_sf %>%
-  filter(!grepl('misc', path_nm)) %>%
-  unite(cu_id, site_name, year, cu_num, remove = F) %>%
+  unite(col = cu_id,
+        site_name,
+        year,
+        cu_num,
+        remove = F) %>%
   filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
-  arrange(cu_id) %>%
   st_drop_geometry() %>%
-  pull(cu_id) %>%
-  unique()
-length(dup_cus)
-dup_cus
+  pull(cu_id)
+
+dup_cus # no duplicate channel units (anymore)
 
 #-------------------------------------
-# read in DASH collector pts
+# read in DASH Field Maps
 #-------------------------------------
 cu_points_path = paste0(nas_prefix,
-                        "/data/habitat/DASH/channel_units/compiled")
+                        "Public Data/data/habitat/DASH/channel_units/compiled")
+
+### START HERE: I need to reformat the 18, 19, and 20 CU points data to match the 2021 format
+
+cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points_18.shp")) %>%
+  rbind(st_read(paste0(cu_points_path, "/dash_cu_points_1920.shp"))) %>%
 
 cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points_1920.shp")) %>%
   rbind(st_read(paste0(cu_points_path, "/dash_cu_points_18.shp"))) %>%
