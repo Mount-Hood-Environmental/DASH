@@ -100,14 +100,10 @@ dup_cus # no duplicate channel units (anymore)
 cu_points_path = paste0(nas_prefix,
                         "Public Data/data/habitat/DASH/channel_units/compiled")
 
-### START HERE: I need to reformat the 18, 19, and 20 CU points data to match the 2021 format
+# read in channel unit points from 2018 - 2021
+cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points.shp"))
 
-cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points_18.shp")) %>%
-  rbind(st_read(paste0(cu_points_path, "/dash_cu_points_1920.shp"))) %>%
-
-cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points_1920.shp")) %>%
-  rbind(st_read(paste0(cu_points_path, "/dash_cu_points_18.shp"))) %>%
-  rename(site_name = site_nm)
+# START HERE
 
 # any channel units in multiple habitat reaches
 cu_hr_mismatch = cu_pts %>%
