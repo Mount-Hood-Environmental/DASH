@@ -16,19 +16,18 @@
 
 qc_centerline <- function(cl_sf = NULL,
                           data_id = "object_id",
-                          cols_to_check_nas = c("CU_Number",
-                                                "Site_ID",
-                                                "StreamName",
-                                                "CU_Type",
-                                                "Seg_Number")) {
+                          cols_to_check_nas = c("site_name",
+                                                "strm_nm",
+                                                "year",
+                                                "seg_num",
+                                                "cu_num",
+                                                "cu_type",
+                                                "hab_rch")) {
 
   stopifnot(!is.null(cl_sf))
 
   # Starting message
   cat("Starting QC on  centerline data. \n")
-
-  # cl_sf %>%
-  #   rename(GlobalID = file_row_id)
 
   # Initiate qc_tmp
   qc_tmp = qc_tbl(data_id)
@@ -40,17 +39,6 @@ qc_centerline <- function(cl_sf = NULL,
     dplyr::as_tibble() %>%
     check_na(cols_to_check_nas = cols_to_check_nas,
              data_id = data_id)
-    # dplyr::mutate(line_num = 1:n()) %>%
-    # dplyr::select(line_num, any_of(cols_to_check_nas)) %>%
-    # dplyr::filter_at(., vars(cols_to_check_nas), any_vars(is.na(.))) %>%
-    # dplyr::mutate(across(any_of(cols_to_check_nas),
-    #                      as.character)) %>%
-    # tidyr::pivot_longer(cols = any_of(cols_to_check_nas),
-    #                     names_to = "col_name",
-    #                     values_to = "value") %>%
-    # dplyr::filter(is.na(value)) %>%
-    # dplyr::mutate(error_message = paste0("Column ", col_name, " is <blank> or NA on line ", line_num, ".")) %>%
-    # dplyr::select(line_num, error_message)
 
   if(!is.null(tmp)) qc_tmp = rbind(qc_tmp, tmp)
 
@@ -59,10 +47,11 @@ qc_centerline <- function(cl_sf = NULL,
   cu_0 = cl_sf %>%
     sf::st_drop_geometry() %>%
     dplyr::as_tibble() %>%
-    # dplyr::select(line_num, CU_Number) %>%
-    filter(CU_Number == 0) %>%
+    filter(cu_num == 0) %>%
     dplyr::mutate(error_message = "Channel unit is labeled 0.") %>%
-    dplyr::select(path_nm, any_of(data_id), error_message)
+    dplyr::select(path_nm,
+                  any_of(data_id),
+                  error_message)
 
   if( nrow(cu_0) > 0 ) {
     cat( nrow(cu_0), "channel units labeled 0. Adding to QC results. \n")
@@ -74,17 +63,18 @@ qc_centerline <- function(cl_sf = NULL,
   cu_dup = cl_sf %>%
     sf::st_drop_geometry() %>%
     dplyr::as_tibble() %>%
-    dplyr::filter(CU_Number != 0) %>%
-    dplyr::group_by(Site_ID, Seg_Number, CU_Number) %>%
+    dplyr::filter(cu_num != 0) %>%
+    dplyr::group_by(site_name, year, seg_num, cu_num) %>%
     dplyr::summarise(n_records = n(),
-              .groups = "drop") %>%
+                     .groups = "drop") %>%
     dplyr::filter(n_records > 1) %>%
     dplyr::left_join(cl_sf %>%
-                sf::st_drop_geometry() %>%
-                dplyr::as_tibble(),
-                by = c("Site_ID", "Seg_Number", 'CU_Number')) %>%
-    dplyr::mutate(error_message = paste0(Site_ID, ", segment ", Seg_Number, ", CU ", CU_Number, " has more than one record.")) %>%
-    dplyr::select(path_nm, any_of(data_id),
+                       sf::st_drop_geometry() %>%
+                       dplyr::as_tibble(),
+                     by = c("site_name", "year", "seg_num", "cu_num")) %>%
+    dplyr::mutate(error_message = paste0(site_name, " ", year, ", segment ", seg_num, ", CU ", cu_num, " has more than one record.")) %>%
+    dplyr::select(path_nm,
+                  any_of(data_id),
                   error_message)
 
   if( nrow(cu_dup) > 0 ) {
