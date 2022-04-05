@@ -45,7 +45,7 @@ for (yw in yr_wtsd) {
 
   # set path for yr_wtsd
   path = paste0(nas_prefix,
-                "Public Data/data/habitat/DASH/OTG/",
+                "main/data/habitat/DASH/OTG/",
                 yw,
                 "/1_formatted_csvs/")
 
@@ -76,7 +76,7 @@ for (yw in yr_wtsd) {
   # save the otg_raw list of dfs, and the initial QC flags
   save(otg_raw,
        file = paste0(nas_prefix,
-                     "Public Data/data/habitat/DASH/OTG/",
+                     "main/data/habitat/DASH/OTG/",
                      yw,
                      "/1_formatted_csvs/otg_raw.rda"))
 
@@ -95,7 +95,7 @@ for (yw in yr_wtsd) {
 
   # set path for yr_wtsd, except QC'd data
   path = paste0(nas_prefix,
-                "Public Data/data/habitat/DASH/OTG/",
+                "main/data/habitat/DASH/OTG/",
                 yw,
                 "/2_qcd_csvs/")
 
@@ -162,7 +162,7 @@ for (yw in yr_wtsd) {
 
   # set path for yr_wtsd, except QC'd data
   path = paste0(nas_prefix,
-                "Public Data/data/habitat/DASH/OTG/",
+                "main/data/habitat/DASH/OTG/",
                 yw,
                 "/2_qcd_csvs/")
 
@@ -195,7 +195,7 @@ for (yw in yr_wtsd) {
   # save as .Rdata object
   save(otg_qcd,
        file = paste0(nas_prefix,
-                     "Public Data/data/habitat/DASH/OTG/",
+                     "main/data/habitat/DASH/OTG/",
                      yw,
                      "/prepped/otg_qcd.rda"))
 

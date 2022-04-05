@@ -26,7 +26,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 #-------------------------
 # load all OTG data
 #-------------------------
-otg_path = "Public Data/data/habitat/DASH/OTG/"
+otg_path = "main/data/habitat/DASH/OTG/"
 otg = readRDS(file = paste0(nas_prefix,
                             otg_path,
                             "prepped/otg_all_18to21.rds"))

@@ -28,9 +28,9 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # load QC'd OTG data from 2018 & 2021
 #-------------------------
 path_2018 = paste0(nas_prefix,
-                   "Public Data/data/habitat/DASH/OTG/2018")
+                   "main/data/habitat/DASH/OTG/2018")
 path_2021 = paste0(nas_prefix,
-                   "Public Data/data/habitat/DASH/OTG/2021")
+                   "main/data/habitat/DASH/OTG/2021")
 
 # list of otg_qcd.rda files in path_2019 and path_2020
 otg_18_paths = list.files(path = path_2018,
@@ -100,7 +100,7 @@ for(i in 1:length(otg_list)) {
 # load QC'd OTG data from 2019 & 2020
 #-------------------------
 otg_1920 = readRDS(file = paste0(nas_prefix,
-                                 "Public Data/data/habitat/DASH/OTG/prepped/otg_qcd_1920_new_format.rds"))
+                                 "main/data/habitat/DASH/OTG/prepped/otg_qcd_1920_new_format.rds"))
 
 #-------------------------
 # bind 18/21 & 19/20 OTG datasets
@@ -119,6 +119,6 @@ for(i in 1:length(otg_all_list)) {
 # save results
 saveRDS(otg_all,
         file = paste0(nas_prefix,
-                      "Public Data/data/habitat/DASH/OTG/prepped/otg_all_18to21.rds"))
+                      "main/data/habitat/DASH/OTG/prepped/otg_all_18to21.rds"))
 
 # END SCRIPT
