@@ -30,7 +30,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # read in DASH Field Maps channel unit points data
 #-------------------------------------
 cu_points_path = paste0(nas_prefix,
-                        "Public Data/data/habitat/DASH/channel_units/compiled")
+                        "main/data/habitat/DASH/channel_units/compiled")
 
 # read in and slightly reformat 2018 - 2020 channel unit points
 cu_pts_1820 = st_read(paste0(cu_points_path, "/dash_cu_points_18.shp")) %>%
@@ -47,6 +47,7 @@ cu_pts_1820 = st_read(paste0(cu_points_path, "/dash_cu_points_18.shp")) %>%
          stream_name,
          site_name,
          fish_site,
+         seg_num,
          cu_num,
          cu_type,
          hab_rch,
@@ -69,6 +70,7 @@ cu_pts_21 = st_read(paste0(cu_points_path, "/dash_cu_points_21.shp")) %>%
          stream_name,
          site_name,
          fish_site,
+         seg_num,
          cu_num,
          cu_type,
          hab_rch,
@@ -81,6 +83,4 @@ cu_pts = rbind(cu_pts_1820, cu_pts_21) %>%
   st_as_sf()
 
 # and write back out to NAS
-st_write(cu_pts, paste0(cu_points_path, "/dash_cu_points.shp"))
-
-
+st_write(cu_pts, paste0(cu_points_path, "/dash_cu_points.shp"), append = F)
