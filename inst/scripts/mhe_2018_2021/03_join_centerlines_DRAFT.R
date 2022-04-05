@@ -31,7 +31,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # read in centerlines
 #-------------------------
 cl_path = paste0(nas_prefix,
-                 "Public Data/data/habitat/DASH/centerlines")
+                 "main/data/habitat/DASH/centerlines")
 
 # get path name to all centerlines.shp files
 cl_files = list.files(path = cl_path,
@@ -81,6 +81,13 @@ cl_sf = map_df(cl_list,
 # a little cleaning
 rm(cl_files, cl_list, col_nms)
 
+# plot centerlines
+cl_p = cl_sf %>%
+  ggplot() +
+  geom_sf() +
+  theme_classic()
+cl_p
+
 # any duplicate channel units within the centerlines
 dup_cus = cl_sf %>%
   unite(col = cu_id,
@@ -98,96 +105,75 @@ dup_cus # no duplicate channel units (anymore)
 # read in DASH Field Maps
 #-------------------------------------
 cu_points_path = paste0(nas_prefix,
-                        "Public Data/data/habitat/DASH/channel_units/compiled")
+                        "main/data/habitat/DASH/channel_units/compiled")
 
 # read in channel unit points from 2018 - 2021
 cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points.shp"))
 
-# START HERE
-
-# any channel units in multiple habitat reaches
+# are there any channel units in multiple habitat reaches?
 cu_hr_mismatch = cu_pts %>%
   st_drop_geometry() %>%
   as_tibble() %>%
-  select(site_name,
+  select(strm_nm,
+         site_nm,
          year,
-         strm_nm,
-         seg_num,
-         hab_rch,
          cu_num,
-         cu_type) %>%
+         cu_type,
+         hab_rch) %>%
   distinct() %>%
-  filter(!is.na(seg_num)) %>%
-  unite(cu_id, site_name, year, seg_num, cu_num, remove = F) %>%
+  unite(cu_id,
+        strm_nm, site_nm, year, cu_num,
+        remove = F) %>%
   filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
   pull(cu_id) %>%
   unique()
-length(cu_hr_mismatch)
+length(cu_hr_mismatch) # these are fine, not an issue
 
-cu_pts %>%
-  st_drop_geometry() %>%
-  as_tibble() %>%
-  unite(cu_id, site_name, year, seg_num, cu_num, remove = F) %>%
-  filter(cu_id %in% cu_hr_mismatch) %>%
-  select(cu_id, cu_type, hab_rch, notes)
+# which sites are in collector points, but not in centerlines?
+unique(cu_pts$site_nm)[! unique(cu_pts$site_nm) %in% unique(cl_sf$site_name)]
+
+# which sites are in centerlines, but not collector points?
+unique(cl_sf$site_name[! unique(cl_sf$site_name) %in% unique(cu_pts$site_nm)])
 
 # add some information from collector points to centerlines spatial file
-cnt_pts_df = cu_pts %>%
+cu_pts_df = cu_pts %>%
   st_drop_geometry() %>%
   as_tibble() %>%
-  select(site_name,
+  select(strm_nm,
+         site_nm,
          year,
-         strm_nm,
          seg_num,
-         hab_rch,
          cu_num,
-         cu_type) %>%
+         cu_type,
+         hab_rch,
+         fish_st,
+         grts_id) %>%
   distinct()
 
-# which sites are in collector points, but not centerlines?
-unique(cnt_pts_df$site_name)[! unique(cnt_pts_df$site_name) %in% unique(cl_sf$site_name)]
-# which sites are in centerlines, but not collector points?
-unique(cl_sf$site_name)[! unique(cl_sf$site_name) %in% unique(cnt_pts_df$site_name)]
-
-# join data to centerlines
+# join cu_pts to centerlines
 cl_sf %<>%
-  left_join(cnt_pts_df,
-            by = c("year", "site_name", "cu_num")) %>%
-  select(-id) %>%
-  relocate(geometry, .after = last_col())
-
+  left_join(cu_pts_df,
+            by = c("year",
+                   "site_name" = "site_nm",
+                   "cu_num")) %>%
+  relocate(geometry,
+           .after = last_col())
 
 #-------------------------------------
 # save raw compiled centerlines
+#-------------------------------------
 st_write(cl_sf,
          dsn = paste0(cl_path, "/compiled/centerlines_raw.gpkg"),
          delete_dsn = T)
 
 #-------------------------------------
+# QC centerlines
 #-------------------------------------
-# need to revamp the code below
-#-------------------------------------
-#-------------------------------------
+cl_qc = qc_centerline(cl_sf) # currently no errors found
 
-#-------------------------------------
-# do a little QC
-#-------------------------------------
-cl_qc = qc_centerline(cl_sf)
 
-# save the file as a csv
-cl_qc %>%
-  write_csv(paste0(cl_path,
-                 "/compiled/QC_centerlines_",
-                 format(Sys.Date(), format = "%Y%m%d"),
-                 ".csv"))
 
-# examine some of the channel units with issues
-cl_qc %>%
-  arrange(path_nm, object_id,
-          error_message) %>%
-  left_join(cl_sf %>%
-              st_drop_geometry())
-
+### START HERE
 # clean up some site names to match centerline file
 cu_df = cu_df %>%
   rename(Site_ID = site_name) %>%
