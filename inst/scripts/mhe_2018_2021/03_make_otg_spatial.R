@@ -98,7 +98,6 @@ dup_cl_cus = cl_sf %>%
   filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
   st_drop_geometry() %>%
   pull(cu_id)
-
 dup_cl_cus # no duplicate channel units (anymore)
 
 #-------------------------------------
@@ -167,12 +166,13 @@ cl_sf %<>%
                    "site_name" = "site_nm",
                    "cu_num")) %>%
   relocate(geometry,
-           .after = last_col())
+           .after = last_col()) %>%
+  mutate(cu_num = str_pad(cu_num, 3, pad = "0"),
+         seg_num = str_pad(seg_num, 2, pad = "0"))
 
 #-------------------------------------
 # save raw compiled centerlines
 #-------------------------------------
-
 # as shapefile
 st_write(cl_sf,
          paste0(cl_path,
@@ -188,5 +188,25 @@ st_write(cl_sf,
 # QC centerlines
 #-------------------------------------
 cl_qc = qc_centerline(cl_sf) # currently no errors found
+
+#-------------------------
+# read in otg data
+#-------------------------
+otg = readRDS(file = paste0(nas_prefix,
+                            "main/data/habitat/DASH/OTG/prepped/dash_18to21_cu_imputed.rds"))
+
+#-------------------------
+# join the centerlines to the OTG data
+#-------------------------
+otg %<>%
+  left_join(cl_sf,
+            by = c("site_name",
+                   "channel_segment_number" = "seg_num",
+                   "channel_unit_number" = "cu_num"))
+
+# write spatial otg as geodatabase
+st_write(otg,
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"),
+         delete_dsn = T)
 
 ### END SCRIPT
