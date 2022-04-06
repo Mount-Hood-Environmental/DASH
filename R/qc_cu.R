@@ -259,6 +259,26 @@ qc_cu = function(qc_df = NULL,
     qc_tmp = rbind(qc_tmp, id_chk)
   }
 
+  #####
+  # CHECK 12: Are widths filled in for all SSCs?
+  cat("Make sure widths are filled in for all SSCs. \n")
+
+  ssc_chk = qc_df %>%
+    dplyr::filter(`Channel Unit Type` == "SSC") %>%
+    dplyr::select(path_nm, GlobalID, starts_with("Width")) %>%
+    dplyr::mutate(na_count = rowSums(is.na(.))) %>%
+    dplyr::filter(na_count > 0) %>%
+    dplyr::mutate(error_message = paste0("Missing width for SSC. \n")) %>%
+    dplyr::select(-na_count,
+                  -starts_with("Width"))
+
+  if( nrow(ssc_chk) == 0 ) cat("Widths for SSCs are filled in! \n")
+  if( nrow(ssc_chk) > 0 ) {
+    cat("Widths are missing for ", nrow(ssc_chk), " SSCs. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, ssc_chk)
+
+  }
+
   ###################
   # return qc results
   return(qc_tmp)
