@@ -7,7 +7,7 @@
 qc_centerline(
   cl_sf = NULL,
   data_id = "object_id",
-  cols_to_check_nas = c("CU_Number", "Site_ID", "StreamName", "CU_Type", "Seg_Number")
+  cols_to_check_nas = c("site_name", "year", "seg_num", "cu_num", "cu_type", "hab_rch")
 )
 }
 \arguments{

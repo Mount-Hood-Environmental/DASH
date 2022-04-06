@@ -17,7 +17,6 @@
 qc_centerline <- function(cl_sf = NULL,
                           data_id = "object_id",
                           cols_to_check_nas = c("site_name",
-                                                "strm_nm",
                                                 "year",
                                                 "seg_num",
                                                 "cu_num",
