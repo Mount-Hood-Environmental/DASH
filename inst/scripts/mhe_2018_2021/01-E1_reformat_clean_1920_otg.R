@@ -353,7 +353,7 @@ otg$cu %<>%
   mutate(across(starts_with("Pebble"),
                 ~if_else(. == 1024, 874, as.numeric(.)))) %>%
   # remove channel unit 56 from Lower Lemhi 3
-  filter(GlobalID != "e03205cf-9fac-4a50-afce-c94baf3de5e9")
+  filter(GlobalID != "726fe634-9bd9-400c-8c7d-8de70f57e4e1")
 
 #-------------------------
 # some additional cleaning of 2019/2020 OTG data to match new format

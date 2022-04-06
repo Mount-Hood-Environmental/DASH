@@ -1,3 +1,63 @@
+# Authors: Mike Ackerman
+#
+# Purpose: A script to join the OTG data to the compiled
+# centerlines, making the entire dataset spatial
+#
+# Initially created: April 6, 2022
+#   Last Modified:
+#
+# Notes:
+
+# clear environment
+rm(list = ls())
+
+#-----------------------------
+# load necessary libraries
+#-----------------------------
+library(tidyverse)
+library(magrittr)
+library(sf)
+
+#-------------------------
+# set NAS prefix, depending on operating system
+#-------------------------
+if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
+# need additional statements if someone has an alternative OS.type
+
+#-------------------------
+# read in otg & joined centerlines
+#-------------------------
+otg = readRDS(file = paste0(nas_prefix,
+                            "main/data/habitat/DASH/OTG/prepped/dash_18to21_cu_imputed.rds"))
+
+cl_sf = st_read(paste0(nas_prefix,
+                       "main/data/habitat/DASH/centerlines/compiled/centerlines_all.shp"))
+
+# START HERE
+otg_tmp = otg %>%
+  select(site_name,
+         channel_segment_number,
+         channel_unit_number,
+         channel_unit_type) %>%
+  unite(cu_id,
+        site_name, channel_segment_number, channel_unit_number, channel_unit_type,
+        remove = T)
+
+cl_tmp = cl_sf %>%
+  st_drop_geometry() %>%
+  as_tibble() %>%
+  select(site_name,
+         seg_num,
+         cu_num,
+         cu_type) %>%
+  mutate(seg_num = str_pad(seg_num, 2, pad = "0"),
+         cu_num = str_pad(cu_num, 3, pad = "0")) %>%
+  unite(cu_id,
+        site_name, seg_num, cu_num, cu_type,
+        remove = T)
+
+mismatches = anti_join(otg_tmp, cl_tmp)
+
 
 ### START HERE
 # clean up some site names to match centerline file
