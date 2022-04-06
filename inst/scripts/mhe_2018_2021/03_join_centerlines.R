@@ -1,7 +1,7 @@
 # Authors: Mike Ackerman and Kevin See
 #
-# Purpose: A script to join the OTG data to the spatial
-# centerlines, making the OTG channel unit data spatial.
+# Purpose: A script to join all of the centerlines, while adding
+# information from the channel unit points.
 #
 # Initially created: December 8, 2020
 #   Modified: March 29, 2022
