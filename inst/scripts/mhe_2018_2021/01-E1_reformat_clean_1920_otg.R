@@ -351,7 +351,9 @@ otg$cu %<>%
   )) %>%
   # standardize pebble sizes; replace all 1024 as 874 which is new as of new data collection form
   mutate(across(starts_with("Pebble"),
-                ~if_else(. == 1024, 874, as.numeric(.))))
+                ~if_else(. == 1024, 874, as.numeric(.)))) %>%
+  # remove channel unit 56 from Lower Lemhi 3
+  filter(GlobalID != "e03205cf-9fac-4a50-afce-c94baf3de5e9")
 
 #-------------------------
 # some additional cleaning of 2019/2020 OTG data to match new format
