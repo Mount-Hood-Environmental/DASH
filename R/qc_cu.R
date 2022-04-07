@@ -319,6 +319,32 @@ qc_cu = function(qc_df = NULL,
     qc_tmp = rbind(qc_tmp, nonssc_chk)
   }
 
+  #####
+  # CHECK 15: Are there any non-SSCs with widths filled in?
+  cat("Does each survey have a TOS and BOS defines? \n")
+  tos_bos_chk = qc_df %>%
+    dplyr::select(path_nm, GlobalID, ParentGlobalID, TOS, BOS) %>%
+    dplyr::filter(TOS == T | BOS == T) %>%
+    tidyr::pivot_longer(cols = c(BOS, TOS),
+                        names_to = "location",
+                        values_to = "value") %>%
+    dplyr::filter(value == T) %>%
+    dplyr::group_by(ParentGlobalID) %>%
+    dplyr::mutate(n_true = dplyr::n()) %>%
+    dplyr::filter(n_true != 2) %>%
+    dplyr::mutate(error_message = paste0("Survey ", ParentGlobalID, " within ", path_nm, "appears to have incorrect TOS & BOS.")) %>%
+    dplyr::select(-GlobalID,
+                  -location,
+                  -value,
+                  -n_true) %>%
+    dplyr::rename(GlobalID = ParentGlobalID)
+
+  if( nrow(tos_bos_chk) == 0 ) cat("Each survey appears to have a TOS & BOS! \n")
+  if( nrow(tos_bos_chk) > 0 ) {
+    cat(nrow(bos_tos_chk), "surveys appear to have errant TOS or BOS. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, bos_tos_chk)
+  }
+
   ###################
   # return qc results
   return(qc_tmp)
