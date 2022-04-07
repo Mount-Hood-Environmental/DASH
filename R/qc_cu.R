@@ -301,6 +301,24 @@ qc_cu = function(qc_df = NULL,
 
   }
 
+  #####
+  # CHECK 14: Are there any non-SSCs with widths filled in?
+  cat("Are there any non-SSC with widths filled in, which should not be the case? \n")
+  nonssc_chk = qc_df %>%
+    dplyr::filter(`Channel Unit Type` != "SSC") %>%
+    dplyr::select(path_nm, GlobalID, starts_with("Width")) %>%
+    dplyr::mutate(value_count = rowSums(!is.na(.))) %>%
+    dplyr::filter(value_count > 2) %>%
+    dplyr::mutate(error_message = "A width is filled in for a non-SSC.") %>%
+    dplyr::select(-value_count,
+                  -starts_with("Width"))
+
+  if( nrow(nonssc_chk) == 0 ) cat("Widths for non-SSCs are empty, which is good! \n")
+  if( nrow(nonssc_chk) > 0 ) {
+    cat("Some widths are filled in for ", nrow(nonssc_chk), " non-SSCs. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, nonssc_chk)
+  }
+
   ###################
   # return qc results
   return(qc_tmp)
