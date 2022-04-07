@@ -24,7 +24,6 @@ library(DASH)
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
-
 # set NAS prefix
 if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # need additional statements if someone has an alternative OS.type

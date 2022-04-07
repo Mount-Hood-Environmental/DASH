@@ -3,7 +3,7 @@
 # Purpose: rollup OTG data to channel unit scale
 #
 # Created: March 4, 2022
-# Last Modified: March 23, 2022
+#   Last Modified: March 23, 2022
 #
 # Notes:
 
@@ -17,36 +17,23 @@ library(tidyverse)
 library(magrittr)
 library(DASH)
 
-#-------------------------
-# set NAS prefix, depending on operating system
-#-------------------------
+#-----------------------------
+# set some arguments/parameters
+#-----------------------------
+#set nas prefix
 if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # need additional statements if someone has an alternative OS.type
+
+# path to OTG data on the NAS
+otg_path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/")
 
 #-------------------------
 # load all OTG data
 #-------------------------
-otg_path = "main/data/habitat/DASH/OTG/"
-otg = readRDS(file = paste0(nas_prefix,
-                            otg_path,
+otg = readRDS(file = paste0(otg_path,
                             "prepped/otg_all_18to21.rds"))
-
 # remove the qc_results data frame from otg
 otg$qc_results = NULL
-
-# let's run clean_names on everything before moving on... This is additionally done in otg_to_cu()
-otg$survey %<>%
-  janitor::clean_names()
-otg$cu %<>%
-  janitor::clean_names()
-otg$wood %<>%
-  janitor::clean_names()
-otg$jam %<>%
-  janitor::clean_names()
-otg$undercut %<>%
-  janitor::clean_names()
-otg$discharge %<>%
-  janitor::clean_names()
 
 #-------------------------
 # roll up OTG data to CU scale, no data imputation
@@ -57,24 +44,36 @@ otg_cu = otg_to_cu(survey_df = otg$survey,
                    jam_df = otg$jam,
                    undercut_df = otg$undercut,
                    discharge_df = otg$discharge,
-                   fix_nas = FALSE)
+                   fix_nas = FALSE) # no imputation
 
 # save non-imputed, prepped data
-write_csv(otg_cu,
-          paste0(nas_prefix,
-                 otg_path,
-                 "prepped/dash_18to21_cu_no_impute.csv"))
-
 write_rds(otg_cu,
-          paste0(nas_prefix,
-                 otg_path,
+          paste0(otg_path,
                  "prepped/dash_18to21_cu_no_impute.rds"))
 
 #-------------------------
-# PRIMARY IMPUTE: Explore imputation of variables in wood_df, jam_df, and undercut_df
-# prior to executing in otg_to_cu()
+# roll up OTG data to CU scale, add primary data imputation
 #-------------------------
+otg_cu_imp = otg_to_cu(survey_df = otg$survey,
+                       cu_df = otg$cu,
+                       wood_df = otg$wood,
+                       jam_df = otg$jam,
+                       undercut_df = otg$undercut,
+                       discharge_df = otg$discharge,
+                       fix_nas = TRUE) # impute missing values
 
+# save imputed, prepped data
+write_rds(otg_cu_imp,
+          paste0(nas_prefix,
+                 otg_path,
+                 "prepped/dash_18to21_cu_imputed.rds"))
+
+# END SCRIPT
+
+
+#-------------------------
+# PRIMARY IMPUTE: Explore imputation of variables in wood_df, jam_df, and undercut_df
+#-------------------------
 ################################
 # WOOD: length_m, diameter_m
 wood_imp = otg$wood %>%
@@ -184,29 +183,5 @@ und_imp %>%
 rm(wood_imp,
    und_imp)
 
-#-------------------------
-# roll up OTG data to CU scale, add primary data imputation
-#-------------------------
-otg_cu_imp = otg_to_cu(survey_df = otg$survey,
-                       cu_df = otg$cu,
-                       wood_df = otg$wood,
-                       jam_df = otg$jam,
-                       undercut_df = otg$undercut,
-                       discharge_df = otg$discharge,
-                       fix_nas = TRUE)
-
-#-------------------------
-# write rolled up CU data, with "primary" imputation complete
-#-------------------------
-# save non-imputed, prepped data
-write_csv(otg_cu_imp,
-          paste0(nas_prefix,
-                 otg_path,
-                 "prepped/dash_18to21_cu_imputed.csv"))
-
-write_rds(otg_cu_imp,
-          paste0(nas_prefix,
-                 otg_path,
-                 "prepped/dash_18to21_cu_imputed.rds"))
 
 # END SCRIPT
