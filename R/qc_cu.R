@@ -103,7 +103,29 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 5: Are maximum depth values within an expected range?
+  # CHECK 5: Are maximum and thalweg exit depths filled in? The exception are OCAs, which do not require a thalweg exit depth.
+  dpth_chk = qc_df %>%
+    dplyr::select(path_nm, GlobalID, `Channel Unit Type`, `Maximum Depth (m)`, `Thalweg Exit Depth (m)`) %>%
+    tidyr::pivot_longer(cols = ends_with("(m)"),
+                        names_to = "measurement",
+                        values_to = "value") %>%
+    dplyr::filter(!(measurement == "Thalweg Exit Depth (m)" & `Channel Unit Type` == "OCA")) %>%
+    dplyr::mutate(is_na = is.na(value)) %>%
+    dplyr::filter(is_na == TRUE) %>%
+    dplyr::mutate(error_message = paste0("The ", measurement, "value is missing.")) %>%
+    dplyr::select(-c(`Channel Unit Type`,
+                     measurement,
+                     value,
+                     is_na))
+
+  if( nrow(dpth_chk) == 0 ) cat("Appropriate depths are filled in! \n")
+  if( nrow(dpth_chk) > 0 ) {
+    cat("Depth values are missing for ", nrow(dpth_chk), " channel units. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, dpth_chk)
+  }
+
+  #####
+  # CHECK 6: Are maximum depth values within an expected range?
   cat("Do maximum depth values fall within an expected range btw", md_min, "and", md_max, "? \n")
 
   md_chk = qc_df %>%
@@ -124,7 +146,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 6: Are thalweg exit depth values within an expected range?
+  # CHECK 7: Are thalweg exit depth values within an expected range?
   cat("Do thalweg exit depth values fall within an expected range btw", ted_min, "and", ted_max, "? \n")
 
   ted_chk = qc_df %>%
@@ -150,7 +172,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 7: Do cover column values sum to btw 100 and cov_max?
+  # CHECK 8: Do cover column values sum to btw 100 and cov_max?
   cat("Do all fish cover columns sum btw 100 and", cov_max, "? \n")
 
   cov_chk = qc_df %>%
@@ -169,7 +191,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 8: Do all channel units have ocular estimates and do they sum to 100?
+  # CHECK 9: Do all channel units have ocular estimates and do they sum to 100?
   cat("Do ocular estimates for all channel units exist and sum to 100? \n")
 
   oc_cus = valid_cus
@@ -191,7 +213,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 9: Do riffles with pebble counts have all columns filled?
+  # CHECK 10: Do riffles with pebble counts have all columns filled?
   cat("Do riffles with pebble counts have all values filled and within expected values? \n")
 
   peb_chk = qc_df %>%
@@ -212,7 +234,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 10: Do pebble values fall within an expected range?
+  # CHECK 11: Do pebble values fall within an expected range?
   cat("Do the pebble size values fall within a reasonable range btw", peb_min, "and", peb_max, "? \n")
 
   peb_sz_chk = qc_df %>%
@@ -240,7 +262,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 11: Is there more than one ParentGlobalID for channel units within a survey?
+  # CHECK 12: Is there more than one ParentGlobalID for channel units within a survey?
   # We expect only 1.
   cat("Checking for multiple ParentGlobalIDs. \n")
 
@@ -260,7 +282,7 @@ qc_cu = function(qc_df = NULL,
   }
 
   #####
-  # CHECK 12: Are widths filled in for all SSCs?
+  # CHECK 13: Are widths filled in for all SSCs?
   cat("Make sure widths are filled in for all SSCs. \n")
 
   ssc_chk = qc_df %>%
@@ -268,7 +290,7 @@ qc_cu = function(qc_df = NULL,
     dplyr::select(path_nm, GlobalID, starts_with("Width")) %>%
     dplyr::mutate(na_count = rowSums(is.na(.))) %>%
     dplyr::filter(na_count > 0) %>%
-    dplyr::mutate(error_message = paste0("Missing width for SSC. \n")) %>%
+    dplyr::mutate(error_message = paste0("Missing width for SSC.")) %>%
     dplyr::select(-na_count,
                   -starts_with("Width"))
 
