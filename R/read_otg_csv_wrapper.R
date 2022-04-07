@@ -11,13 +11,13 @@
 #' @inheritParams get_otg_col_specs
 #'
 #' @param otg_type_names an optional character vector that can be used to name each
-#' data frame of `otg_type_list`. If the `otg_type_names` argument is provided, it
-#' MUST be the same length as `otg_type_list`. If the default `otg_type_names = NULL`
-#' is used, data frames will be named using the `otg_type_list` character
+#' data frame of `otg_type`. If the `otg_type_names` argument is provided, it
+#' MUST be the same length as `otg_type`. If the default `otg_type_names = NULL`
+#' is used, data frames will be named using the `otg_type` character
 #' vector (i.e., the .csv file names).
 #'
 #' @export
-#' @return a list of data frames, each containing data from `otg_type_list`
+#' @return a list of data frames, each containing data from `otg_type`
 
 read_otg_csv_wrapper = function(path = ".",
                                 otg_type = c("surveyPoint_0.csv",
@@ -26,11 +26,16 @@ read_otg_csv_wrapper = function(path = ".",
                                              "Jam_3.csv",
                                              "Undercut_4.csv",
                                              "Discharge_5.csv"),
-                                otg_type_names = NULL) {
+                                otg_type_names = c("survey",
+                                                   "cu",
+                                                   "wood",
+                                                   "jam",
+                                                   "undercut",
+                                                   "discharge")) {
 
   # if otg_type_names is NOT NULL, verify it is the same length as otg_type_list
   if(!is.null(otg_type_names)) {
-    chk = identical(length(otg_type_list), length(otg_type_names))
+    chk = identical(length(otg_type), length(otg_type_names))
     if(chk == FALSE) stop("If argument otg_type_names is not NULL, otg_type_list and otg_type_names MUST be of the same length. Stopping execution.")
   }
 
@@ -40,8 +45,8 @@ read_otg_csv_wrapper = function(path = ".",
   # initiate counter
   ctr = 1
 
-  # for loop over otg_type_list
-  for (o in otg_type_list) {
+  # for loop over otg_type
+  for (o in otg_type) {
 
     tmp = read_otg_csv(path = path,
                        otg_type = o)

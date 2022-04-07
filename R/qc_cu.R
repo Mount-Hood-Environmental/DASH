@@ -341,8 +341,8 @@ qc_cu = function(qc_df = NULL,
 
   if( nrow(tos_bos_chk) == 0 ) cat("Each survey appears to have a TOS & BOS! \n")
   if( nrow(tos_bos_chk) > 0 ) {
-    cat(nrow(bos_tos_chk), "surveys appear to have errant TOS or BOS. Adding to QC results. \n")
-    qc_tmp = rbind(qc_tmp, bos_tos_chk)
+    cat(nrow(tos_bos_chk), "surveys appear to have errant TOS or BOS. Adding to QC results. \n")
+    qc_tmp = rbind(qc_tmp, tos_bos_chk)
   }
 
   ###################

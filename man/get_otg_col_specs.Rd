@@ -10,9 +10,7 @@ get_otg_col_specs(
 )
 }
 \arguments{
-\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
-the initiation of the function a character vector of the file names e.g., "surveyPoint_0.csv",
-"CU_1.csv", etc.}
+\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with?}
 }
 \value{
 an object of class \code{col_spec}

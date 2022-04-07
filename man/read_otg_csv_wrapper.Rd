@@ -8,25 +8,23 @@ read_otg_csv_wrapper(
   path = ".",
   otg_type = c("surveyPoint_0.csv", "CU_1.csv", "Wood_2.csv", "Jam_3.csv",
     "Undercut_4.csv", "Discharge_5.csv"),
-  otg_type_names = NULL
+  otg_type_names = c("survey", "cu", "wood", "jam", "undercut", "discharge")
 )
 }
 \arguments{
 \item{path}{A path to the directory containing the folders of interest. \code{path} should only contain
 folders (no files), and each of those folders should only contain files (no folders).}
 
-\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
-the initiation of the function a character vector of the file names e.g., "surveyPoint_0.csv",
-"CU_1.csv", etc.}
+\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with?}
 
 \item{otg_type_names}{an optional character vector that can be used to name each
-data frame of \code{otg_type_list}. If the \code{otg_type_names} argument is provided, it
-MUST be the same length as \code{otg_type_list}. If the default \code{otg_type_names = NULL}
-is used, data frames will be named using the \code{otg_type_list} character
+data frame of \code{otg_type}. If the \code{otg_type_names} argument is provided, it
+MUST be the same length as \code{otg_type}. If the default \code{otg_type_names = NULL}
+is used, data frames will be named using the \code{otg_type} character
 vector (i.e., the .csv file names).}
 }
 \value{
-a list of data frames, each containing data from \code{otg_type_list}
+a list of data frames, each containing data from \code{otg_type}
 }
 \description{
 A wrapper function for \code{read_otg_csv()}. The function imports .csv delimited

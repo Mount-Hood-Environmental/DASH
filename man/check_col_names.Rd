@@ -13,9 +13,7 @@ check_col_names(
 \arguments{
 \item{qc_df}{The survey data frame to be QC'd}
 
-\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
-the initiation of the function a character vector of the file names e.g., "surveyPoint_0.csv",
-"CU_1.csv", etc.}
+\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with?}
 }
 \value{
 a message

@@ -14,9 +14,7 @@ read_otg_csv(
 \item{path}{A path to the directory containing the folders of interest. \code{path} should only contain
 folders (no files), and each of those folders should only contain files (no folders).}
 
-\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of
-the initiation of the function a character vector of the file names e.g., "surveyPoint_0.csv",
-"CU_1.csv", etc.}
+\item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with?}
 }
 \value{
 a data frame containing data of \code{otg_type}
