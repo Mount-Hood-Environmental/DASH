@@ -11,7 +11,7 @@ read_otg_csv(
 )
 }
 \arguments{
-\item{path}{a path to the directory containing the folders of interest. \code{path} should only contain
+\item{path}{A path to the directory containing the folders of interest. \code{path} should only contain
 folders (no files), and each of those folders should only contain files (no folders).}
 
 \item{otg_type}{what type of on-the-ground (OTG) data would the user like to deal with? As of

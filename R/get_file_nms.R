@@ -4,7 +4,7 @@
 #'
 #' @author Mike Ackerman and Kevin See
 #'
-#' @param path a path to the directory containing the folders of interest. `path` should only contain
+#' @param path A path to the directory containing the folders of interest. `path` should only contain
 #' folders (no files), and each of those folders should only contain files (no folders).
 #'
 #' @import purrr dplyr

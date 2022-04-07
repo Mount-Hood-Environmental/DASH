@@ -1,8 +1,8 @@
-#' @title Read On-The-Ground .csv Data - Wrapper
+#' @title Read DASH OTG Data - Wrapper
 #'
-#' @description A wrapper function for `read_otg_csv()`. Import .csv delimited files
-#' containing on-the-ground (OTG) data collected using the DASH protocol. This function
-#' can be performed on multiple (perhaps all) "types" of OTG data at once to create a
+#' @description A wrapper function for `read_otg_csv()`. The function imports .csv delimited
+#' files containing on-the-ground (OTG) data collected using the DASH protocol. This function
+#' can be performed on multiple (all if desired) "types" of OTG data at once to create a
 #' list of data frames, each containing data for one of the data types.
 #'
 #' @author Mike Ackerman
@@ -20,12 +20,12 @@
 #' @return a list of data frames, each containing data from `otg_type_list`
 
 read_otg_csv_wrapper = function(path = ".",
-                                otg_type_list = c("surveyPoint_0.csv",
-                                                  "CU_1.csv",
-                                                  "Wood_2.csv",
-                                                  "Jam_3.csv",
-                                                  "Undercut_4.csv",
-                                                  "Discharge_5.csv"),
+                                otg_type = c("surveyPoint_0.csv",
+                                             "CU_1.csv",
+                                             "Wood_2.csv",
+                                             "Jam_3.csv",
+                                             "Undercut_4.csv",
+                                             "Discharge_5.csv"),
                                 otg_type_names = NULL) {
 
   # if otg_type_names is NOT NULL, verify it is the same length as otg_type_list

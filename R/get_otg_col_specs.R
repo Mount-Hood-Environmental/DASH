@@ -20,8 +20,7 @@ get_otg_col_specs = function(otg_type = c("surveyPoint_0.csv",
                                           "Wood_2.csv",
                                           "Jam_3.csv",
                                           "Undercut_4.csv",
-                                          "Discharge_5.csv",
-                                          "DischargeMeasurements_6.csv")) {
+                                          "Discharge_5.csv")) {
 
   # Survey Info
   if(otg_type == "surveyPoint_0.csv") {

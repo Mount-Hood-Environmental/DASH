@@ -7,7 +7,7 @@
 get_file_nms(path = ".")
 }
 \arguments{
-\item{path}{a path to the directory containing the folders of interest. \code{path} should only contain
+\item{path}{A path to the directory containing the folders of interest. \code{path} should only contain
 folders (no files), and each of those folders should only contain files (no folders).}
 }
 \value{
