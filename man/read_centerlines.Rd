@@ -4,7 +4,11 @@
 \alias{read_centerlines}
 \title{Read In Centerlines}
 \usage{
-read_centerlines(path = ".", cl_names = "centerlines.shp")
+read_centerlines(
+  path = ".",
+  cl_names = "centerlines.shp",
+  find_duplicates = TRUE
+)
 }
 \arguments{
 \item{path}{A path to the directory containing the folders of interest. \code{path} should only contain
@@ -12,6 +16,9 @@ folders (no files), and each of those folders should only contain files (no fold
 
 \item{cl_names}{The file name of each centerline. All centerlines should share
 same name, but be saved in separate folders for each site.}
+
+\item{find_duplicates}{Would you like to search for duplicate channel units
+within the centerlines after import?}
 }
 \value{
 a shapefile of merged centerlines
