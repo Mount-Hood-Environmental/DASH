@@ -2,10 +2,11 @@
 #
 # Purpose: Reformat the 2019 & 2020 OTG data to a format
 #          that matches the 2018 & 2021 data i.e., to match
-#          the newest DASH data collection forms
+#          the newest DASH data collection forms, then
+#          merge it with the 2019 & 2020 data
 #
 # Created: March 2, 2022
-#   Last Modified: March 24, 2022
+#   Last Modified: April 8, 2022
 #
 # Notes:
 
