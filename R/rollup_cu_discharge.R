@@ -15,7 +15,10 @@ rollup_cu_discharge = function(discharge_df = NULL) {
 
   stopifnot(!is.null(discharge_df))
 
-  return_df = calc_discharge(discharge_df = discharge_df)
+  return_df = calc_discharge(discharge_df = discharge_df) %>%
+    mutate(discharge_cfs = discharge_cms * 35.314666212661) %>%
+    mutate(discharge_cms = round(discharge_cms, 2)) %>%
+    mutate(discharge_cfs = round(discharge_cfs, 2))
 
   return(return_df)
 
