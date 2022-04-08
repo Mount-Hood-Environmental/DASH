@@ -4,7 +4,7 @@
 # information from the channel unit points.
 #
 # Initially created: December 8, 2020
-#   Last Modified: April 6, 2022
+#   Last Modified: April 8, 2022
 #
 # Notes:
 
@@ -20,6 +20,7 @@ library(stringr)
 library(rlang)
 library(purrr)
 library(sf)
+library(DASH)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -32,54 +33,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 #-------------------------
 cl_path = paste0(nas_prefix,
                  "main/data/habitat/DASH/centerlines")
-
-# get path name to all centerlines.shp files
-cl_files = list.files(path = cl_path,
-                      pattern = "centerlines.shp$",
-                      recursive = TRUE) %>%
-  as.list() %>%
-  rlang::set_names(nm = function(x) str_remove(x, "/centerlines.shp$")) %>%
-  map(.f = function(x) {
-    paste(cl_path, x, sep = "/")
-  })
-
-# the columns we're interested in from the centerlines.shp files
-col_nms = c("path_nm",
-            "site_name",
-            "year",
-            "cu_num",
-            "geometry")
-
-# read in all cl_files
-cl_list = cl_files %>%
-  map(.f = function(x) {
-    read_sf(x) %>%
-      dplyr::mutate(path_nm = stringr::str_remove(x, cl_path)) %>%
-      janitor::clean_names() %>%
-      select(path_nm,
-             everything())
-  }) %>%
-  map(.f = function(x) {
-    if(sum(!col_nms %in% names(x)) > 0) {
-      for(col_nm in col_nms[!col_nms %in% names(x)]) {
-        x[,col_nm] = NA_character_
-      }
-    }
-    x %>%
-      select(any_of(col_nms))
-  })
-
-# merge cl_list into a single sf object
-cl_sf = map_df(cl_list,
-                .f = identity) %>%
-  # add an object_id column
-  mutate(object_id = 1:n()) %>%
-  select(object_id,
-         path_nm,
-         everything())
-
-# a little cleaning
-rm(cl_files, cl_list, col_nms)
+cl_sf = read_centerlines(path = cl_path)
 
 # plot centerlines
 cl_p = cl_sf %>%
