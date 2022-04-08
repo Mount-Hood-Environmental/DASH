@@ -27,19 +27,6 @@ rollup_cu_undercut = function(undercut_df = NULL,
 
   stopifnot(!is.null(undercut_df))
 
-  # shouldn't be necessary for undercuts, shouldn't be any character vectors
-  # # get class of each impute_cols
-  # cols_class = undercut_df %>%
-  #   dplyr::select(dplyr::any_of(impute_cols)) %>%
-  #   sapply(class)
-  #
-  # # if any impute_cols are character vectors, turn them into factors
-  # if(sum(cols_class == "character") > 0) {
-  #   undercut_df = undercut_df %>%
-  #     dplyr::mutate_at(vars(dplyr::any_of(names(cols_class)[cols_class == "character"])),
-  #                      list(as.factor))
-  # }
-
   # how many missing values in individual undercuts
   n_nas = undercut_df %>%
     dplyr::select(dplyr::any_of(impute_cols)) %>%
@@ -72,7 +59,9 @@ rollup_cu_undercut = function(undercut_df = NULL,
                      undct_n_right = length(parent_global_id[location == "Right_Bank"]),
                      undct_n_islnd = length(parent_global_id[location == "Island"]),
                      undct_length_m = sum(length_m),
-                     undct_area_m = sum(area_m2))
+                     undct_area_m2 = sum(area_m2)) %>%
+    dplyr::mutate(undct_length_m = round(undct_length_m, 2)) %>%
+    dplyr::mutate(undct_area_m2 = round(undct_area_m2, 2))
 
   return(return_df)
 
