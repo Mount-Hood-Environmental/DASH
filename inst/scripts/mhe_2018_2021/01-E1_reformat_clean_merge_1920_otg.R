@@ -18,6 +18,7 @@ rm(list = ls())
 library(tidyverse)
 library(magrittr)
 library(janitor)
+library(DASH)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -56,11 +57,11 @@ otg_list = otg_1920_paths %>%
 # combine elements of otg_list into otg
 for(i in 1:length(otg_list)) {
   if(i == 1) {
-    otg = otg_list[[1]]
+    otg_1920 = otg_list[[1]]
   } else {
-    otg = suppressMessages(purrr::map2(otg,
-                                       otg_list[[i]],
-                                       dplyr::full_join))
+    otg_1920 = suppressMessages(purrr::map2(otg_1920,
+                                            otg_list[[i]],
+                                            dplyr::full_join))
   }
 }
 
@@ -68,7 +69,7 @@ for(i in 1:length(otg_list)) {
 # reformat to match newest data collection form
 #-------------------------
 # survey
-otg$survey %<>%
+otg_1920$survey %<>%
   mutate(`Stream Name` = c("Big Springs Creek",
                            "Big Timber Creek",
                            "Big Timber Creek",
@@ -127,7 +128,7 @@ otg$survey %<>%
          y)
 
 # cu
-otg$cu %<>%
+otg_1920$cu %<>%
   mutate(TOS = FALSE,
          BOS = FALSE,
          `Cover Sum (%)` = rowSums(select(.,
@@ -188,24 +189,24 @@ otg$cu %<>%
          Editor)
 
 # wood
-otg$wood %<>%
+otg_1920$wood %<>%
   select(-`Large Wood Number`) %>%
   mutate(`CreationDate` = as.character(`CreationDate`),
          `EditDate` = as.character(`EditDate`))
 
 # jam
-otg$jam %<>%
+otg_1920$jam %<>%
   mutate(`CreationDate` = as.character(`CreationDate`),
          `EditDate` = as.character(`EditDate`))
 
 # undercut
-otg$undercut %<>%
+otg_1920$undercut %<>%
   select(-`Undercut Number`) %>%
   mutate(`CreationDate` = as.character(`CreationDate`),
          `EditDate` = as.character(`EditDate`))
 
 # discharge
-otg$discharge = otg$discharge_measurements %>%
+otg_1920$discharge = otg_1920$discharge_measurements %>%
   group_by(ParentGlobalID) %>%
   mutate(`Tape Distance (m)` = cumsum(`Station Width`)) %>%
   rename(`Station Depth (m)` = `Station Depth`,
@@ -226,13 +227,13 @@ otg$discharge = otg$discharge_measurements %>%
          Editor)
 
 # remove discharge_measurements
-otg$discharge_measurements = NULL
+otg_1920$discharge_measurements = NULL
 
 #-------------------------
 # some additional cleaning of 2019/2020 OTG data to match new format
 #-------------------------
 # fill in some coordinates for surveys
-otg$survey %<>%
+otg_1920$survey %<>%
   mutate(x = case_when(
     `Site Name` == "Big Springs" ~          -113.414252,
     `Site Name` == "Big Timber 1" ~         -113.373110,
@@ -266,10 +267,15 @@ otg$survey %<>%
     `Site Name` == "Barton" ~               45.407768,
     `Site Name` == "Upper Lemhi 3 Snyder" ~ 44.785816,
     TRUE ~ y
+  )) %>%
+  # fix conductivity for Little Springs
+  mutate(`Conductivity (ms)` = case_when(
+    `Site Name` == "Little Springs" ~ 53.0,
+    TRUE ~ `Conductivity (ms)`
   ))
 
 # define TOS & BOS for 2019/2020 data
-otg$cu %<>%
+otg_1920$cu %<>%
   mutate(TOS = case_when(
     ParentGlobalID == "96ff5d57-608b-435b-9df8-2fdd2e39909e" & `Channel Unit Number` == 1   ~ TRUE,
     ParentGlobalID == "00306343-48cc-4c89-babe-904376f900b0" & `Channel Unit Number` == 76  ~ TRUE,
@@ -359,7 +365,7 @@ otg$cu %<>%
 # some additional cleaning of 2019/2020 OTG data to match new format
 #-------------------------
 # calculate ocular estimates based on pebble counts for riffles
-ocular_tmp = otg$cu %>%
+ocular_tmp = otg_1920$cu %>%
   filter(`Channel Unit Type` == "Riffle" & is.na(`Sand/Fines <2mm (%)`)) %>%
   rowwise() %>%
   mutate(`Sand/Fines <2mm (%)` = sum(c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) > 0 & c_across(`Pebble 1 (mm)`:`Pebble 11 (mm)`) <= 2),
@@ -372,7 +378,7 @@ ocular_tmp = otg$cu %>%
             .funs = funs(. * 100))
 
 # replace riffles with missing ocular estimates with ocular_tmp above
-otg$cu = anti_join(otg$cu,
+otg_1920$cu = anti_join(otg_1920$cu,
                    ocular_tmp,
                    by = c("path_nm",
                           "GlobalID",
@@ -381,7 +387,7 @@ otg$cu = anti_join(otg$cu,
 
 # fill in some remaining missing values; here, I'm simply filling in missing values using the mean from each site and channel_unit_type
 # not ideal, but perhaps I'll stew on some better methods.
-otg$cu %<>%
+otg_1920$cu %<>%
   group_by(path_nm, `Channel Unit Type`) %>%
   # maximum and thalweg exit depths
   mutate_at(vars(`Maximum Depth (m)`:`Thalweg Exit Depth (m)`),
@@ -405,7 +411,7 @@ otg$cu %<>%
 # after all this, I still have a small # of missing values; I'll attempt to fill these in using drone orthos
 
 # one record with missing fish cover estimates
-otg$cu %<>%
+otg_1920$cu %<>%
   mutate(`Overhanging (%)` = case_when(
     path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 30,
     TRUE ~ `Overhanging (%)`)) %>%
@@ -426,7 +432,7 @@ otg$cu %<>%
     TRUE ~ `Cover Sum (%)`))
 
 # one record with missing depths
-otg$cu %<>%
+otg_1920$cu %<>%
   mutate(`Maximum Depth (m)` = case_when(
     path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 0.2,
     TRUE ~ `Maximum Depth (m)`)) %>%
@@ -435,7 +441,7 @@ otg$cu %<>%
     TRUE ~ `Thalweg Exit Depth (m)`))
 
 # 16 SSCs with missing widths
-otg$cu %<>%
+otg_1920$cu %<>%
   #----
   mutate(`Width 1 (m)` = case_when(
     path_nm == "BigSprings_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 274 ~ 0.83,
@@ -673,7 +679,7 @@ otg$cu %<>%
     TRUE ~ `Channel Unit Type`))
 
 # 1 record with missing ocular estimates
-otg$cu %<>%
+otg_1920$cu %<>%
   mutate(`Sand/Fines <2mm (%)` = case_when(
     path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 30,
     TRUE ~ `Sand/Fines <2mm (%)`)) %>%
@@ -691,8 +697,99 @@ otg$cu %<>%
     TRUE ~ `Ocular Sum (%)`))
 
 # save results
-saveRDS(otg,
+saveRDS(otg_1920,
         file = paste0(nas_prefix,
                       "main/data/habitat/DASH/OTG/prepped/otg_qcd_1920_new_format.rds"))
+
+#-------------------------
+# load QC'd OTG data from 2018 & 2021
+#-------------------------
+path_2018 = paste0(nas_prefix,
+                   "main/data/habitat/DASH/OTG/2018")
+path_2021 = paste0(nas_prefix,
+                   "main/data/habitat/DASH/OTG/2021")
+
+# list of otg_qcd.rda files in path_2019 and path_2020
+otg_18_paths = list.files(path = path_2018,
+                          pattern = "^otg_qcd.rda$",
+                          recursive = T) %>%
+  paste(path_2018, ., sep = "/")
+
+otg_21_paths = list.files(path = path_2021,
+                          pattern = "^otg_qcd.rda$",
+                          recursive = T) %>%
+  paste(path_2021, ., sep = "/")
+
+otg_1821_paths = c(otg_18_paths, otg_21_paths)
+
+# load each of otg_qcd.rda objects
+otg_list = otg_1821_paths %>%
+  map(.f = function(x) {
+    load(x) %>%
+      get()
+  })
+
+# clean some stuff
+rm(otg_18_paths, otg_21_paths,
+   path_2018, path_2021,
+   otg_1821_paths)
+
+# add some blank jam tibbles for a couple cases where there are no data
+otg_list[[2]]$jam = tibble("path_nm" = as.character(),
+                           "ObjectID" = as.integer(),
+                           "GlobalID" = as.character(),
+                           "Length (m)" = as.double(),
+                           "Width (m)" = as.double(),
+                           "Height (m)" = as.double(),
+                           "Estimated Number of Pieces" = as.integer(),
+                           "ParentGlobalID" = as.character(),
+                           "CreationDate" = as.character(),
+                           "Creator" = as.character(),
+                           "Edit Date" = as.character(),
+                           "Editor" = as.character())
+otg_list[[3]]$jam = tibble("path_nm" = as.character(),
+                           "ObjectID" = as.integer(),
+                           "GlobalID" = as.character(),
+                           "Length (m)" = as.double(),
+                           "Width (m)" = as.double(),
+                           "Height (m)" = as.double(),
+                           "Estimated Number of Pieces" = as.integer(),
+                           "ParentGlobalID" = as.character(),
+                           "CreationDate" = as.character(),
+                           "Creator" = as.character(),
+                           "EditDate" = as.character(),
+                           "Editor" = as.character())
+otg_list[[2]] = otg_list[[2]][c("survey", "cu", "wood", "jam", "undercut", 'discharge', "qc_results")]
+otg_list[[3]] = otg_list[[3]][c("survey", "cu", "wood", "jam", "undercut", 'discharge', "qc_results")]
+
+# combine elements of otg_list into otg
+for(i in 1:length(otg_list)) {
+  if(i == 1) {
+    otg_1821 = otg_list[[1]]
+  } else {
+    otg_1821 = suppressMessages(purrr::map2(otg_1821,
+                                            otg_list[[i]],
+                                            dplyr::full_join))
+  }
+}
+
+#-------------------------
+# bind 18/21 & 19/20 OTG datasets
+#-------------------------
+otg_all_list = list(otg_1821, otg_1920)
+for(i in 1:length(otg_all_list)) {
+  if(i == 1) {
+    otg_all = otg_all_list[[1]]
+  } else {
+    otg_all = suppressMessages(purrr::map2(otg_all,
+                                           otg_all_list[[i]],
+                                           dplyr::full_join))
+  }
+}
+
+# save results
+saveRDS(otg_all,
+        file = paste0(nas_prefix,
+                      "main/data/habitat/DASH/OTG/prepped/otg_all_18to21.rds"))
 
 # END SCRIPT
