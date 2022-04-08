@@ -69,14 +69,16 @@ rollup_cu_wood = function(wood_df = NULL,
                      lwd_area_m2 = sum(piece_area_m2),
                      lwd_vol_m3 = sum(piece_vol_m3),
                      lwd_n_wet = length(parent_global_id[wet == "Yes"]),
-                     lwd_area_m2_wet = sum(piece_area_m2[wet == "Yes"]),
-                     lwd_vol_m3_wet = sum(piece_vol_m3[wet == "Yes"]),
+                     lwd_area_wet_m2 = sum(piece_area_m2[wet == "Yes"]),
+                     lwd_vol_wet_m3 = sum(piece_vol_m3[wet == "Yes"]),
                      lwd_n_cf = length(parent_global_id[channel_forming == "Yes"]),
-                     lwd_area_m2_cf = sum(piece_area_m2[channel_forming == "Yes"]),
-                     lwd_vol_m3_cf = sum(piece_vol_m3[channel_forming == "Yes"]),
+                     lwd_area_cf_m2 = sum(piece_area_m2[channel_forming == "Yes"]),
+                     lwd_vol_cf_m3 = sum(piece_vol_m3[channel_forming == "Yes"]),
                      lwd_n_bal = length(parent_global_id[ballasted == "Yes"]),
-                     lwd_area_m2_bal = sum(piece_area_m2[ballasted == "Yes"]),
-                     lwd_vol_m3_bal = sum(piece_vol_m3[ballasted == "Yes"]))
+                     lwd_area_bal_m2 = sum(piece_area_m2[ballasted == "Yes"]),
+                     lwd_vol_bal_m3 = sum(piece_vol_m3[ballasted == "Yes"])) %>%
+    dplyr::mutate_at(vars(ends_with("_m2")), round, 2) %>%
+    dplyr::mutate_at(vars(ends_with("_m3")), round, 2)
 
   return(return_df)
 
