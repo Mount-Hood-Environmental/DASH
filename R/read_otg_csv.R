@@ -57,23 +57,6 @@ read_otg_csv = function(path = ".",
                     tmp = try(suppressWarnings(readr::read_csv(paste0(path, x$path_nm),
                                                                col_types = otg_col_specs)))
 
-                    # # extract just the date portion for CreationDate and EditDate
-                    # if(nrow(tmp) > 0 & sum(c("CreationDate", "EditDate") %in% names(tmp)) > 0) {
-                    #   tmp = tmp %>%
-                    #     mutate(across(any_of(c("CreationDate", "EditDate")),
-                    #                   ~ stringr::str_split(., " ", simplify = T)[,1])) %>%
-                    #     mutate(across(any_of(c("CreationDate", "EditDate")),
-                    #                   lubridate::mdy))
-                    # }
-                    #
-                    # # # change the format of `Survey Start Date Time`, HiddenStart, and HiddenEnd to POSIXct date_time
-                    # if(otg_type == "surveyPoint_0.csv" & nrow(tmp) > 0) {
-                    #   tmp = tmp %>%
-                    #     mutate(`Survey Start Date Time` = as.POSIXct(`Survey Start Date Time`, format = "%m/%d/%Y %I:%M"),
-                    #            HiddenStart = as.POSIXct(HiddenStart, format = "%m/%d/%Y %I:%M"),
-                    #            HiddenEnd = as.POSIXct(HiddenEnd, format = "%m/%d/%Y %I:%M"))
-                    # }
-
                     #####
                     # CHECK 3
                     if(chk == FALSE | class(tmp)[1] == "try-error") {
