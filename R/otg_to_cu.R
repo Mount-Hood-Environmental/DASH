@@ -89,7 +89,7 @@ otg_to_cu = function(survey_df = NULL,
 
   # convert what should be true 0s from NA to 0
   cu_df = cu_df %>%
-    mutate_at(vars(lwd_n:undct_area_m),
+    mutate_at(vars(lwd_n:undct_area_m2),
               replace_na, 0)
 
   return(cu_df)
