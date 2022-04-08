@@ -76,7 +76,9 @@ rollup_cu_jam = function(jam_df = NULL,
     dplyr::summarise(jam_n = length(parent_global_id),
                      jam_est_n_pieces = sum(estimated_number_of_pieces),
                      jam_area_m2 = sum(area_m2),
-                     jam_vol_m3 = sum(vol_m3))
+                     jam_vol_m3 = sum(vol_m3)) %>%
+    dplyr::mutate(jam_area_m2 = round(jam_area_m2, 2)) %>%
+    dplyr::mutate(jam_vol_m3 = round(jam_vol_m3, 2))
 
   return(return_df)
 
