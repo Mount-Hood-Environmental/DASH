@@ -13,12 +13,12 @@
 #'
 #' @import dplyr purrr
 #' @importFrom rlang set_names
+#' @importFrom magrittr %>%
 #' @importFrom stringr str_remove
 #' @importFrom sf st_read
 #' @importFrom janitor clean_names
 #' @importFrom tidyr unite
 #' @export
-#'
 #' @return a shapefile of merged centerlines
 
 read_centerlines = function(path = ".",
