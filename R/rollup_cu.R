@@ -44,6 +44,7 @@ rollup_cu = function(survey_df = NULL,
                                 channel_segment_number,
                                 channel_unit_number,
                                 sep = "_")) %>%
+    dplyr::mutate_at(vars(ends_with("_percent")), round) %>%
     dplyr::select(parent_global_id,
                   global_id,
                   path_nm,
