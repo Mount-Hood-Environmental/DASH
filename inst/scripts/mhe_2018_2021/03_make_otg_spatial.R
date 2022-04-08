@@ -33,7 +33,9 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 #-------------------------
 cl_path = paste0(nas_prefix,
                  "main/data/habitat/DASH/centerlines")
-cl_sf = read_centerlines(path = cl_path)
+
+cl_sf = read_centerlines(path = cl_path,
+                         find_duplicates = T)
 
 # plot centerlines
 cl_p = cl_sf %>%
@@ -42,45 +44,20 @@ cl_p = cl_sf %>%
   theme_classic()
 cl_p
 
-# any duplicate channel units within the centerlines
-dup_cl_cus = cl_sf %>%
-  unite(col = cu_id,
-        site_name,
-        year,
-        cu_num,
-        remove = F) %>%
-  filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
-  st_drop_geometry() %>%
-  pull(cu_id)
-dup_cl_cus # no duplicate channel units (anymore)
-
 #-------------------------------------
-# read in DASH Field Maps
+# read in channel unit points (e.g., from Field Maps)
 #-------------------------------------
-cu_points_path = paste0(nas_prefix,
-                        "main/data/habitat/DASH/channel_units/compiled")
+cu_pts_path = paste0(nas_prefix,
+                     "main/data/habitat/DASH/channel_units/compiled")
 
 # read in channel unit points from 2018 - 2021
-cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points.shp"))
+cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points.gpkg"))
 
-# are there any channel units in multiple habitat reaches?
-cu_hr_mismatch = cu_pts %>%
-  st_drop_geometry() %>%
-  as_tibble() %>%
-  select(strm_nm,
-         site_nm,
-         year,
-         cu_num,
-         cu_type,
-         hab_rch) %>%
-  distinct() %>%
-  unite(cu_id,
-        strm_nm, site_nm, year, cu_num,
-        remove = F) %>%
-  filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
-  pull(cu_id) %>%
-  unique()
-length(cu_hr_mismatch) # these are fine, not an issue
+# QC channel unit points
+cu_pts_qc = qc_cu_points(cu_pts)
+
+# START HERE - Consider adding more checks in qc_cu_points including cleaning column names and
+# checking if appropriate column names are present.
 
 # which sites are in collector points, but not in centerlines?
 unique(cu_pts$site_nm)[! unique(cu_pts$site_nm) %in% unique(cl_sf$site_name)]
@@ -127,13 +104,6 @@ cl_sf %<>%
 #-------------------------------------
 # save raw compiled centerlines
 #-------------------------------------
-# as shapefile
-st_write(cl_sf,
-         paste0(cl_path,
-                "/compiled/centerlines_all.shp"),
-         append = F)
-
-# as geodatabase
 st_write(cl_sf,
          dsn = paste0(cl_path, "/compiled/centerlines_all.gpkg"),
          delete_dsn = T)
