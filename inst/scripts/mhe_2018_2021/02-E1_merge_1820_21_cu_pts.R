@@ -5,7 +5,7 @@
 # in Field Maps
 #
 # Initially created: March 30, 2022
-#   Modified:
+#   Modified: April 8, 2021
 #
 # Notes:
 
@@ -30,12 +30,13 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # read in DASH Field Maps channel unit points data
 #-------------------------------------
 cu_points_path = paste0(nas_prefix,
-                        "main/data/habitat/DASH/channel_units/compiled")
+                        "main/data/habitat/DASH/channel_units")
 
 # read in and slightly reformat 2018 - 2020 channel unit points
 cu_pts_1820 = st_read(paste0(cu_points_path, "/dash_cu_points_18.shp")) %>%
   as_tibble() %>%
-  rbind(st_read(paste0(cu_points_path, "/dash_cu_points_1920.shp"))) %>%
+  rbind(st_read(paste0(cu_points_path, "/dash_cu_points_19.shp"))) %>%
+  rbind(st_read(paste0(cu_points_path, "/dash_cu_points_20.shp"))) %>%
   rename(global_id = globl_d,
          stream_name = strm_nm,
          site_name = site_nm,
@@ -82,5 +83,9 @@ cu_pts_21 = st_read(paste0(cu_points_path, "/dash_cu_points_21.shp")) %>%
 cu_pts = rbind(cu_pts_1820, cu_pts_21) %>%
   st_as_sf()
 
-# and write back out to NAS
-st_write(cu_pts, paste0(cu_points_path, "/dash_cu_points.shp"), append = F)
+# and write back out to NAS, but as geopackage
+st_write(cu_pts,
+         dsn = paste0(cu_points_path, "/compiled/dash_cu_points.gpkg"),
+         delete_dsn = T)
+
+# END SCRIPT
