@@ -35,6 +35,8 @@ otg = readRDS(file = paste0(otg_path,
 # remove the qc_results data frame from otg
 otg$qc_results = NULL
 
+View(otg$survey)
+
 #-------------------------
 # roll up OTG data to CU scale, no data imputation
 #-------------------------
