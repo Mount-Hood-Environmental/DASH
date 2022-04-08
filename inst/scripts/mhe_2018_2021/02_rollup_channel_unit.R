@@ -35,8 +35,6 @@ otg = readRDS(file = paste0(otg_path,
 # remove the qc_results data frame from otg
 otg$qc_results = NULL
 
-View(otg$survey)
-
 #-------------------------
 # roll up OTG data to CU scale, no data imputation
 #-------------------------
@@ -66,8 +64,7 @@ otg_cu_imp = otg_to_cu(survey_df = otg$survey,
 
 # save imputed, prepped data
 write_rds(otg_cu_imp,
-          paste0(nas_prefix,
-                 otg_path,
+          paste0(otg_path,
                  "prepped/dash_18to21_cu_imputed.rds"))
 
 # END SCRIPT
