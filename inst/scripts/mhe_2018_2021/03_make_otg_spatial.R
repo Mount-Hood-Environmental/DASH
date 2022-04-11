@@ -34,6 +34,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 cl_path = paste0(nas_prefix,
                  "main/data/habitat/DASH/centerlines")
 
+# import centerlines using read_centerlines()
 cl_sf = read_centerlines(path = cl_path,
                          find_duplicates = T)
 
@@ -51,13 +52,12 @@ cu_pts_path = paste0(nas_prefix,
                      "main/data/habitat/DASH/channel_units/compiled")
 
 # read in channel unit points from 2018 - 2021
-cu_pts = st_read(paste0(cu_points_path, "/dash_cu_points.gpkg"))
+cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points.gpkg"))
 
 # QC channel unit points
 cu_pts_qc = qc_cu_points(cu_pts)
 
-# START HERE - Consider adding more checks in qc_cu_points including cleaning column names and
-# checking if appropriate column names are present.
+# START HERE - I need to fix qc_cu_points()
 
 # which sites are in collector points, but not in centerlines?
 unique(cu_pts$site_nm)[! unique(cu_pts$site_nm) %in% unique(cl_sf$site_name)]
