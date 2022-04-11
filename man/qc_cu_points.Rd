@@ -4,18 +4,38 @@
 \alias{qc_cu_points}
 \title{QC Channel Unit Points}
 \usage{
-qc_cu_points(cu_points_sf = NULL)
+qc_cu_points(
+  cu_pts_sf = NULL,
+  site_name_col = "site_name",
+  year_col = "year",
+  seg_num_col = "seg_num",
+  cu_num_col = "cu_num",
+  hab_reach_col = "hab_rch"
+)
 }
 \arguments{
-\item{cu_points_sf}{The sf object containing the channel unit points, perhaps
-collected in the field using Field Maps}
+\item{cu_pts_sf}{The sf object containing the channel unit points, perhaps
+collected in the field using Field Maps. At a minimum, the sf object should
+contain columns containing the site/survey name, year of the survey, segment
+number, channel unit number, and the habitat reach which defines which
+channel units should be "lumped together" for analysis.}
+
+\item{site_name_col}{The name of the column containing the site/survey name.}
+
+\item{year_col}{The name of the column containing the year.}
+
+\item{seg_num_col}{The name of the column containing the segment number.}
+
+\item{cu_num_col}{The name of the column containing the channel unit number.}
+
+\item{hab_reach_col}{The name of the column containing the habitat reach.}
 }
 \value{
 a tibble with QC results
 }
 \description{
 Quality control the channel unit points, perhaps from
-Field Maps
+Field Maps.
 }
 \author{
 Mike Ackerman
