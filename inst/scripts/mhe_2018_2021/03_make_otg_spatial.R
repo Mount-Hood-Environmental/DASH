@@ -41,8 +41,11 @@ cl_sf = read_centerlines(path = cl_path,
 # plot centerlines
 cl_p = cl_sf %>%
   ggplot() +
-  geom_sf() +
-  theme_classic()
+  geom_sf(aes(color = site_name),
+          size = 2) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(title = "DASH Centerlines")
 cl_p
 
 #-------------------------------------
@@ -52,57 +55,49 @@ cu_pts_path = paste0(nas_prefix,
                      "main/data/habitat/DASH/channel_units/compiled")
 
 # read in channel unit points from 2018 - 2021
-cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points.gpkg"))
+cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points.gpkg")) %>%
+  mutate(seg_num = str_pad(seg_num, 2, pad = "0"),
+         hab_rch = str_pad(hab_rch, 2, pad = "0"),
+         cu_num = str_pad(cu_num, 3, pad = "0"))
 
 # QC channel unit points
 cu_pts_qc = qc_cu_points(cu_pts)
 
-# START HERE - I need to fix qc_cu_points()
-
-# which sites are in collector points, but not in centerlines?
-unique(cu_pts$site_nm)[! unique(cu_pts$site_nm) %in% unique(cl_sf$site_name)]
-
-# which sites are in centerlines, but not collector points?
-unique(cl_sf$site_name[! unique(cl_sf$site_name) %in% unique(cu_pts$site_nm)])
-
-# add some information from collector points to centerlines spatial file
+#-------------------------------------
+# attach some data from channel unit points to centerlines sf
+#-------------------------------------
 cu_pts_df = cu_pts %>%
   st_drop_geometry() %>%
   as_tibble() %>%
-  select(strm_nm,
-         site_nm,
+  select(site_name,
          year,
          seg_num,
          cu_num,
          cu_type,
          hab_rch,
-         fish_st,
+         fish_site,
          grts_id) %>%
   distinct()
 
-# are there any duplicate channel units in the cu pts?
+# are there any duplicate channel units in cu_pts_df?
 dup_pt_cus = cu_pts_df %>%
   unite(col = cu_id,
-        site_nm, year, cu_num,
+        site_name, year, cu_num,
         remove = F) %>%
-  filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
-  write_csv(file = paste0(cu_points_path,
-                          "/duplicate_cu_pts.csv"))
+  filter(cu_id %in% cu_id[duplicated(cu_id)])
 dup_pt_cus # no duplicate channel units (anymore)
 
 # join cu_pts to centerlines
 cl_sf %<>%
   left_join(cu_pts_df,
-            by = c("year",
-                   "site_name" = "site_nm",
+            by = c("site_name",
+                   "year",
                    "cu_num")) %>%
   relocate(geometry,
-           .after = last_col()) %>%
-  mutate(cu_num = str_pad(cu_num, 3, pad = "0"),
-         seg_num = str_pad(seg_num, 2, pad = "0"))
+           .after = last_col())
 
 #-------------------------------------
-# save raw compiled centerlines
+# save compiled centerlines
 #-------------------------------------
 st_write(cl_sf,
          dsn = paste0(cl_path, "/compiled/centerlines_all.gpkg"),
@@ -123,10 +118,13 @@ otg = readRDS(file = paste0(nas_prefix,
 # join the centerlines to the OTG data
 #-------------------------
 otg %<>%
-  left_join(cl_sf,
+  left_join(cl_sf %>%
+              select(-path_nm),
             by = c("site_name",
                    "channel_segment_number" = "seg_num",
-                   "channel_unit_number" = "cu_num"))
+                   "channel_unit_number" = "cu_num")) %>%
+  relocate(geometry,
+           .after = last_col())
 
 # write spatial otg as geodatabase
 st_write(otg,
