@@ -64,10 +64,15 @@ qc_cu_points = function(cu_pts_sf = NULL,
   #####
   # CHECK 2: are there CUs that fall in multiple habitat reaches?
   cus_in_multiple_hrs = cu_tmp %>%
-    dplyr::distinct() %>%
+    dplyr::select({{site_name_col}},
+                  {{year_col}},
+                  {{seg_num_col}},
+                  {{cu_num_col}},
+                  {{hab_reach_col}}) %>%
     tidyr::unite(cu_id,
-                 {{site_name_col}}, {{year_col}}, {{cu_num_col}},
-                 remove = F) %>%
+                 {{site_name_col}}, {{year_col}}, {{seg_num_col}}, {{cu_num_col}},
+                 remove = T) %>%
+    dplyr::distinct() %>%
     dplyr::filter(cu_id %in% cu_id[duplicated(cu_id)]) %>%
     dplyr::mutate(error_message = paste0("Channel unit ", cu_id, " is within multiple habitat reaches.")) %>%
     dplyr::select(cu_id,
