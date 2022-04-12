@@ -15,6 +15,7 @@
 #' @importFrom rlang set_names
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_remove
+#' @importFrom stringr str_pad
 #' @importFrom sf st_read
 #' @importFrom janitor clean_names
 #' @importFrom tidyr unite
@@ -66,7 +67,8 @@ read_centerlines = function(path = ".",
   cl_sf = purrr::map_df(cl_list,
                         .f = identity) %>%
     # add an object_id column
-    dplyr::mutate(object_id = 1:n()) %>%
+    dplyr::mutate(object_id = 1:n(),
+                  cu_num = stringr::str_pad(cu_num, 3, pad = "0")) %>%
     dplyr::select(object_id,
                   path_nm,
                   everything())
