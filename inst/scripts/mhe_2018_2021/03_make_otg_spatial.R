@@ -127,7 +127,23 @@ otg %<>%
                    "channel_segment_number" = "seg_num",
                    "channel_unit_number" = "cu_num")) %>%
   relocate(geometry,
-           .after = last_col())
+           .after = last_col()) %>%
+  st_as_sf() %>%
+  # change geom from "MULTILINESTRING" to "LINESTRING" (for whatever reason, there seems to be 5 channel units that actually
+  # contain multiple lines, hence the use of group_or_split = F. I need to remedy that eventually.)
+  mutate(geometry = st_cast(st_sfc(geometry), "LINESTRING", group_or_split = F)) %>%
+  # convert to EPSG: 32612 = WGS 84/UTM zone 12N, which allows us to calculate some geometries
+  st_transform(crs = 32612) %>%
+  # length of each channel unit
+  mutate(cu_length_m = as.numeric(st_length(geometry))) %>%
+  # straight line distance for each channel unit
+  mutate(cu_strght_m = map_dbl(geometry,
+                               .f = function(x) {
+                                 st_distance(st_line_sample(x, sample = 0),
+                                             st_line_sample(x, sample = 1))
+                               })) %>%
+  # sinuosity
+  mutate(cu_sin = cu_length_m / cu_strght_m)
 
 # write spatial otg as geodatabase
 st_write(otg,
