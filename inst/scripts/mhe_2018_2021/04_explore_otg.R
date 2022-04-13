@@ -27,12 +27,10 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 #-------------------------
 # read in spatial otg
 #-------------------------
-otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg")) %>%
-  mutate(geom = st_cast(st_sfc(geom), "LINESTRING", group_or_split = F)) %>%
-  st_transform(crs = 32612)
+dash_cu_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"))
 
 # do channel unit types match btw otg and channel unit points?
-cu_match = otg_sf %>%
+cu_match = dash_cu_sf %>%
   st_drop_geometry() %>%
   as_tibble() %>%
   select(path_nm,
@@ -47,20 +45,14 @@ cu_match = otg_sf %>%
   filter(match == 0)
 cu_match # omg, they all match!
 
-# prepare a DASH channel unit data frame
-dash_cu = otg_sf %>%
+# add additional cu metrics
+cu_tmp = dash_cu_sf %>%
   # remove cu_type from cu points
   select(-cu_type) %>%
   # calculate residual depth
-  mutate(residual_depth_m = maximum_depth_m - thalweg_exit_depth_m) %>%
-  # length of each channel unit
-  mutate(cu_length_m = as.numeric(st_length(geom))) %>%
-  # straight line distance for each channel unit
-  mutate(cu_strght_m = map_dbl(geom,
-                               .f = function(x) {
-                                 st_distance(st_line_sample(x, sample = 0),
-                                             st_line_sample(x, sample = 1))
-                               })) %>%
-  # sinuosity
-  mutate(cu_sin = cu_length_m / cu_strght_m)
+  mutate(residual_depth_m = maximum_depth_m - thalweg_exit_depth_m)
+
+dash_hr_sf = cu_tmp %>%
+
+
 

@@ -47,7 +47,7 @@ read_centerlines = function(path = ".",
   # read in all cl_files
   cl_list = cl_files %>%
     purrr::map(.f = function(x) {
-      sf::st_read(x) %>%
+      sf::st_read(x, type = 2) %>%
         dplyr::mutate(path_nm = stringr::str_remove(x, path)) %>%
         janitor::clean_names() %>%
         dplyr::select(path_nm,
