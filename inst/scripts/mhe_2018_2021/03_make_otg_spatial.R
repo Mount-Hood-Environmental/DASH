@@ -112,7 +112,9 @@ cl_qc = qc_centerline(cl_sf) # currently no errors found
 # read in otg data
 #-------------------------
 otg = readRDS(file = paste0(nas_prefix,
-                            "main/data/habitat/DASH/OTG/prepped/dash_18to21_cu_imputed.rds"))
+                            "main/data/habitat/DASH/OTG/prepped/dash_18to21_cu_imputed.rds")) %>%
+  # extract year from survey_start_date_time
+  mutate(year = as.numeric(str_extract(survey_start_date_time, "\\d{4}")))
 
 #-------------------------
 # join the centerlines to the OTG data
@@ -121,6 +123,7 @@ otg %<>%
   left_join(cl_sf %>%
               select(-path_nm),
             by = c("site_name",
+                   "year",
                    "channel_segment_number" = "seg_num",
                    "channel_unit_number" = "cu_num")) %>%
   relocate(geometry,
