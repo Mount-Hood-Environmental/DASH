@@ -697,6 +697,12 @@ otg_1920$cu %<>%
     path_nm == "Hayden4_Survey123_2019/CU_1.csv" & `Channel Unit Number` == 24 ~ 100,
     TRUE ~ `Ocular Sum (%)`))
 
+# Finally, when thalweg_exit_depth_m > maximum_depth_m, change maximum_depth_m = thalweg_exit_depth
+otg_1920$cu %<>%
+  mutate(`Maximum Depth (m)` = case_when(
+    `Thalweg Exit Depth (m)` > `Maximum Depth (m)` ~ `Thalweg Exit Depth (m)`,
+    TRUE ~ `Maximum Depth (m)`))
+
 # save results
 saveRDS(otg_1920,
         file = paste0(nas_prefix,
