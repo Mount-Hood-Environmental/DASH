@@ -64,12 +64,12 @@ hr_sf = cu_sf %>%
             water_temp_c = unique(site_water_temp_c),
             conductivity_ms = unique(site_conductivity_ms),
             hr_max_depth_m = round(max(maximum_depth_m, na.rm = T), 2),
-            overhang_cov_perc = round(weighted.mean(overhanging_percent, cu_length_m), 2),
-            aquat_veg_cov_perc = round(weighted.mean(aquatic_vegetation_percent, cu_length_m), 2),
-            woody_cov_perc = round(weighted.mean(woody_debris_percent, cu_length_m), 2),
-            artificial_cov_perc = round(weighted.mean(artificial_percent, cu_length_m), 2),
-            total_cover_perc = sum(overhang_cov_perc, aquat_veg_cov_perc, woody_cov_perc, artificial_cov_perc),
-            no_cover_perc = round(weighted.mean(total_no_cover_percent, cu_length_m), 2))
+            fish_cov_tr_veg = round(weighted.mean(overhanging_percent, cu_length_m), 2),
+            fish_cov_aq_veg = round(weighted.mean(aquatic_vegetation_percent, cu_length_m), 2),
+            fish_cov_lwd = round(weighted.mean(woody_debris_percent, cu_length_m), 2),
+            fish_cov_art = round(weighted.mean(artificial_percent, cu_length_m), 2),
+            fish_cov_total = sum(fish_cov_tr_veg, fish_cov_aq_veg, fish_cov_lwd, fish_cov_art),
+            fish_cov_none = round(weighted.mean(total_no_cover_percent, cu_length_m), 2))
 
 
 
