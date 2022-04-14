@@ -20,6 +20,7 @@ library(stringr)
 library(rlang)
 library(purrr)
 library(sf)
+library(lwgeom)
 library(DASH)
 
 #-------------------------
@@ -119,7 +120,7 @@ otg = readRDS(file = paste0(nas_prefix,
 #-------------------------
 # join the centerlines to the OTG data
 #-------------------------
-tmp = otg %>%
+otg_sf = otg %>%
   left_join(cl_sf %>%
               select(-path_nm),
             by = c("site_name",
@@ -128,52 +129,21 @@ tmp = otg %>%
                    "channel_unit_number" = "cu_num")) %>%
   relocate(geometry,
            .after = last_col()) %>%
-  mutate(geo_type = st_geometry_type(geometry))
-
-# non_lines = tmp %>%
-#   filter(geo_type != "LINESTRING") %>%
-#   select(path_nm,
-#          site_name,
-#          cu_id,
-#          geo_type) %>%
-#   write_csv("S:/main/data/habitat/DASH/centerlines/non_lines.csv")
-
-
-# tmp2 = tmp %>%
-#   st_as_sf()
-# %>%
-#   st_as_sf() %>%
-#   mutate(geometry = st_cast(geometry, "LINESTRING", group_or_split = F)) %>%
-#   st_transform(crs = 32612) %>%
-#   mutate(cu_length_m = as.numeric(st_length(geometry)))
-#
-#
-#   mutate(cu_strght_m = map_dbl(geometry,
-#                                .f = function(x) {
-#                                  st_distance(st_line_sample(x, sample = 0),
-#                                              st_line_sample(x, sample = 1))
-#                                }))
-#
-#
-# tmp2 = tmp %>%
-#   # change geom from "MULTILINESTRING" to "LINESTRING" (for whatever reason, there seems to be 5 channel units that actually
-#   # contain multiple lines, hence the use of group_or_split = F. I need to remedy that eventually.)
-#   mutate(geometry = st_cast(st_sfc(geometry), "LINESTRING", group_or_split = F)) %>%
-#   # convert to EPSG: 32612 = WGS 84/UTM zone 12N, which allows us to calculate some geometries
-#   st_transform(crs = 32612) %>%
-#   # length of each channel unit
-#   mutate(cu_length_m = as.numeric(st_length(geometry))) %>%
-#   # straight line distance for each channel unit
-#   mutate(cu_strght_m = map_dbl(geometry,
-#                                .f = function(x) {
-#                                  st_distance(st_line_sample(x, sample = 0),
-#                                              st_line_sample(x, sample = 1))
-#                                })) %>%
-#   # sinuosity
-#   mutate(cu_sin = cu_length_m / cu_strght_m)
+  # convert to sf object
+  st_as_sf() %>%
+  # convert to EPSG: 32612 = WGS 84/UTM zone 12N, which allows us to calculate some geometries
+  st_transform(crs = 32612) %>%
+  mutate(geo_type = st_geometry_type(geometry),
+         # length of centerline
+         cu_length_m = as.numeric(st_length(geometry)),
+         # straight line distance of centerline
+         cu_strght_m = as.numeric(map2(st_startpoint(geometry),
+                                       st_endpoint(geometry),
+                                       st_distance)),
+         cu_sin = cu_length_m / cu_strght_m)
 
 # write spatial otg as geodatabase
-st_write(otg,
+st_write(otg_sf,
          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"),
          delete_dsn = T)
 
