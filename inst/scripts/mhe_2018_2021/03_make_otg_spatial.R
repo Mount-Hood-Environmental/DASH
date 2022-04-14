@@ -142,6 +142,27 @@ otg_sf = otg %>%
                                        st_distance)),
          cu_sin = cu_length_m / cu_strght_m)
 
+# do channel unit types match btw otg and channel unit points?
+cu_match = otg_sf %>%
+  st_drop_geometry() %>%
+  as_tibble() %>%
+  select(path_nm,
+         site_name,
+         year,
+         cu_id,
+         channel_segment_number,
+         channel_unit_number,
+         channel_unit_type,
+         cu_type) %>%
+  mutate(match = if_else(channel_unit_type == cu_type, 1, 0)) %>%
+  filter(match == 0)
+cu_match # omg, they all match!
+
+# add additional cu metrics
+otg_sf %<>%
+  # remove cu_type from cu points
+  select(-cu_type)
+
 # write spatial otg as geodatabase
 st_write(otg_sf,
          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"),
