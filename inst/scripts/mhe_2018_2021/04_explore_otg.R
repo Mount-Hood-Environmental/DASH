@@ -40,7 +40,17 @@ cu_sf = otg_sf %>%
 # initiate habitat reach sf
 #-------------------------
 hr_sf = otg_sf %>%
-  group_by(site_name, year, hab_rch)
+  group_by(site_name, year, hab_rch) %>%
+  summarise(cu_ids = list(unique(cu_id)),
+            n_cus = n_distinct(cu_id),
+            n_pools = sum(channel_unit_type == "Pool"),
+            n_runs = sum(channel_unit_type == "Run"),
+            n_riffles = sum(channel_unit_type == "Riffle"),
+            n_rapids = sum(channel_unit_type == "Rapid+"),
+            n_ocas = sum(channel_unit_type == "OCA"),
+            n_sscs = sum(channel_unit_type == "SSC"),
+            n_slow = sum(n_pools, n_ocas),
+            n_fst_turb= sum(n_riffles, n_rapids))
 
 
 
