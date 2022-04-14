@@ -42,15 +42,25 @@ cu_sf = otg_sf %>%
 hr_sf = otg_sf %>%
   group_by(site_name, year, hab_rch) %>%
   summarise(cu_ids = list(unique(cu_id)),
-            n_cus = n_distinct(cu_id),
-            n_pools = sum(channel_unit_type == "Pool"),
-            n_runs = sum(channel_unit_type == "Run"),
-            n_riffles = sum(channel_unit_type == "Riffle"),
-            n_rapids = sum(channel_unit_type == "Rapid+"),
-            n_ocas = sum(channel_unit_type == "OCA"),
-            n_sscs = sum(channel_unit_type == "SSC"),
-            n_slow = sum(n_pools, n_ocas),
-            n_fst_turb= sum(n_riffles, n_rapids))
+            n_cu = n_distinct(cu_id),
+            n_pool = sum(channel_unit_type == "Pool"),
+            n_run = sum(channel_unit_type == "Run"),
+            n_riffle = sum(channel_unit_type == "Riffle"),
+            n_rapid = sum(channel_unit_type == "Rapid+"),
+            n_oca = sum(channel_unit_type == "OCA"),
+            n_ssc = sum(channel_unit_type == "SSC"),
+            n_slow = sum(n_pool, n_oca),
+            n_fst_turb = sum(n_riffle, n_rapid),
+            hr_length_m = sum(cu_length_m),
+            cu_freq = n_cu / hr_length_m * 100,
+            pool_freq = n_pool / hr_length_m * 100,
+            run_freq = n_run / hr_length_m * 100,
+            riffle_freq = n_riffle / hr_length_m * 100,
+            rapid_freq = n_rapid / hr_length_m * 100,
+            oca_freq = n_oca / hr_length_m * 100,
+            ssc_freq = n_ssc / hr_length_m * 100,
+            slow_freq = n_slow / hr_length_m * 100,
+            fst_turb_freq = n_fst_turb / hr_length_m * 100)
 
 
 
