@@ -39,7 +39,7 @@ cu_sf = otg_sf %>%
 #-------------------------
 # initiate habitat reach sf
 #-------------------------
-hr_sf = otg_sf %>%
+hr_sf = cu_sf %>%
   group_by(site_name, year, hab_rch) %>%
   summarise(cu_ids = list(unique(cu_id)),
             n_cu = n_distinct(cu_id),
@@ -52,15 +52,25 @@ hr_sf = otg_sf %>%
             n_slow = sum(n_pool, n_oca),
             n_fst_turb = sum(n_riffle, n_rapid),
             hr_length_m = sum(cu_length_m),
-            cu_freq = n_cu / hr_length_m * 100,
-            pool_freq = n_pool / hr_length_m * 100,
-            run_freq = n_run / hr_length_m * 100,
-            riffle_freq = n_riffle / hr_length_m * 100,
-            rapid_freq = n_rapid / hr_length_m * 100,
-            oca_freq = n_oca / hr_length_m * 100,
-            ssc_freq = n_ssc / hr_length_m * 100,
-            slow_freq = n_slow / hr_length_m * 100,
-            fst_turb_freq = n_fst_turb / hr_length_m * 100)
+            cu_freq = round(n_cu / hr_length_m * 100, 2),
+            pool_freq = round(n_pool / hr_length_m * 100, 2),
+            run_freq = round(n_run / hr_length_m * 100, 2),
+            riffle_freq = round(n_riffle / hr_length_m * 100, 2),
+            rapid_freq = round(n_rapid / hr_length_m * 100, 2),
+            oca_freq = round(n_oca / hr_length_m * 100, 2),
+            ssc_freq = round(n_ssc / hr_length_m * 100, 2),
+            slow_freq = round(n_slow / hr_length_m * 100, 2),
+            fst_turb_freq = round(n_fst_turb / hr_length_m * 100, 2),
+            water_temp_c = unique(site_water_temp_c),
+            conductivity_ms = unique(site_conductivity_ms),
+            hr_max_depth_m = round(max(maximum_depth_m, na.rm = T), 2),
+            overhang_cov_perc = round(weighted.mean(overhanging_percent, cu_length_m), 2),
+            aquat_veg_cov_perc = round(weighted.mean(aquatic_vegetation_percent, cu_length_m), 2),
+            woody_cov_perc = round(weighted.mean(woody_debris_percent, cu_length_m), 2),
+            artificial_cov_perc = round(weighted.mean(artificial_percent, cu_length_m), 2),
+            total_cover_perc = sum(overhang_cov_perc, aquat_veg_cov_perc, woody_cov_perc, artificial_cov_perc),
+            no_cover_perc = round(weighted.mean(total_no_cover_percent, cu_length_m), 2))
+
 
 
 
