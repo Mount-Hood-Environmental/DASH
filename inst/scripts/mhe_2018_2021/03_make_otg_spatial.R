@@ -140,7 +140,7 @@ otg_sf = otg %>%
          cu_strght_m = as.numeric(map2(st_startpoint(geometry),
                                        st_endpoint(geometry),
                                        st_distance)),
-         cu_sin = cu_length_m / cu_strght_m)
+         cu_sin_cl = cu_length_m / cu_strght_m)
 
 # do channel unit types match btw otg and channel unit points?
 cu_match = otg_sf %>%
