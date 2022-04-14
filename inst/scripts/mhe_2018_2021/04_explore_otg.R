@@ -34,7 +34,19 @@ otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_1
 #-------------------------
 cu_sf = otg_sf %>%
   # residual depth
-  mutate(resid_depth_m = maximum_depth_m - thalweg_exit_depth_m)
+  mutate(resid_depth_m = maximum_depth_m - thalweg_exit_depth_m) %>%
+  # diameter metrics
+  rowwise() %>%
+  mutate(
+    cu_d16 = quantile(c_across(starts_with("pebble")), 0.16, na.rm = T),
+    cu_d50 = quantile(c_across(starts_with("pebble")), 0.50, na.rm = T),
+    cu_d84 = quantile(c_across(starts_with("pebble")), 0.84, na.rm = T),
+  )
+
+# write channel unit sf object to geodatabase
+st_write(cu_sf,
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_18-21.gpkg"),
+         delete_dsn = T)
 
 #-------------------------
 # initiate habitat reach sf
@@ -69,8 +81,16 @@ hr_sf = cu_sf %>%
             fish_cov_lwd = round(weighted.mean(woody_debris_percent, cu_length_m), 2),
             fish_cov_art = round(weighted.mean(artificial_percent, cu_length_m), 2),
             fish_cov_total = sum(fish_cov_tr_veg, fish_cov_aq_veg, fish_cov_lwd, fish_cov_art),
-            fish_cov_none = round(weighted.mean(total_no_cover_percent, cu_length_m), 2))
+            fish_cov_none = round(weighted.mean(total_no_cover_percent, cu_length_m), 2),
+            sub_est_sand_fines = round(weighted.mean(sand_fines_2mm_percent, cu_length_m), 2),
+            sub_est_gravl = round(weighted.mean(gravel_2_64mm_percent, cu_length_m), 2),
+            sub_est_cbl = round(weighted.mean(cobble_64_256mm_percent, cu_length_m), 2),
+            sub_est_bldr = round(weighted.mean(boulder_256mm_percent, cu_length_m), 2),
+            hr_d16 = mean(cu_d16, na.rm = T),
+            hr_d50 = mean(cu_d50, na.rm = T),
+            hr_d84 = mean(cu_d84, na.rm = T))
 
-
-
+# write habitat reach sf object to file
+saveRDS(hr_sf,
+        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_18-21.rds"))
 
