@@ -27,32 +27,20 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 #-------------------------
 # read in spatial otg
 #-------------------------
-dash_cu_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"))
+otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"))
 
-# do channel unit types match btw otg and channel unit points?
-cu_match = dash_cu_sf %>%
-  st_drop_geometry() %>%
-  as_tibble() %>%
-  select(path_nm,
-         site_name,
-         year,
-         cu_id,
-         channel_segment_number,
-         channel_unit_number,
-         channel_unit_type,
-         cu_type) %>%
-  mutate(match = if_else(channel_unit_type == cu_type, 1, 0)) %>%
-  filter(match == 0)
-cu_match # omg, they all match!
+#-------------------------
+# additional metrics for channel units
+#-------------------------
+cu_sf = otg_sf %>%
+  # residual depth
+  mutate(resid_depth_m = maximum_depth_m - thalweg_exit_depth_m)
 
-# add additional cu metrics
-cu_tmp = dash_cu_sf %>%
-  # remove cu_type from cu points
-  select(-cu_type) %>%
-  # calculate residual depth
-  mutate(residual_depth_m = maximum_depth_m - thalweg_exit_depth_m)
-
-dash_hr_sf = cu_tmp %>%
+#-------------------------
+# initiate habitat reach sf
+#-------------------------
+hr_sf = otg_sf %>%
+  group_by(site_name, year, hab_rch)
 
 
 
