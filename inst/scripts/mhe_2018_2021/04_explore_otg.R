@@ -48,8 +48,6 @@ st_write(cu_sf,
          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_18-21.gpkg"),
          delete_dsn = T)
 
-tmp = paste(list(cu_sf$cu_id), sep = "-")
-
 #-------------------------
 # initiate habitat reach sf
 #-------------------------
@@ -134,6 +132,8 @@ hr_sf = cu_sf %>%
     # size
     hr_thlwg_dpth_avg_m = round(mean(thalweg_exit_depth_m, na.rm = T), 2),
     hr_max_depth_m = round(max(maximum_depth_m, na.rm = T), 2),
+    hr_avg_pool_dpth_m = mean(maximum_depth_m[channel_unit_type == "Pool"]),
+    hr_avg_resid_pool_dpth_m = mean(resid_depth_m[channel_unit_type == "Pool"]),
     # temperature
     obs_water_temp_c = unique(site_water_temp_c),
     # water quality
