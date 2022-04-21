@@ -86,6 +86,7 @@ hr_sf = cu_sf %>%
     ssc_perc = round((sum(cu_length_m[channel_unit_type == "SSC"]) / hr_length_m) * 100, 1),
     slow_perc = sum(pool_perc, oca_perc),
     fst_turb_perc = sum(riffle_perc, rapid_perc),
+    pool_turb_ratio = round(sum(cu_length_m[channel_unit_type == "Pool"]) / sum(cu_length_m[channel_unit_type == "Riffle"], cu_length_m[channel_unit_type == "Rapid+"]), 2),
     # fish cover
     fish_cov_tr_veg = round(weighted.mean(overhanging_percent, cu_length_m), 1),
     fish_cov_aq_veg = round(weighted.mean(aquatic_vegetation_percent, cu_length_m), 1),
