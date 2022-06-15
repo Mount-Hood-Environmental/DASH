@@ -99,6 +99,7 @@ hr_sf = cu_sf %>%
     sub_est_gravl = round(weighted.mean(gravel_2_64mm_percent, cu_length_m), 1),
     sub_est_cbl = round(weighted.mean(cobble_64_256mm_percent, cu_length_m), 1),
     sub_est_bldr = round(weighted.mean(boulder_256mm_percent, cu_length_m), 1),
+    sub_est_cbl_bldr = sum(sub_est_cbl, sub_est_bldr),
     # diameter estimates from pebble counts
     hr_d16_mm = round(mean(cu_d16, na.rm = T), 1),
     hr_d50_mm = round(mean(cu_d50, na.rm = T), 1),
