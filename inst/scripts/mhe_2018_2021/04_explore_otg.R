@@ -107,6 +107,7 @@ hr_sf = cu_sf %>%
     # wood
     n_lwd_bankfull = sum(lwd_n),
     n_lwd_wetted = sum(lwd_n_wet),
+    lwd_wetted_freq = round(n_lwd_wetted / hr_length_m * 100,2),
     lwd_bankfull_area_m2 = sum(lwd_area_m2),
     lwd_wetted_area_m2 = sum(lwd_area_wet_m2),
     lwd_bankfull_vol_m3 = sum(lwd_vol_m3),
