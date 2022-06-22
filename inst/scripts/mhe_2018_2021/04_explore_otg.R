@@ -17,6 +17,7 @@ rm(list = ls())
 library(tidyverse)
 library(sf)
 library(dplyr)
+library(elevatr)
 
 #-------------------------
 # set NAS prefix, depending on operating system
@@ -28,6 +29,19 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # read in spatial otg
 #-------------------------
 otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"))
+
+#-----------------------
+# pull in elevation data from UGSG - 3DEP
+#-----------------------
+elev_DEM = otg_sf %>%
+  select(x = site_lon,
+         y = site_lat)
+
+# elevtr() needs a data frame with x & y coordinates
+out <- get_elev_point(locations = as.data.frame(elev_DEM), units ="meters", src = "epqs", prj = 4326) #WGS84
+
+otg_sf = otg_sf %>%
+  mutate(elev_m_dem = out@data[["elevation"]])
 
 #-------------------------
 # additional metrics for channel units
@@ -142,6 +156,8 @@ hr_sf = cu_sf %>%
     obs_water_temp_c = unique(site_water_temp_c),
     # water quality
     obs_conductivity_ms = unique(site_conductivity_ms),
+    # elevation
+    elev_m_dem = unique(elev_m_dem),
     .groups = "drop"
   ) %>%
   rename(geometry = geom) #%>%
