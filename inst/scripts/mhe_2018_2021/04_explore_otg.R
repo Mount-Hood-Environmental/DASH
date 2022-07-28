@@ -30,6 +30,19 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 #-------------------------
 otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"))
 
+#-------------------------
+# append discharge data from 2019 and 2020
+#-------------------------
+load(paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_discharge_1920.rda"))
+
+otg_sf %<>%
+  left_join(dis_1920, by = "parent_global_id", suffix = c("","_new")) %>%
+  mutate(discharge_cms = ifelse(is.na(discharge_cms),discharge_cms_new,discharge_cms),
+         discharge_cfs = ifelse(is.na(discharge_cfs),discharge_cfs_new,discharge_cfs)) %>%
+  select(-discharge_cms_new, -discharge_cfs_new)
+
+rm(dis_1920)
+
 #-----------------------
 # pull in elevation data from UGSG - 3DEP
 #-----------------------
@@ -145,7 +158,7 @@ hr_sf = cu_sf %>%
     hr_ms_sin_cl = round(weighted.mean(cu_sin_cl[channel_segment_number == "01"], cu_length_m[channel_segment_number == "01"], na.rm = T), 2),
     hr_sin_cl = round(weighted.mean(cu_sin_cl, cu_length_m, na.rm = T), 2),
     hr_thlwg_dpth_cv = round(raster::cv(thalweg_exit_depth_m, na.rm = T), 2),
-    hr_braidedness = round(sum(cu_length_m) / sum(cu_strght_m[channel_segment_number == "01"]), 2),
+    hr_braidedness = round(hr_length_m / sum(cu_strght_m[channel_segment_number == "01"]), 2),
     # size
     hr_discharge_cfs = round(mean(discharge_cfs, na.rm = T), 2),
     hr_thlwg_dpth_avg_m = round(mean(thalweg_exit_depth_m, na.rm = T), 2),
@@ -162,6 +175,11 @@ hr_sf = cu_sf %>%
   ) %>%
   rename(geometry = geom) #%>%
   #st_cast("MULTILINESTRING")
+
+
+#TEMPORARY SOLUTION
+#Spread weighted mean discharge across sites
+
 
 # write habitat reach sf object to file
 saveRDS(hr_sf,
