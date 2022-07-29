@@ -43,6 +43,14 @@ otg_sf %<>%
 
 rm(dis_1920)
 
+#TEMPORARY SOLUTION
+#Spread weighted mean discharge across sites
+otg_sf %<>%
+  group_by(parent_global_id) %>%
+  mutate(discharge_cfs = weighted.mean(discharge_cfs, cu_length_m, na.rm = T),
+         discharge_cms = weighted.mean(discharge_cms, cu_length_m, na.rm = T)) %>%
+  ungroup()
+
 #-----------------------
 # pull in elevation data from UGSG - 3DEP
 #-----------------------
@@ -67,8 +75,7 @@ cu_sf = otg_sf %>%
   mutate(
     cu_d16 = quantile(c_across(starts_with("pebble")), 0.16, na.rm = T),
     cu_d50 = quantile(c_across(starts_with("pebble")), 0.50, na.rm = T),
-    cu_d84 = quantile(c_across(starts_with("pebble")), 0.84, na.rm = T),
-  )
+    cu_d84 = quantile(c_across(starts_with("pebble")), 0.84, na.rm = T),  )
 
 # write channel unit sf object to geodatabase
 st_write(cu_sf,
@@ -175,10 +182,6 @@ hr_sf = cu_sf %>%
   ) %>%
   rename(geometry = geom) #%>%
   #st_cast("MULTILINESTRING")
-
-
-#TEMPORARY SOLUTION
-#Spread weighted mean discharge across sites
 
 
 # write habitat reach sf object to file

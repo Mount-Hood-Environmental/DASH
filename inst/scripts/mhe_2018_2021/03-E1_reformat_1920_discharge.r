@@ -45,22 +45,31 @@ yr_wtsd = c("2019/lemhi/",
 path = c()
 
 for (yw in yr_wtsd) {
-  path = c(path, list.dirs(paste0(otg_path, yw, "1_formatted_csvs"))[-1])
+  path = c(path, list.dirs(paste0(otg_path, yw, "2_qcd_csvs"))[-1])
 }
 
 id = ldply(paste0(path, "/Discharge_5.csv"), read_csv)
+
+#Load discharge data and convert station width to tape distance
+dat = ldply(paste0(path, "/DischargeMeasurements_6.csv"), read_csv) %>%
+  mutate(tape_distance_m = ave(`Station Width`,ParentGlobalID, FUN = cumsum))
+
+otg$discharge %<>%
+  left_join(dat %>% select(GlobalID, ParentGlobalID, tape_distance_m)
+              ,by = c("GlobalID","ParentGlobalID")) %>%
+  mutate(`Tape Distance (m)` = ifelse(is.na(`Station Width`), `Tape Distance (m)`, tape_distance_m)) %>%
+  select(-tape_distance_m)
 
 dis_1920 = id %>%
   select(GlobalID, ParentGlobalID) %>%
   left_join(otg$discharge, by = c("GlobalID" = "ParentGlobalID")) %>%
   select(path_nm, ObjectID, GlobalID, `Tape Distance (m)`, `Station Depth (m)`, `Station Velocity (m/s)`, ParentGlobalID, CreationDate, Creator, EditDate, Editor) %>%
-  mutate(GlobalID = "ParentID_is_Site") %>%
+  left_join(dat %>% select(GlobalID, ParentGlobalID, tape_distance_m)
+            ,by = c("GlobalID","ParentGlobalID")) %>%
+  mutate(`Tape Distance (m)` = ifelse(is.na(tape_distance_m), `Tape Distance (m)`, tape_distance_m)) %>%
+  select(-tape_distance_m) %>%
   janitor::clean_names() %>%
-  #Issues with data (TapeDist vs. StatWidth)leading to weird discharge values.
   rollup_cu_discharge()
-
-  View(filter(dis_1920, ParentGlobalID == "a8ff9117-d94c-4b95-a488-66e809b8fae5") %>%
-         mutate(vel =`Tape Distance (m)` * `Station Depth (m)` * `Station Velocity (m/s)` ))
 
 save(dis_1920,
      file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_discharge_1920.rda"))
