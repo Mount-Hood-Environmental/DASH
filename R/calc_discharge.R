@@ -34,10 +34,10 @@ calc_discharge <- function(discharge_df = NULL) {
                   max_stat = max(station)) %>%
     # calculate station width
     dplyr::mutate(stat_width_m = if_else(station == min_stat,
-                                         (lead(tape_distance_m) - tape_distance_m) / 2,
+                                         abs(lead(tape_distance_m) - tape_distance_m) / 2,
                                          if_else(station == max_stat,
-                                                 (tape_distance_m - lag(tape_distance_m)) / 2,
-                                                 ((tape_distance_m - lag(tape_distance_m)) / 2) + ((lead(tape_distance_m) - tape_distance_m) / 2)))) %>%
+                                                 abs(tape_distance_m - lag(tape_distance_m)) / 2,
+                                                 abs((tape_distance_m - lag(tape_distance_m)) / 2) + abs((lead(tape_distance_m) - tape_distance_m) / 2)))) %>%
     # calculate station discharge
     dplyr::mutate(stat_disch = stat_width_m * station_depth_m * station_velocity_m_s) %>%
     # calculate channel unit discharge
