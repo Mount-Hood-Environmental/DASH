@@ -13,8 +13,8 @@ rm(list = ls())
 #-----------------------------
 # load necessary libraries
 #-----------------------------
-library(tidyverse)
 library(plyr)
+library(tidyverse)
 library(sf)
 library(magrittr)
 library(DASH)
@@ -57,7 +57,7 @@ dat = ldply(paste0(path, "/DischargeMeasurements_6.csv"), read_csv) %>%
 otg$discharge %<>%
   left_join(dat %>% select(GlobalID, ParentGlobalID, tape_distance_m)
               ,by = c("GlobalID","ParentGlobalID")) %>%
-  mutate(`Tape Distance (m)` = ifelse(is.na(`Station Width`), `Tape Distance (m)`, tape_distance_m)) %>%
+  mutate(`Tape Distance (m)` = ifelse(is.na(`tape_distance_m`), `Tape Distance (m)`, tape_distance_m)) %>%
   select(-tape_distance_m)
 
 dis_1920 = id %>%
@@ -67,6 +67,7 @@ dis_1920 = id %>%
   left_join(dat %>% select(GlobalID, ParentGlobalID, tape_distance_m)
             ,by = c("GlobalID","ParentGlobalID")) %>%
   mutate(`Tape Distance (m)` = ifelse(is.na(tape_distance_m), `Tape Distance (m)`, tape_distance_m)) %>%
+  mutate(`Tape Distance (m)` = as.numeric(`Tape Distance (m)`)) %>%
   select(-tape_distance_m) %>%
   janitor::clean_names() %>%
   rollup_cu_discharge()
@@ -78,7 +79,7 @@ save(dis_1920,
 #MERGE TESTING: Append the discharge data onto the CU data at the site level
 otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"))
 
-setdiff( dis_1920$parent_global_id, otg_sf$parent_global_id)
+setdiff(dis_1920$parent_global_id, otg_sf$parent_global_id)
 
 load(paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_discharge_1920.rda"))
 

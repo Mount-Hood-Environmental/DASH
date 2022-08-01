@@ -46,7 +46,7 @@ rm(dis_1920)
 #TEMPORARY SOLUTION
 #Spread weighted mean discharge across sites
 otg_sf %<>%
-  group_by(parent_global_id) %>%
+  group_by(parent_global_id, path_nm) %>%
   mutate(discharge_cfs = weighted.mean(discharge_cfs, cu_length_m, na.rm = T),
          discharge_cms = weighted.mean(discharge_cms, cu_length_m, na.rm = T)) %>%
   ungroup()
