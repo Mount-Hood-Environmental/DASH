@@ -203,7 +203,8 @@ cu_sf %<>%
             ) %>%
   mutate(fish_cov_lwd = lwd_area_wet_m2/(mean(width_1_m, width_2_m, width_3_m, width_4_m, width_5_m, na.rm = T)*cu_length_m),
          SubEstCandBldr = cobble_64_256mm_percent + boulder_256mm_percent
-         )
+         ) %>%
+  rename(geometry = geom)
 
 #Write out channel unit data to .csv, .rds, .gpkg
 saveRDS(cu_sf,
