@@ -43,8 +43,7 @@ otg_sf %<>%
 
 rm(dis_1920)
 
-#TEMPORARY SOLUTION
-#Spread weighted mean discharge across sites
+#Spread weighted mean discharge across sites from 2019-20 without cu discharge
 otg_sf %<>%
   group_by(parent_global_id, path_nm) %>%
   mutate(discharge_cfs = weighted.mean(discharge_cfs, cu_length_m, na.rm = T),
@@ -52,17 +51,17 @@ otg_sf %<>%
   ungroup()
 
 #-----------------------
-# pull in elevation data from UGSG - 3DEP
+# pull in elevation data from UGSG - 3DEP: CURRENTLY NOT IN USE
 #-----------------------
-elev_DEM = otg_sf %>%
-  select(x = site_lon,
-         y = site_lat)
-
+# elev_DEM = otg_sf %>%
+#   select(x = site_lon,
+#          y = site_lat)
+#
 # elevtr() needs a data frame with x & y coordinates
-out <- get_elev_point(locations = as.data.frame(elev_DEM), units ="meters", src = "epqs", prj = 4326) #WGS84
-
-otg_sf = otg_sf %>%
-  mutate(elev_m_dem = out@data[["elevation"]])
+# out <- get_elev_point(locations = as.data.frame(elev_DEM), units ="meters", src = "epqs", prj = 4326) #WGS84
+#
+# otg_sf = otg_sf %>%
+#   mutate(elev_m_dem = out@data[["elevation"]])
 
 #-------------------------
 # additional metrics for channel units
@@ -76,11 +75,6 @@ cu_sf = otg_sf %>%
     cu_d16 = quantile(c_across(starts_with("pebble")), 0.16, na.rm = T),
     cu_d50 = quantile(c_across(starts_with("pebble")), 0.50, na.rm = T),
     cu_d84 = quantile(c_across(starts_with("pebble")), 0.84, na.rm = T),  )
-
-# write channel unit sf object to geodatabase
-st_write(cu_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_18-21.gpkg"),
-         delete_dsn = T)
 
 #-------------------------
 # initiate habitat reach sf
@@ -177,7 +171,7 @@ hr_sf = cu_sf %>%
     # water quality
     obs_conductivity_ms = unique(site_conductivity_ms),
     # elevation
-    elev_m_dem = unique(elev_m_dem),
+    #elev_m_dem = unique(elev_m_dem),
     .groups = "drop"
   ) %>%
   rename(geometry = geom) #%>%
@@ -195,3 +189,31 @@ write_csv(hr_sf,
 # st_write(hr_sf,
 #          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_18-21.gpkg"),
 #          delete_dsn = T)
+
+
+#-------------------------
+# Append habitat reach data to channel unit object for winter QRF model
+#-------------------------
+
+cu_sf %<>%
+  left_join(hr_sf %>%
+              st_drop_geometry() %>%
+              select(site_name, year, hab_rch, cu_freq, hr_sin_cl, hr_braidedness)
+            ,by = c("site_name", "year", "hab_rch")
+            ) %>%
+  mutate(fish_cov_lwd = lwd_area_wet_m2/(mean(width_1_m, width_2_m, width_3_m, width_4_m, width_5_m, na.rm = T)*cu_length_m),
+         SubEstCandBldr = cobble_64_256mm_percent + boulder_256mm_percent
+         ) %>%
+  rename(geometry = geom)
+
+#Write out channel unit data to .csv, .rds, .gpkg
+saveRDS(cu_sf,
+        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_18-21.rds"))
+
+write_csv(cu_sf,
+          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_18-21.csv"))
+
+# write channel unit sf object to geodatabase
+st_write(cu_sf,
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_18-21.gpkg"),
+         delete_dsn = T)
