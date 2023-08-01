@@ -3,7 +3,8 @@
 # Purpose: rollup OTG data to channel unit scale
 #
 # Created: March 4, 2022
-#   Last Modified: March 23, 2022
+#   Last Modified: August 1, 2023 by Tulley Mackey for DASH data collected
+#                 July, 2022 near Lemhi_Hayden confluence
 #
 # Notes:
 
@@ -28,43 +29,45 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 otg_path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/")
 
 #-------------------------
-# load all OTG data
+# load 2022 OTG data
 #-------------------------
-otg = readRDS(file = paste0(otg_path,
-                            "prepped/otg_all_18to21.rds"))
-# remove the qc_results data frame from otg
-otg$qc_results = NULL
+
+otg_2022 = readRDS(file = paste0(otg_path,
+                                 "prepped/otg_qcd_2022.rds"))
+
+# remove the qc_results data frame from otg_qcd_2022
+otg_2022$qc_results = NULL
 
 #-------------------------
 # roll up OTG data to CU scale, no data imputation
 #-------------------------
-otg_cu = otg_to_cu(survey_df = otg$survey,
-                   cu_df = otg$cu,
-                   wood_df = otg$wood,
-                   jam_df = otg$jam,
-                   undercut_df = otg$undercut,
-                   discharge_df = otg$discharge,
+otg_22_cu = otg_to_cu(survey_df = otg_2022$survey,
+                   cu_df = otg_2022$cu,
+                   wood_df = otg_2022$wood,
+                   jam_df = otg_2022$jam,
+                   undercut_df = otg_2022$undercut,
+                   discharge_df = otg_2022$discharge,
                    fix_nas = FALSE) # no imputation
 
 # save non-imputed, prepped data
-write_rds(otg_cu,
+write_rds(otg_22_cu,
           paste0(otg_path,
-                 "prepped/dash_18to21_cu_no_impute.rds"))
+                 "prepped/dash_2022_cu_no_impute.rds"))
 
 #-------------------------
 # roll up OTG data to CU scale, add primary data imputation
 #-------------------------
-otg_cu_imp = otg_to_cu(survey_df = otg$survey,
-                       cu_df = otg$cu,
-                       wood_df = otg$wood,
-                       jam_df = otg$jam,
-                       undercut_df = otg$undercut,
-                       discharge_df = otg$discharge,
+otg_22_cu_imp = otg_to_cu(survey_df = otg_2022$survey,
+                       cu_df = otg_2022$cu,
+                       wood_df = otg_2022$wood,
+                       jam_df = otg_2022$jam,
+                       undercut_df = otg_2022$undercut,
+                       discharge_df = otg_2022$discharge,
                        fix_nas = TRUE) # impute missing values
 
 # save imputed, prepped data
-write_rds(otg_cu_imp,
+write_rds(otg_22_cu_imp,
           paste0(otg_path,
-                 "prepped/dash_18to21_cu_imputed.rds"))
+                 "prepped/dash_2022_cu_imputed.rds"))
 
 # END SCRIPT

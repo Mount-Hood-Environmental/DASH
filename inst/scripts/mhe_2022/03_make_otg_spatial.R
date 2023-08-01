@@ -4,7 +4,8 @@
 # information from the channel unit points.
 #
 # Initially created: December 8, 2020
-#   Last Modified: April 12, 2022
+#   Last Modified: August 1, 2023 by Tulley Mackey for DASH data collected
+#                  near Lemhi-Hayden confluence July, 2022
 #
 # Notes:
 
@@ -33,7 +34,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # read in centerlines
 #-------------------------
 cl_path = paste0(nas_prefix,
-                 "main/data/habitat/DASH/centerlines")
+                 "main/data/habitat/DASH/centerlines/2022")
 
 # import centerlines using read_centerlines()
 cl_sf = read_centerlines(path = cl_path,
@@ -53,10 +54,10 @@ cl_p
 # read in channel unit points (e.g., from Field Maps)
 #-------------------------------------
 cu_pts_path = paste0(nas_prefix,
-                     "main/data/habitat/DASH/channel_units/compiled")
+                     "main/data/habitat/DASH/channel_units")
 
-# read in channel unit points from 2018 - 2021
-cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points.gpkg")) %>%
+# read in channel unit points from 2022
+cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points_2022.shp")) %>%
   mutate(seg_num = str_pad(seg_num, 2, pad = "0"),
          hab_rch = str_pad(hab_rch, 2, pad = "0"),
          cu_num = str_pad(cu_num, 3, pad = "0"))
