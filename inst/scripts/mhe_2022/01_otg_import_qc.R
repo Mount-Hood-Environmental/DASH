@@ -141,3 +141,5 @@ for (yw in yr_wtsd) {
 } # end import QC'd data, record final QC messages, and export prepped data
 
 # END SCRIPT
+
+saveRDS(otg_qcd, "S:/main/data/habitat/DASH/OTG/prepped/otg_qcd_2022.rds")

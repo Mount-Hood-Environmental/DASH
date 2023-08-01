@@ -57,7 +57,7 @@ cu_pts_path = paste0(nas_prefix,
                      "main/data/habitat/DASH/channel_units")
 
 # read in channel unit points from 2022
-cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points_2022.shp")) %>%
+cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points_22.shp")) %>%
   mutate(seg_num = str_pad(seg_num, 2, pad = "0"),
          hab_rch = str_pad(hab_rch, 2, pad = "0"),
          cu_num = str_pad(cu_num, 3, pad = "0"))
@@ -76,9 +76,7 @@ cu_pts_df = cu_pts %>%
          seg_num,
          cu_num,
          cu_type,
-         hab_rch,
-         fish_site,
-         grts_id) %>%
+         hab_rch) %>%
   distinct()
 
 # are there any duplicate channel units in cu_pts_df?
@@ -102,9 +100,8 @@ cl_sf %<>%
 # save compiled centerlines
 #-------------------------------------
 st_write(cl_sf,
-         dsn = paste0(cl_path, "/compiled/centerlines_all.gpkg"),
-         delete_dsn = T)
-
+         dsn = paste0(cl_path, "/compiled/centerlines_2022.shp"),
+         delete_dsn = TRUE)
 #-------------------------------------
 # QC centerlines
 #-------------------------------------
@@ -114,7 +111,7 @@ cl_qc = qc_centerline(cl_sf) # currently no errors found
 # read in otg data
 #-------------------------
 otg = readRDS(file = paste0(nas_prefix,
-                            "main/data/habitat/DASH/OTG/prepped/dash_18to21_cu_imputed.rds")) %>%
+                            "main/data/habitat/DASH/OTG/prepped/dash_2022_cu_imputed.rds")) %>%
   # extract year from survey_start_date_time
   mutate(year = as.numeric(str_extract(survey_start_date_time, "\\d{4}")))
 
@@ -166,7 +163,7 @@ otg_sf %<>%
 
 # write spatial otg as geodatabase
 st_write(otg_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_18to21.gpkg"),
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_2022.gpkg"),
          delete_dsn = T)
 
 ### END SCRIPT
