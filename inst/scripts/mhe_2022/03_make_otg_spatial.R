@@ -5,7 +5,7 @@
 #
 # Initially created: December 8, 2020
 #   Last Modified: August 1, 2023 by Tulley Mackey for DASH data collected
-#                  near Lemhi-Hayden confluence July, 2022
+#                  near the Lemhi-Hayden confluence July, 2022
 #
 # Notes:
 
@@ -77,6 +77,9 @@ cu_pts_df = cu_pts %>%
          cu_num,
          cu_type,
          hab_rch) %>%
+  mutate(site_name = ifelse(site_name == 'Pre Restoration', 'Hayden_Pre Restoration', site_name),
+        site_name = ifelse(site_name == 'Split River Ranch', 'Split_River', site_name),
+        site_name = ifelse(site_name == 'Fish Gamer', 'Fish_Gamer', site_name)) %>%
   distinct()
 
 # are there any duplicate channel units in cu_pts_df?
@@ -113,7 +116,11 @@ cl_qc = qc_centerline(cl_sf) # currently no errors found
 otg = readRDS(file = paste0(nas_prefix,
                             "main/data/habitat/DASH/OTG/prepped/dash_2022_cu_imputed.rds")) %>%
   # extract year from survey_start_date_time
-  mutate(year = as.numeric(str_extract(survey_start_date_time, "\\d{4}")))
+  mutate(year = as.numeric(str_extract(survey_start_date_time, "\\d{4}"))) %>%
+  mutate(site_name = ifelse(site_name == 'Pre Restoration', 'Hayden_Pre Restoration', site_name),
+         site_name = ifelse(site_name == 'Split River Ranch', 'Split_River', site_name),
+         site_name = ifelse(site_name == 'Fish Gamer', 'Fish_Gamer', site_name)) %>%
+  select(-channel_unit_notes)
 
 #-------------------------
 # join the centerlines to the OTG data
@@ -163,7 +170,7 @@ otg_sf %<>%
 
 # write spatial otg as geodatabase
 st_write(otg_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_2022.gpkg"),
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_2022.shp"),
          delete_dsn = T)
 
 ### END SCRIPT
