@@ -163,7 +163,7 @@ hr_sf = cu_sf %>%
     # water quality
     # obs_conductivity_ms = unique(site_conductivity_ms),
     # elevation
-    #elev_m_dem = unique(elev_m_dem),
+    elev_m_dem = unique(elev_m_dem),
     .groups = "drop"
   ) %>%
   rename(geometry = geom) #%>%
