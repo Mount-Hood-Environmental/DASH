@@ -38,17 +38,17 @@ otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_2
 
 
 #-----------------------
-# pull in elevation data from UGSG - 3DEP
+# pull in elevation data from UGSG - 3DEP - CURRENTLY NOT IN USE
 #-----------------------
-elev_DEM = otg_sf %>%
-  select(x = site_ln,
-         y = site_lt)
+# elev_DEM = otg_sf %>%
+#  select(x = site_ln,
+#         y = site_lt)
 
 # elevtr() needs a data frame with x & y coordinates
-out <- get_elev_point(locations = as.data.frame(elev_DEM), units ="meters", src = "epqs", prj = 4326) #WGS84
+# out <- get_elev_point(locations = as.data.frame(elev_DEM), units ="meters", src = "epqs", prj = 4326) #WGS84
 
-otg_sf = otg_sf %>%
-  mutate(elev_m_dem = out@data[["elevation"]])
+# otg_sf = otg_sf %>%
+#  mutate(elev_m_dem = out@data[["elevation"]])
 
 #-------------------------
 # additional metrics for channel units
@@ -163,9 +163,8 @@ hr_sf = cu_sf %>%
     # water quality
     # obs_conductivity_ms = unique(site_conductivity_ms),
     # elevation
-    elev_m_dem = unique(elev_m_dem),
-    .groups = "drop"
-  ) %>%
+    # elev_m_dem = unique(elev_m_dem),
+    .groups = "drop") %>%
   rename(geometry = geom) #%>%
   #st_cast("MULTILINESTRING")
 
