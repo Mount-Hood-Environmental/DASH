@@ -73,7 +73,7 @@ st_write(cu_sf,
 #-------------------------
 hr_sf = cu_sf %>%
   group_by(site_nm) %>%
-  summarise(
+  reframe(
     hr_length_m = round(sum(c_lngt_), 1),
     # channel unit counts
     #cu_ids = list(unique(cu_id)),
@@ -164,8 +164,8 @@ hr_sf = cu_sf %>%
     # obs_conductivity_ms = unique(site_conductivity_ms),
     # elevation
     # elev_m_dem = unique(elev_m_dem),
-    .groups = "drop") %>%
-  rename(geometry = geom) #%>%
+     .groups = "drop")
+  # rename(geometry = geom) #%>%
   #st_cast("MULTILINESTRING")
 
 
