@@ -72,7 +72,7 @@ st_write(cu_sf,
 # initiate habitat reach sf
 #-------------------------
 hr_sf = cu_sf %>%
-  group_by(site_nm) %>%
+  group_by(site_nm, hab_rch) %>%
   reframe(
     hr_length_m = round(sum(c_lngt_), 1),
     # channel unit counts
@@ -157,24 +157,25 @@ hr_sf = cu_sf %>%
     hr_thlwg_dpth_avg_m = round(mean(thalweg_exit_depth_m, na.rm = T), 2),
     hr_max_depth_m = round(max(maximum_depth_m, na.rm = T), 2),
     hr_avg_pool_dpth_m = mean(maximum_depth_m[chnnl_nt_t == "Pool"]),
-    hr_avg_resid_pool_dpth_m = mean(resid_depth_m[chnnl_nt_t == "Pool"]),
+    hr_avg_resid_pool_dpth_m = mean(resid_depth_m[chnnl_nt_t == "Pool"])) %>%
     # temperature
     # obs_water_temp_c = unique(site_water_temp_c),
     # water quality
     # obs_conductivity_ms = unique(site_conductivity_ms),
     # elevation
     # elev_m_dem = unique(elev_m_dem),
-     .groups = "drop")
+    # .groups = "drop") %>%
   # rename(geometry = geom) #%>%
   #st_cast("MULTILINESTRING")
+  distinct(hr_length_m, .keep_all = TRUE)
 
 
 # write habitat reach sf object to file
 saveRDS(hr_sf,
-        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.rds"))
+        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_site_22.rds"))
 
 write_csv(hr_sf,
-          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.csv"))
+          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_site_22.csv"))
 
 # write habitat reach sf as shapefile
 # st_write(hr_sf,
