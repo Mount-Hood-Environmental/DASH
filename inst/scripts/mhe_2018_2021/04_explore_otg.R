@@ -80,7 +80,7 @@ cu_sf = otg_sf %>%
 # initiate habitat reach sf
 #-------------------------
 hr_sf = cu_sf %>%
-  group_by(site_name, year, hab_rch) %>%
+  group_by(site_name,hab_rch, year) %>%
   summarise(
     hr_length_m = round(sum(cu_length_m), 1),
     # channel unit counts
@@ -176,7 +176,6 @@ hr_sf = cu_sf %>%
   ) %>%
   rename(geometry = geom) #%>%
   #st_cast("MULTILINESTRING")
-
 
 # write habitat reach sf object to file
 saveRDS(hr_sf,

@@ -157,7 +157,8 @@ hr_sf = cu_sf %>%
     hr_thlwg_dpth_avg_m = round(mean(thalweg_exit_depth_m, na.rm = T), 2),
     hr_max_depth_m = round(max(maximum_depth_m, na.rm = T), 2),
     hr_avg_pool_dpth_m = mean(maximum_depth_m[chnnl_nt_t == "Pool"]),
-    hr_avg_resid_pool_dpth_m = mean(resid_depth_m[chnnl_nt_t == "Pool"])) %>%
+    hr_avg_resid_pool_dpth_m = mean(resid_depth_m[chnnl_nt_t == "Pool"]),
+    geometry) %>%
     # temperature
     # obs_water_temp_c = unique(site_water_temp_c),
     # water quality
@@ -165,19 +166,44 @@ hr_sf = cu_sf %>%
     # elevation
     # elev_m_dem = unique(elev_m_dem),
     # .groups = "drop") %>%
-  # rename(geometry = geom) #%>%
   #st_cast("MULTILINESTRING")
   distinct(hr_length_m, .keep_all = TRUE)
 
 
 # write habitat reach sf object to file
 saveRDS(hr_sf,
-        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_site_22.rds"))
+        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.rds"))
 
 write_csv(hr_sf,
-          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_site_22.csv"))
+          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.csv"))
 
-# write habitat reach sf as shapefile
-# st_write(hr_sf,
-#          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.shp"),
-#          delete_dsn = T)
+ # write habitat reach sf as shapefile
+ st_write(hr_sf,
+          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.shp"),
+          delete_dsn = T)
+
+#-------------------------
+# Append habitat reach data to channel unit object for winter QRF model
+#-------------------------
+
+cu_sf %<>%
+  left_join(hr_sf %>%
+              st_drop_geometry() %>%
+              select(site_nm, hab_rch, cu_freq, hr_sin_cl, hr_braidedness)
+            ,by = c("site_nm", "hab_rch")
+  ) %>%
+  mutate(fish_cov_lwd = lwd_r_w_2/(mean(wdth_1_, wdth_2_, wdth_3_, wdth_4_, wdth_5_, na.rm = T)*c_lngt_),
+         SubEstCandBldr = c_64_25 + bl_256_
+  )
+
+#Write out channel unit data to .csv, .rds, .gpkg
+saveRDS(cu_sf,
+        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_22.rds"))
+
+write_csv(cu_sf,
+          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_22.csv"))
+
+# write channel unit sf object to geodatabase
+st_write(cu_sf,
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_22.shp"),
+         delete_dsn = T)
