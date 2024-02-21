@@ -162,6 +162,7 @@ hr_sf = cu_sf %>%
     hr_braidedness = round(hr_length_m / sum(cu_strght_m[channel_segment_number == "01"]), 2),
     # size
     hr_discharge_cfs = round(mean(discharge_cfs, na.rm = T), 2),
+    hr_discharge_cms = round(mean(discharge_cms, na.rm = T), 2),
     hr_thlwg_dpth_avg_m = round(mean(thalweg_exit_depth_m, na.rm = T), 2),
     hr_max_depth_m = round(max(maximum_depth_m, na.rm = T), 2),
     hr_avg_pool_dpth_m = mean(maximum_depth_m[channel_unit_type == "Pool"]),
