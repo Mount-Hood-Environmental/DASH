@@ -6,10 +6,10 @@
 # forms.
 #
 # First Created: July 15, 2020
-#   Last Modified: July 28, 2023; Tulley Mackey modified for 2022 data collected
-#   in the Lemhi-Hayden restoration complex, pre-restoration
+# Last Modified: April 24, 2024; Bridger Bertram update for site specific
+#                                workflow.
 #
-# Notes:
+# Notes : This workflow uses the NAS directory OTG/2024/example
 
 # clear environment
 rm(list = ls())
@@ -17,6 +17,7 @@ rm(list = ls())
 #-----------------------------
 # load necessary libraries
 #-----------------------------
+
 library(tidyverse)
 library(beepr)
 library(janitor)
@@ -29,17 +30,23 @@ library(DASH)
 if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # need additional statements if someone has an alternative OS.type
 
-# create a vector of directories containing the OTG data for 2018 & 2021 data (updated data collection forms)
-yr_wtsd = c("2022/lemhi")
+# create a vector of directories containing the OTG data for year and site. For this template,
+# we will use 2024/example. replace this with the watershed and year your data was collected in
+# e.g. "2024/Lemhi"
+yr_wtsd = c("2024/example")
 
 #-----------------------------
-# LOOP 1: import raw OTG data; loop over year_watershed combinations
+# LOOP 1: import raw OTG data; loop over year_watershed combinations.
+#
+# NOTE: Save Raw csvs form DASH survey "0_raw_csvs" and save data with formatted csv names to "1_formatted_csvs".
+#       Folders should be saved within the year/watershed working directory you are in.
+#       We will preform an initial QC on data saved in "1_formatted_csvs" and leave "0_raw_csvs"
+#       as raw data. The RDA file saved in 1_formatted_csvs will contain the initial QC flags.
 #-----------------------------
 for (yw in yr_wtsd) {
 
   # set path for yr_wtsd
   path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/", yw, "/1_formatted_csvs/")
-
   # import OTG data
   otg_raw = read_otg_csv_wrapper(path = path)
 
@@ -56,17 +63,20 @@ for (yw in yr_wtsd) {
   save(otg_raw,
        file = paste0(nas_prefix, "main/data/habitat/DASH/OTG/", yw, "/1_formatted_csvs/otg_raw.rda"))
 
-  rm(otg_raw, path)
-
-  # after last loop, sound an alarm
-  if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
+  #rm(otg_raw, path)
 
 } # end import raw, QC, and save loop
 
 #-----------------------------
 # LOOP 2: iterative loop: import "QC'd" .csvs, run QC, write QC results,
-# fix problems in said "QC'd" .csvs, rinse and repeat...
+#         fix problems in said "QC'd" .csvs, rinse and repeat...
+#
+# NOTE : For this loop, Make a copy of dash data from "1_formatted_csvs" and save
+#        it into a new folder called "2_qcd_csvs". Each iteration of this loop saves a
+#        csv file describing the qc flags. This is the stage where you can manually edit the
+#        csv files is needed.
 #-----------------------------
+
 for (yw in yr_wtsd) {
 
   # set path for yr_wtsd
@@ -91,9 +101,6 @@ for (yw in yr_wtsd) {
   save(otg_interim,
        file = paste0(path, "otg_interim.rda"))
 
-  # after last loop, sound an alarm
-  if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
-
 } # end interim QC loop
 
 # IMPORTANT: THE ABOVE LOOP 2) IMPORTING QC'D DATA AND QC'ING THAT DATA IS A
@@ -111,6 +118,8 @@ for (yw in yr_wtsd) {
 
 #-----------------------------
 # LOOP 3: re-import "QC" .csvs, perform final QC
+#
+# Note: This loop will pull the csvs from "2_qcd_csvs" folder, and preform final QC
 #-----------------------------
 for (yw in yr_wtsd) {
 
@@ -132,14 +141,11 @@ for (yw in yr_wtsd) {
   # write "final" QC results
   otg_qcd$qc_results = qc_final
 
-  # save as .Rdata object
-  save(otg_qcd, file = paste0(nas_prefix, "main/data/habitat/DASH/OTG/", yw, "/prepped/otg_qcd.rda"))
+} # end import QC'd data, record final QC messages, and export prepped data. Make sure to create "3_prepped_otg" folder before saving.
 
-  # after last loop, sound an alarm
-  if (yw == tail(yr_wtsd, 1)) { beepr::beep(3) }
-
-} # end import QC'd data, record final QC messages, and export prepped data
+save_final_otg_to_this_path <- paste0("S:/main/data/habitat/DASH/OTG/",yw,"/3_prepped_otg/otg_qcd_",sub("/.*", "", yw),"_",sub("^[^/]*/", "", yw),".rds")
+saveRDS(otg_qcd, save_final_otg_to_this_path)
 
 # END SCRIPT
 
-saveRDS(otg_qcd, "S:/main/data/habitat/DASH/OTG/prepped/otg_qcd_2022.rds")
+

@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Welcome to the [DASH](https://github.com/BiomarkABS/DASH) R package! This vignette, which logically serves as the first of multiple vignettes in the package, describes how to import and quality control (QC) on-the-ground (OTG hereafter) collected habitat data  using the DASH protocol. The initial data collection forms to record the OTG data were generated using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) and we focus on importing data from those forms. After data import, we describe how functions included in the DASH R package can then be used to perform QC on the data to identify potential errors, perhaps that occurred in the field. Finally, we describe initial data cleaning and joining (i.e., joining channel unit scale information with wood, undercut, etc. information collected for that unit) in preparation of attaching the OTG collected data to stream centerline data to make it spatial. Later, our spatial OTG data can then be connected to drone-generated orthomosaics. 
+Welcome to the [DASH](https://github.com/BiomarkABS/DASH) R package! This vignette, which logically serves as the first of multiple vignettes in the package, describes how to import and quality control (QC) on-the-ground (OTG hereafter) collected habitat data using the DASH protocol. The initial data collection forms to record the OTG data were generated using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) and we focus on importing data from those forms. After data import, we describe how functions included in the DASH R package can then be used to perform QC on the data to identify potential errors, perhaps that occurred in the field. Finally, we describe initial data cleaning and joining (i.e., joining channel unit scale information with wood, undercut, etc. information collected for that unit) in preparation of attaching the OTG collected data to stream centerline data to make it spatial. Later, our spatial OTG data can then be connected to drone-generated orthomosaics.
 
 We'll start by describing the import procedure for OTG data; we'll then go into QC of that data and how to resolve some of the identified errors. Begin by loading the necessary libraries (R packages) needed for this vignette and analysis:
 
@@ -46,13 +46,13 @@ library(magrittr)
 
 Each DASH OTG survey conducted using [ArcGIS Survey123](https://www.esri.com/en-us/arcgis/products/arcgis-survey123/overview) data collection forms and for a site typically consists of 7 comma-delimited (.csv) files:
 
-* **surveyPoint_0.csv**: Information related to the site and survey including site name, survey date/time and crew, and location (lat/long).
-* **CU_1.csv**: Data collected for individual channel units. Valid channel units (should) include the following: Riffle, Run, Pool, Rapid+, OCA (off-channel area), and SSC (small side channel).
-* **Wood_2.csv**: Data for large wood measured within channel units including count, size, etc.
-* **Jam_3.csv**: Data for wood jams within channel units.
-* **Undercut_4.csv**: Data for undercut banks within channel units.
-* **Discharge_5.csv**: Data indicating the location where discharge was measured at a given site.
-* **DischargeMeasurements_6.csv**: The width, depth, and velocity measurements for each station where discharge is to be estimated.
+-   **surveyPoint_0.csv**: Information related to the site and survey including site name, survey date/time and crew, and location (lat/long).
+-   **CU_1.csv**: Data collected for individual channel units. Valid channel units (should) include the following: Riffle, Run, Pool, Rapid+, OCA (off-channel area), and SSC (small side channel).
+-   **Wood_2.csv**: Data for large wood measured within channel units including count, size, etc.
+-   **Jam_3.csv**: Data for wood jams within channel units.
+-   **Undercut_4.csv**: Data for undercut banks within channel units.
+-   **Discharge_5.csv**: Data indicating the location where discharge was measured at a given site.
+-   **DischargeMeasurements_6.csv**: The width, depth, and velocity measurements for each station where discharge is to be estimated.
 
 Each of the .csv files can be joined or related to each other using the **GlobalID** and **ParentGlobalID** columns in each. For example, the **ParentGlobalID** in **CU_1.csv** can be used to related it back to a **GlobalID** in **surveyPoint_0.csv**, whereas the **GlobalID** in **CU_1.csv** is a unique identifier for each channel unit. Similarly, the **ParentGlobalID** in **Wood_2.csv** can be used to join it back to a **GlobalID** in **CU_1.csv**. Note that the **surveyPoint_0.csv** file does not contain a **ParentGlobalID** column as it does not have a "parent" (i.e., it is the parent).
 
@@ -180,32 +180,32 @@ Recognize that you don't need to load `otg_raw` if it's already in your environm
 
 To QC the OTG data, DASH includes 7 QC functions as follows (including a description of the QC checks that each performs), each corresponding to an `otg_type`:
 
-* `qc_survey()`: For `otg_type = "surveyPoint_0.csv` data.
-    * Are there duplicate sites?
-    * Do the latitude and longitude values fall within an expected range?
-* `qc_cu()`: For `otg_type = "CU_1.csv"` data.
-    * Are all channel unit types valid?
-    * Are all channel unit numbers within each survey unique?
-    * Are the thalweg exit depth and maximum depth values all within an expected range?
-    * Does the sum of the fish cover values fall within an expected range?
-    * Do the ocular substrate estimates for all slow water channel units sum to 100?
-    * Do the riffles with pebble counts have all columns filled in, and if so, do values fall within an expected range?
-    * Is there more than one **ParentGlobalID** for channel units within a site? We expect only one.
-* `qc_wood()`: For `otg_type = "Wood_2.csv"` data.
-    * Are there any strange values in the **Wet?**, **Channel Forming?**, or **Ballasted?** columns?
-    * Are the length and diameter measurements for any pieces of wood possibly reversed?
-    * Are there any number, length, or diameter values that fall outside expected values?
-* `qc_jam()`: For `otg_type = "Jam_3.csv"` data.
-    * Do any of the number of pieces, length, width, or height values fall outside an expected range?
-* `qc_undercut()`: For `otg_type = "Undercut_5.csv"` data.
-    * Are there any strange entries in the **Location** column?
-    * Are there any undercut number, length, or width values that fall outside expected values?
-* `qc_disch()`: For `otg_type = "Discharge_5.csv"` data.
-    * Are any channel units not numeric?
-    * Are any channel units negative?
-    * Is there more than one **ParentGlobalID** for channel units within a site? We expect only one.
-* `qc_disch_meas()`: For `otg_type = "DischargeMeasurements_6.csv"` data.
-    * Do any of the width, depth, or velocity measurements fall outside of expected values?
+-   `qc_survey()`: For `otg_type = "surveyPoint_0.csv` data.
+    -   Are there duplicate sites?
+    -   Do the latitude and longitude values fall within an expected range?
+-   `qc_cu()`: For `otg_type = "CU_1.csv"` data.
+    -   Are all channel unit types valid?
+    -   Are all channel unit numbers within each survey unique?
+    -   Are the thalweg exit depth and maximum depth values all within an expected range?
+    -   Does the sum of the fish cover values fall within an expected range?
+    -   Do the ocular substrate estimates for all slow water channel units sum to 100?
+    -   Do the riffles with pebble counts have all columns filled in, and if so, do values fall within an expected range?
+    -   Is there more than one **ParentGlobalID** for channel units within a site? We expect only one.
+-   `qc_wood()`: For `otg_type = "Wood_2.csv"` data.
+    -   Are there any strange values in the **Wet?**, **Channel Forming?**, or **Ballasted?** columns?
+    -   Are the length and diameter measurements for any pieces of wood possibly reversed?
+    -   Are there any number, length, or diameter values that fall outside expected values?
+-   `qc_jam()`: For `otg_type = "Jam_3.csv"` data.
+    -   Do any of the number of pieces, length, width, or height values fall outside an expected range?
+-   `qc_undercut()`: For `otg_type = "Undercut_5.csv"` data.
+    -   Are there any strange entries in the **Location** column?
+    -   Are there any undercut number, length, or width values that fall outside expected values?
+-   `qc_disch()`: For `otg_type = "Discharge_5.csv"` data.
+    -   Are any channel units not numeric?
+    -   Are any channel units negative?
+    -   Is there more than one **ParentGlobalID** for channel units within a site? We expect only one.
+-   `qc_disch_meas()`: For `otg_type = "DischargeMeasurements_6.csv"` data.
+    -   Do any of the width, depth, or velocity measurements fall outside of expected values?
 
 In addition to the above, each QC function also 1) identifies whether the column names in `qc_df` match the expected defined in `get_otg_cols_specs()`, and 2) checks whether there are any `NA` or <blanks> in important columns defined using the `cols_to_check_nas` argument (where applicable).
 
@@ -356,7 +356,7 @@ init_qc %>%
   
 ```
 
-Here's one last example for exploring a somewhat common error. In this case, let's look at all errors in the undercut data `filter(source == "Undercut")`, join the source data `left_join(otg_raw$undercut)`, and then reduce the number of columns included in the results ``select(path_nm:error_message, `Undercut Number`:`Width 75% (m)`)``. Note in this case we need to place backticks around the variable (column) names "Undercut Number" and "Width 75% (m)" because they contain invalid or special character (e.g., <space>, %, ()).
+Here's one last example for exploring a somewhat common error. In this case, let's look at all errors in the undercut data `filter(source == "Undercut")`, join the source data `left_join(otg_raw$undercut)`, and then reduce the number of columns included in the results `` select(path_nm:error_message, `Undercut Number`:`Width 75% (m)`) ``. Note in this case we need to place backticks around the variable (column) names "Undercut Number" and "Width 75% (m)" because they contain invalid or special character (e.g., <space>, %, ()).
 
 ```{r undercut-errors}
 # undercut errors; note many of these are flagged bc of a strange "Location" values
@@ -370,13 +370,13 @@ init_qc %>%
 
 ## Resolve QC Errors
 
-Time to resolve errors identified during QC process. We discuss suggested routes for resolving both [uncommon][Uncommon Errors] and [common][Common Errors]. Common errors we've identified to date are related to ocular substrate estimates not summing to 100 and fish cover estimates not summing within an expected range.
+Time to resolve errors identified during QC process. We discuss suggested routes for resolving both [uncommon](#uncommon-errors) and [common](#common-errors). Common errors we've identified to date are related to ocular substrate estimates not summing to 100 and fish cover estimates not summing within an expected range.
 
-### Uncommon Errors
+### Uncommon Errors {#uncommon-errors}
 
-We suggest working on the uncommon errors first. Remember that as you review and work through the QC results, make any modifications to the .csv files within the "/2_qcd_csvs/" directory. 
+We suggest working on the uncommon errors first. Remember that as you review and work through the QC results, make any modifications to the .csv files within the "/2_qcd_csvs/" directory.
 
-### Common Errors
+### Common Errors {#common-errors}
 
 After resolving the uncommon errors to the best of your ability, let's resolve the common errors using a couple functions provided in the [DASH](https://github.com/BiomarkABS/DASH) package. We'll first want to import our data from the "/2_qcd_csvs/" directory that contains data that has been modified to address uncommon errors identified during the QC process.
 
@@ -407,7 +407,7 @@ otg_qcd = read_otg_csv_wrapper(path = qcd_path,
 
 #### Fix ocular substrate estimates
 
-The package includes the function `DASH::rescale_values()` that can be used to rescale a set of values to sum to a given `sum_to = ` value. In our below example, we are going to rescale any case where the values in `col_names` sum between `min_value = 90` and `max_value = 110` so that they `sum_to = 100`. Presumably, errors like this occurs because a simple math or recording error was made in the field. Note the default values for `min_value` and `max_value` are actually set to 80 and 120 by default. Note that the `rescale_values()` function could theoretically be applied to any set of numerical columns in your OTG (or any other!) data.
+The package includes the function `DASH::rescale_values()` that can be used to rescale a set of values to sum to a given `sum_to =` value. In our below example, we are going to rescale any case where the values in `col_names` sum between `min_value = 90` and `max_value = 110` so that they `sum_to = 100`. Presumably, errors like this occurs because a simple math or recording error was made in the field. Note the default values for `min_value` and `max_value` are actually set to 80 and 120 by default. Note that the `rescale_values()` function could theoretically be applied to any set of numerical columns in your OTG (or any other!) data.
 
 ```{r fix-oc-ests, eval = F}
 # ocular substrate fixes

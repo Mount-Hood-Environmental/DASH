@@ -1,0 +1,16 @@
+
+Author: Bridger Bertram
+Purpose: Outline for how to use a site specific workflow.
+Created: April 25, 2025
+
+
+
+User Guide for Using Site Specific Workflow.
+
+  This document provides some general guidence to help pipline DASH data into a QRF model,
+  and in turn get capacity estimates for your DASH Site.
+
+1. This folder "site_specific_workflow" serves as a template. Copy and paste this folder, and rename it to
+   your specific site. EXAMPLE: "Lemhi_Hayden_Prerestoration". This folder uses the Dash data from Lemhi Hayden complex as an
+   example. User will need to reformat some elements to make it work for their own Site.
+

@@ -4,8 +4,8 @@
 # to roll up measurements into habitat reach metrics
 #
 # Initially created: April 12, 2022
-#   Last Modified: August 2, 2023 by Tulley Mackey for DASH data collected near
-#                  the Lemhi-Hayden confluence in July 2022
+#   Last Modified: April 24, 2024 by Bridger Bertram for Site specific
+#                                 workflow
 #
 # Notes:
 
@@ -26,33 +26,23 @@ library(elevatr)
 if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # need additional statements if someone has an alternative OS.type
 
+# Specify year and site
+year = "2024"
+watershed = "example"
+
 #-------------------------
 # read in spatial otg
 #-------------------------
-otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_2022.shp")) %>%
-  mutate(site_ln = ifelse(site_ln == -113.820058, -113.62607, site_ln),
-         site_lt = ifelse(site_lt == 45.13898738, 44.869823, site_lt)) %>%
+
+otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_",year,"_",watershed,".shp")) %>%
   rename(maximum_depth_m = mxmm_d_,
          thalweg_exit_depth_m = thlw___)
 
 
-
-#-----------------------
-# pull in elevation data from UGSG - 3DEP - CURRENTLY NOT IN USE
-#-----------------------
-# elev_DEM = otg_sf %>%
-#  select(x = site_ln,
-#         y = site_lt)
-
-# elevtr() needs a data frame with x & y coordinates
-# out <- get_elev_point(locations = as.data.frame(elev_DEM), units ="meters", src = "epqs", prj = 4326) #WGS84
-
-# otg_sf = otg_sf %>%
-#  mutate(elev_m_dem = out@data[["elevation"]])
-
 #-------------------------
 # additional metrics for channel units
 #-------------------------
+
 cu_sf = otg_sf %>%
   # residual depth
   mutate(resid_depth_m = maximum_depth_m - thalweg_exit_depth_m) %>%
@@ -65,7 +55,7 @@ cu_sf = otg_sf %>%
 
 # write channel unit sf object to geodatabase
 st_write(cu_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_22.shp"),
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".shp"),
          delete_dsn = T)
 
 #-------------------------
@@ -158,6 +148,8 @@ hr_sf = cu_sf %>%
     hr_max_depth_m = round(max(maximum_depth_m, na.rm = T), 2),
     hr_avg_pool_dpth_m = mean(maximum_depth_m[chnnl_nt_t == "Pool"]),
     hr_avg_resid_pool_dpth_m = mean(resid_depth_m[chnnl_nt_t == "Pool"]),
+    lat = mean(lat),
+    lon = mean(lon),
     geometry) %>%
     # temperature
     # obs_water_temp_c = unique(site_water_temp_c),
@@ -172,14 +164,14 @@ hr_sf = cu_sf %>%
 
 # write habitat reach sf object to file
 saveRDS(hr_sf,
-        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.rds"))
+        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_",year,"_",watershed,".rds"))
 
 write_csv(hr_sf,
-          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.csv"))
+          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_",year,"_",watershed,".csv"))
 
  # write habitat reach sf as shapefile
  st_write(hr_sf,
-          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_22.shp"),
+          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_",year,"_",watershed,".shp"),
           delete_dsn = T)
 
 #-------------------------
@@ -198,12 +190,16 @@ cu_sf %<>%
 
 #Write out channel unit data to .csv, .rds, .gpkg
 saveRDS(cu_sf,
-        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_22.rds"))
+        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".rds"))
 
 write_csv(cu_sf,
-          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_22.csv"))
+          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".csv"))
 
 # write channel unit sf object to geodatabase
 st_write(cu_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_22.shp"),
+         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".shp"),
          delete_dsn = T)
+
+### END SCRIPT
+
+
