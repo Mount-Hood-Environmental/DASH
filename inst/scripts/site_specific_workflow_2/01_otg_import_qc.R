@@ -33,7 +33,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # create a vector of directories containing the OTG data for year and site. For this template,
 # we will use 2024/example. replace this with the watershed and year your data was collected in
 # e.g. "2024/Lemhi"
-yr_wtsd = c("2024/example")
+yr_wtsd = c("2024/example_2")
 
 #-----------------------------
 # LOOP 1: import raw OTG data; loop over year_watershed combinations.

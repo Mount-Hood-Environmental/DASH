@@ -19,7 +19,6 @@ library(readxl)
 library(here)
 library(patchwork)
 library(ggforce)
-library(stringdist)
 
 #-------------------------
 # set NAS prefix (depending on operating system), set year and watershed of your site,
@@ -89,9 +88,13 @@ hab_reach_data <- hab_reach_data %>%
 ##-------------------------
 #  Renaming of Columns for QRF model. QRF model requires specific columns, and column names. Refer to
 #  "QRF_new_hab_cov_tbl.rds" for each model.
+#
+#  Note: MHE folks, maybe we can standardize column names when collecting dash survey data to potentially skip this step
+#        or make it more efficient?
 ##-------------------------
 
 load(here("inst/QRF_new_hab_cov_tbl.rda"))
+
 
 # First, hr scale....
 QRF_hab_reach_data = hab_reach_data %>%
