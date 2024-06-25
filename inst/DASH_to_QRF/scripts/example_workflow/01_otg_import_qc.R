@@ -33,7 +33,7 @@ if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # create a vector of directories containing the OTG data for year and site. For this template,
 # we will use 2024/example. replace this with the watershed and year your data was collected in
 # e.g. "2024/Lemhi"
-yr_wtsd = c("2024/example_2")
+yr_wtsd = c("2024/example")
 
 #-----------------------------
 # LOOP 1: import raw OTG data; loop over year_watershed combinations.
@@ -42,6 +42,14 @@ yr_wtsd = c("2024/example_2")
 #       Folders should be saved within the year/watershed working directory you are in.
 #       We will preform an initial QC on data saved in "1_formatted_csvs" and leave "0_raw_csvs"
 #       as raw data. The RDA file saved in 1_formatted_csvs will contain the initial QC flags.
+#
+# Folder Names from survey123 should be changed to..
+#   surveyPoint_0
+#   CU_1
+#   Wood_2
+#   Jam_3
+#   Undercut_4
+#   Discharge_5
 #-----------------------------
 for (yw in yr_wtsd) {
 

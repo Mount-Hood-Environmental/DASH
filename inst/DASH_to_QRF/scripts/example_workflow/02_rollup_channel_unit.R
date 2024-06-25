@@ -34,7 +34,7 @@ otg_path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/")
 
 
 year = "2024" # example year, Put in your year here
-watershed = "example_2" # example watershed, put your watershed here
+watershed = "example" # example watershed, put your watershed here
 
 # This will read in the OTG data for your year and watershed in the 3_prepped_otg folder.
 otg_data <- readRDS(file = paste0(otg_path,year,"/",watershed,
