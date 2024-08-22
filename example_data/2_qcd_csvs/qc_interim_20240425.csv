@@ -1,0 +1,22 @@
+source,path_nm,GlobalID,location_id,error_message
+Survey,Pre Restoration/surveyPoint_0.csv,fe1e10c7-9cab-4620-856a-b4f12283992d,Pre Restoration,The longitude (x) 0 falls outside the expected values -125 and -110
+Survey,Pre Restoration/surveyPoint_0.csv,fe1e10c7-9cab-4620-856a-b4f12283992d,Pre Restoration,The latitude (y) 0 falls ouside the expected values 40 and 50
+Survey,Split River Ranch/surveyPoint_0.csv,7a7458ef-c091-4b63-86cd-a75367073eb0,Split River Ranch,The longitude (x) 0 falls outside the expected values -125 and -110
+Survey,Split River Ranch/surveyPoint_0.csv,7a7458ef-c091-4b63-86cd-a75367073eb0,Split River Ranch,The latitude (y) 0 falls ouside the expected values 40 and 50
+CU,Fish Gamer/CU_1.csv,7b2b8c72-a13a-4ad5-be03-852817077477,Fish Gamer_004_014,"Cover values sum to 140, not between 100 and 130."
+CU,Pre Restoration/CU_1.csv,8782c1c6-a86b-46f5-8a7d-f9b3bcc86292,Pre Restoration_001_004,"Cover values sum to 30, not between 100 and 130."
+CU,Split River Ranch/CU_1.csv,19103545-898f-468d-ab1a-d78b6eaaf7bc,Split River Ranch_001_009,Pebble size values for 1 columns within the pebble counts appear to be NA.
+Undercut,Pre Restoration/Undercut_4.csv,65e8a58b-70b4-4f4c-b374-5484e2b5b378,Pre Restoration_001_016,Column Length (m) is <blank> or NA.
+Undercut,Pre Restoration/Undercut_4.csv,65e8a58b-70b4-4f4c-b374-5484e2b5b378,Pre Restoration_001_016,Column Width 25% (m) is <blank> or NA.
+Undercut,Pre Restoration/Undercut_4.csv,65e8a58b-70b4-4f4c-b374-5484e2b5b378,Pre Restoration_001_016,Column Width 50% (m) is <blank> or NA.
+Undercut,Pre Restoration/Undercut_4.csv,65e8a58b-70b4-4f4c-b374-5484e2b5b378,Pre Restoration_001_016,Column Width 75% (m) is <blank> or NA.
+Undercut,Pre Restoration/Undercut_4.csv,552aac5d-cb59-4efd-8d97-a948fb941af2,Pre Restoration_001_001,The Width 25% (m) measurement 2 is outside of the expected values of 0 and 1.5
+Undercut,Pre Restoration/Undercut_4.csv,d47886f3-c205-4604-8aa9-80f6f6593910,Pre Restoration_001_006,The Length (m) measurement 12 is outside of the expected values of 0 and 10
+Undercut,Pre Restoration/Undercut_4.csv,58bb0066-f59e-445a-9852-582ff9854dc9,Pre Restoration_001_010,The Length (m) measurement 25 is outside of the expected values of 0 and 10
+Undercut,Pre Restoration/Undercut_4.csv,014b9cc7-fa68-4d2f-a0ac-37aa7ba721e3,Pre Restoration_001_016,The Length (m) measurement 12 is outside of the expected values of 0 and 10
+Undercut,Pre Restoration/Undercut_4.csv,4aa5a21d-224e-494f-8c21-f3353f675cb2,Pre Restoration_001_017,The Length (m) measurement 25 is outside of the expected values of 0 and 10
+Undercut,Pre Restoration/Undercut_4.csv,6f3f39f9-1a17-4986-b491-15680c28f768,Pre Restoration_001_017,The Length (m) measurement 14 is outside of the expected values of 0 and 10
+Undercut,Pre Restoration/Undercut_4.csv,f1a5be2a-6e6a-4f16-8538-8dd06c97f28b,Pre Restoration_001_017,The Length (m) measurement 25 is outside of the expected values of 0 and 10
+Undercut,Pre Restoration/Undercut_4.csv,aef706dd-7de0-4fcf-be05-3d06b95ee79b,Pre Restoration_001_019,The Length (m) measurement 25 is outside of the expected values of 0 and 10
+Undercut,Split River Ranch/Undercut_4.csv,efa8087f-be62-4edc-8303-28b828d66f7b,Split River Ranch_001_003,The Length (m) measurement 11 is outside of the expected values of 0 and 10
+Undercut,Split River Ranch/Undercut_4.csv,08a5c313-d871-4403-bd1a-b2595c47bc82,Split River Ranch_001_003,The Length (m) measurement 25 is outside of the expected values of 0 and 10
