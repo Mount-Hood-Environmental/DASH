@@ -17,24 +17,29 @@ library(tidyverse)
 library(sf)
 library(dplyr)
 library(elevatr)
+library(here)
 
 #-------------------------
 # set NAS prefix, depending on operating system
 #-------------------------
 
-if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
+#if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 
 # Specify year and site
-year = "2024"
-watershed = "example"
+#year = "2024"
+#watershed = "example"
+
+
+data_directory <- here("data/example_data")
+#data_directory <- here("data/project_data")
 
 #-------------------------
 # read in spatial otg
 #-------------------------
 
-otg_sf = st_read(dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_",year,"_",watershed,".shp")) %>%
-  rename(maximum_depth_m = mxmm_d_,
-         thalweg_exit_depth_m = thlw___)
+otg_sf = st_read(dsn = paste0(data_directory,"/5_otg_spatial/otg_spatial.shp")) %>%
+                       rename(maximum_depth_m = mxmm_d_,
+                       thalweg_exit_depth_m = thlw___)
 
 #-------------------------
 # additional metrics for channel units
@@ -51,9 +56,9 @@ cu_sf = otg_sf %>%
     cu_d84 = quantile(c_across(starts_with("pbbl")), 0.84, na.rm = T),  )
 
 # write channel unit sf object to geodatabase
-st_write(cu_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".shp"),
-         delete_dsn = T)
+# st_write(cu_sf,
+#          dsn = paste0(data_directory,"/5_otg_spatial/chnl_unit.shp"),
+#          delete_dsn = F)
 
 #-------------------------
 # initiate habitat reach sf
@@ -162,15 +167,15 @@ hr_sf = cu_sf %>%
 
 # write habitat reach sf object to file
 saveRDS(hr_sf,
-        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_",year,"_",watershed,".rds"))
+        file = paste0(data_directory,"/6_otg_scaled/hab_reach.rds"))
 
-write_csv(hr_sf,
-          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_",year,"_",watershed,".csv"))
+# write_csv(hr_sf,
+#           file = paste0(data_directory,"/6_otg_scaled/hab_reach.csv"))
 
- # write habitat reach sf as shapefile
- st_write(hr_sf,
-          dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_hr_",year,"_",watershed,".shp"),
-          delete_dsn = T)
+# write habitat reach sf as shapefile
+st_write(hr_sf,
+         dsn = paste0(data_directory,"/6_otg_scaled/hab_reach.shp"),
+         delete_dsn = F)
 
 #-------------------------
 # Append habitat reach data to channel unit object for winter QRF model
@@ -188,15 +193,15 @@ cu_sf %<>%
 
 #Write out channel unit data to .csv, .rds, .gpkg
 saveRDS(cu_sf,
-        file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".rds"))
+        file = paste0(data_directory,"/6_otg_scaled/chnl_unit.rds"))
 
-write_csv(cu_sf,
-          file = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".csv"))
+# write_csv(cu_sf,
+#           file = paste0(data_directory,"/6_otg_scaled/chnl_unit.csv"))
 
 # write channel unit sf object to geodatabase
 st_write(cu_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".shp"),
-         delete_dsn = T)
+         dsn = paste0(data_directory,"/6_otg_scaled/chnl_unit.shp"),
+         delete_dsn = F)
 
 ### END SCRIPT
 

@@ -22,27 +22,28 @@ library(purrr)
 library(sf)
 library(lwgeom)
 library(DASH)
+library(here)
 
 #-------------------------
-# set NAS prefix, depending on operating system
+# set directory to your spatial data
 #-------------------------
 
-if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
-# need additional statements if someone has an alternative OS.type
+# example_data
+shapefile_path = here("data/example_data/spatial_files")
 
-# Specify year and site
-year = "2024"
-watershed = "example"
+# project_data
+#shapefile_path = here("data/project_data/spatial_files/")
 
 #-------------------------
 # read in centerlines
 #-------------------------
-cl_path = paste0(nas_prefix,
-                 "main/data/habitat/DASH/centerlines/",year,"/",watershed,"/")
 
-# import centerlines using read_centerlines()
-cl_sf = read_centerlines(path = cl_path,
-                         find_duplicates = T)
+# --- Old dash
+# import centerlines using read_centerlines(). note, centerlines most be named "centerlines.shp"
+#cl_sf = read_centerlines(path = shapefile_path, find_duplicates = T)
+
+# --- new dash
+cl_sf <- st_read(paste0(shapefile_path,"/centerlines/centerlines.shp"))
 
 # plot centerlines
 cl_p = cl_sf %>%
@@ -56,17 +57,12 @@ cl_p
 
 #-------------------------------------
 # read in channel unit points (e.g., from Field Maps)
-# Note: when naming channel unit points use this naming conventions "dash_cu_points_24_example"
-#       replace "24" with year survey took place, and "example" with watershed
+# Note: when naming channel unit points use this naming conventions "cu_points"
 #-------------------------------------
-cu_pts_path = paste0(nas_prefix,
-                     "main/data/habitat/DASH/channel_units")
+#cu_pts_path = paste0(shapefile_path,"/channel_unit_points/")
 
 # read in channel unit points from selected year
-cu_pts = st_read(paste0(cu_pts_path, "/dash_cu_points_",substr(year, nchar(year) - 1, nchar(year)),"_",watershed,".shp")) %>%
-  mutate(seg_num = str_pad(seg_num, 2, pad = "0"),
-         hab_rch = str_pad(hab_rch, 2, pad = "0"),
-         cu_num = str_pad(cu_num, 3, pad = "0"))
+cu_pts = st_read(paste0(shapefile_path, "/channel_unit_points/cu_points.shp"))# %>%
 
 # QC channel unit points
 cu_pts_qc = qc_cu_points(cu_pts)
@@ -74,9 +70,6 @@ cu_pts_qc = qc_cu_points(cu_pts)
 #-------------------------------------
 # attach some data from channel unit points to centerlines sf
 #-------------------------------------
-
-# Note: The renaming of entries in site_name column is specific for lemhi-hayden complex.
-#       Be sure to change this to make site_name from cu_pts_df to match cl_sf
 
 cu_pts_df = cu_pts %>%
   st_drop_geometry() %>%
@@ -87,20 +80,11 @@ cu_pts_df = cu_pts %>%
          cu_num,
          cu_type,
          hab_rch) %>%
-  mutate(site_name = ifelse(site_name == 'Pre Restoration', 'Hayden_Pre Restoration', site_name),
-         site_name = ifelse(site_name == 'Split River Ranch', 'Split_River', site_name),
-         site_name = ifelse(site_name == 'Fish Gamer', 'Fish_Gamer', site_name)) %>%
   distinct()
 
 # are there any duplicate channel units in cu_pts_df?
-dup_pt_cus = cu_pts_df %>%
-  unite(col = cu_id,
-        site_name, year, cu_num,
-        remove = F) %>%
-  filter(cu_id %in% cu_id[duplicated(cu_id)])
-dup_pt_cus # no duplicate channel units (anymore)
 
-# join cu_pts to centerlines
+# join cu_pts_df to centerlines
 cl_sf %<>%
   left_join(cu_pts_df,
             by = c("site_name",
@@ -110,11 +94,11 @@ cl_sf %<>%
            .after = last_col())
 
 #-------------------------------------
-# save compiled centerlines
+# save merged centerlines
 #-------------------------------------
 st_write(cl_sf,
-         dsn = paste0(cl_path, "compiled/centerlines_",year,".shp"),
-         delete_dsn = TRUE)
+         dsn = paste0(shapefile_path, "/merged_centerlines/merged_centerlines.shp"),
+         delete_dsn = F)
 #-------------------------------------
 # QC centerlines
 #-------------------------------------
@@ -124,29 +108,24 @@ cl_qc = qc_centerline(cl_sf) # currently no errors found
 # read in otg data
 #-------------------------
 
-# Note: The renaming of entries in site_name column is specific for lemhi-hayden complex.
-#       Be sure to change this to make site_name from OTG to match cl_sf
-
-otg = readRDS(file = paste0(nas_prefix,
-              "main/data/habitat/DASH/OTG/",year,"/",watershed,"/3_prepped_otg/dash_",year,"_",watershed,"_cu_imputed.rds")) %>%
-
-  # extract year from survey_start_date_time
+otg = readRDS(file = here("data/example_data/4_otg_rolled_cu/cu_imputed.rds"))  %>%
   mutate(year = as.numeric(str_extract(survey_start_date_time, "\\d{4}"))) %>%
-  mutate(site_name = ifelse(site_name == 'Pre Restoration', 'Hayden_Pre Restoration', site_name),
-         site_name = ifelse(site_name == 'Split River Ranch', 'Split_River', site_name),
-         site_name = ifelse(site_name == 'Fish Gamer', 'Fish_Gamer', site_name)) %>%
+  mutate(channel_segment_number = as.numeric(channel_segment_number)) %>%
+  mutate(channel_unit_number = as.numeric(channel_unit_number)) %>%
   select(-channel_unit_notes)
 
 #-------------------------
-# join the centerlines to the OTG data
+# join the merged_centerlines to the OTG data
 #-------------------------
+
 otg_sf = otg %>%
   left_join(cl_sf %>%
-              select(-path_nm),
+            select(-path_nm),
             by = c("site_name",
                    "year",
                    "channel_segment_number" = "seg_num",
-                   "channel_unit_number" = "cu_num")) %>%
+                   "channel_unit_number" = "cu_num"))  %>%
+
   relocate(geometry,
            .after = last_col()) %>%
 
@@ -154,6 +133,7 @@ otg_sf = otg %>%
   st_as_sf() %>%
   # convert to EPSG: 32612 = WGS 84/UTM zone 12N, which allows us to calculate some geometries
   st_transform(crs = 32612) %>%
+
   mutate(geo_type = st_geometry_type(geometry),
          # length of centerline
          cu_length_m = as.numeric(st_length(geometry)),
@@ -193,7 +173,7 @@ otg_sf %<>%
 
 # write spatial otg as geodatabase
 st_write(otg_sf,
-         dsn = paste0(nas_prefix, "main/data/habitat/DASH/prepped/DASH_",year,"_",watershed,".shp"),
+         dsn = here("data/example_data/5_otg_spatial/otg_spatial.shp"),
          delete_dsn = T)
 
 ### END SCRIPT

@@ -1,0 +1,3 @@
+source,path_nm,GlobalID,location_id,error_message
+CU,dash_example/CU_1.csv,7b2b8c72-a13a-4ad5-be03-852817077477,dash_example_004_014,"Cover values sum to 140, not between 100 and 130."
+Undercut,dash_example/Undercut_4.csv,fa70945c-c880-4c8f-960b-0bbf29cgf68b,dash_example_001_004,"Strange value, right bank, in Location column"

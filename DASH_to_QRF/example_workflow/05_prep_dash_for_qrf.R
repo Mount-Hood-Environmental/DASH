@@ -25,16 +25,13 @@ library(stringdist)
 # and read in Habitat data.
 #-------------------------
 
-if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
-
-# Specify year and site
-year = "2024"
-watershed = "example"
+data_directory <- here("data/example_data")
+#data_directory <- here("data/project_data")
 
 
 #Read in Channel Unit and Habitat Reach data...
-hab_reach_data = readRDS(paste0(nas_prefix,"main/data/habitat/DASH/prepped/dash_hr_",year,"_",watershed,".rds"))
-chnl_unit_data = readRDS(paste0(nas_prefix,"main/data/habitat/DASH/prepped/dash_cu_",year,"_",watershed,".rds"))
+hab_reach = readRDS(paste0(data_directory,"/6_otg_scaled/hab_reach.rds"))
+chnl_unit = readRDS(paste0(data_directory,"/6_otg_scaled/chnl_unit.rds"))
 
 ##-------------------------
 #  Append Temperature Data From reach_200 file
@@ -47,7 +44,7 @@ chnl_unit_data = readRDS(paste0(nas_prefix,"main/data/habitat/DASH/prepped/dash_
 WS_crs = st_crs(4326) # WGS84
 
 #specify watershed boundary.
-ws_bound = st_read(paste0(nas_prefix,"main/data/habitat/watershed_boundaries/Lemhi_WS.gpkg")) %>%
+ws_bound = st_read(paste0("S:/main/data/habitat/watershed_boundaries/Lemhi_WS.gpkg")) %>%
 st_transform(WS_crs)
 
 # Append temperatures from rch_200 file
@@ -68,7 +65,7 @@ temps_trim <- temps[ws_bound, ] # This is too easy of a way to clip/subset spati
 
 
 # add temps_trim to chnl_unit_data
-chnl_unit_data <- chnl_unit_data %>%
+chnl_unit <- chnl_unit %>%
   st_as_sf(coords = c("lat","lon")) %>%
   st_transform(crs = WS_crs) %>%
   st_join(temps_trim,
@@ -76,7 +73,7 @@ chnl_unit_data <- chnl_unit_data %>%
           join = st_nearest_feature)
 
 # add temps_trim to hab_reach_data
-hab_reach_data <- hab_reach_data %>%
+hab_reach <- hab_reach %>%
   mutate(geom_lat = lat,
          geom_lon = lon) %>%
   st_as_sf(coords = c("geom_lat","geom_lon"), crs = WS_crs) %>%
@@ -93,7 +90,7 @@ hab_reach_data <- hab_reach_data %>%
 load(here("Documentation/DASH_QRF_Metrics/QRF_new_hab_cov_tbl.rda"))
 
 # First, hr scale....
-QRF_hab_reach_data = hab_reach_data %>%
+QRF_hab_reach = hab_reach %>%
   rename(Site = site_nm,
          CU_Freq = cu_freq,
          FstNT_Freq = run_freq,
@@ -137,7 +134,7 @@ QRF_hab_reach_data = hab_reach_data %>%
          LAT_DD)
 
 # Next, CU Scale....
-QRF_chnl_unit_data = chnl_unit_data %>%
+QRF_chnl_unit = chnl_unit %>%
   mutate(FishCovSome = 100 - ttl_n__) %>%
   rename(Site = "site_nm",
          CU_Freq = "cu_freq",
@@ -177,55 +174,47 @@ QRF_chnl_unit_data = chnl_unit_data %>%
   ungroup()
 
 # Pull A few mets from QRF_hab_reach_data to add to QRF_chnl_unit_data
-add_metrics <- QRF_hab_reach_data  %>%
+add_metrics <- QRF_hab_reach %>%
   select(Site, hab_rch, FstNT_Freq, FstTurb_Freq) %>%
   st_drop_geometry()
 
-QRF_chnl_unit_data <- QRF_chnl_unit_data %>%
+QRF_chnl_unit <- QRF_chnl_unit %>%
  left_join(add_metrics, by = c("Site", "hab_rch"))
 
 ##-------------------------
 #  Now add area Wetted area to both QRF_hab_reach and QRF_chnl_unit. This is going to allow us to
 #  calculate between per m and per m^2.
 #
-#  Note: For this step, someone is going to have to draw some polygons delinating the channel of the site at the
-#        channel unit scale. (From there is is easy to roll up to HR scale). Save the polygons somewhere handy.
 ##-------------------------
 
-
-# These Shape files are specific to Lemhi-Hayden complex.
-# Pull in areas from shape files
-hayden_shp <- st_read("S:/main/data/habitat/DASH/cu_polygons/2022/Hayden_Pre Restoration.shp")
-split_shp <- st_read("S:/main/data/habitat/DASH/cu_polygons/2022/Split_River.shp")
-fish_gamer_shp <- st_read("S:/main/data/habitat/DASH/cu_polygons/2022/Fish_Gamer.shp")
-
+example_cu_poly <- st_read(paste0(data_directory,"/spatial_files/channel_unit_polygons/cu_polygons.shp")) %>%
+  mutate(hab_rch = as.numeric(hab_rch),
+         cu_num  = as.numeric(cu_num))
 
 # Make new DF formatted at HR Scale with areas at CU scale
-add_area_df_cu <- bind_rows(hayden_shp,split_shp,fish_gamer_shp) %>%
+add_area_df_cu <- example_cu_poly %>%
   select(site_name,hab_rch,cu_num,area) %>%
-  rename("chnnl_nt_n" = "cu_num",
-         "Site" = "site_name") %>%
   st_drop_geometry()
 
 # now HR
 add_area_df_hr <- add_area_df_cu %>%
-  group_by(Site,hab_rch) %>%
+  group_by(site_name,hab_rch) %>%
   summarise(area = sum(area))
 
 # Append Area Metrics to corresponding QRF data frames.
 
 #habitat reach scale
-QRF_hab_reach_data <- QRF_hab_reach_data %>%
-  left_join(add_area_df_hr, by = c("Site" = "Site", "hab_rch" = "hab_rch"))
+QRF_hab_reach <- QRF_hab_reach %>%
+  left_join(add_area_df_hr, by = c("Site" = "site_name", "hab_rch" = "hab_rch"))
 
 #channel unit Scale
-QRF_chnl_unit_data <- QRF_chnl_unit_data %>%
-  left_join(add_area_df_cu, by = c("Site" = "Site", "hab_rch" = "hab_rch", "chnnl_nt_n" = "chnnl_nt_n"))
+QRF_chnl_unit <- QRF_chnl_unit %>%
+  left_join(add_area_df_cu, by = c("Site" = "site_name", "hab_rch" = "hab_rch", "chnnl_nt_n" = "cu_num"))
 
 
 # Save DASH data prepped for QRF capacity model to "DASH_prepped_for_QRF" folder
-write_csv(QRF_hab_reach_data, paste0(nas_prefix,"main/data/habitat/DASH/DASH_prepped_for_QRF/",year,"/",watershed,"/habitat_reach_scale.csv"))
-write_csv(QRF_chnl_unit_data, paste0(nas_prefix,"main/data/habitat/DASH/DASH_prepped_for_QRF/",year,"/",watershed,"/channel_unit_scale.csv"))
+write_csv(QRF_hab_reach, paste0(data_directory,"/7_qrf_ready/qrf_hab_reach.csv"))
+write_csv(QRF_chnl_unit, paste0(data_directory,"/7_qrf_ready/qrf_chnl_unit.csv"))
 
 
 ### END SCRIPT

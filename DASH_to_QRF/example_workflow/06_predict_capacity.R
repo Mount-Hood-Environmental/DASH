@@ -2,7 +2,7 @@
 # Purpose: Estimate habitat capacity for DASH surveyed sites
 # Created: 1/30/2024
 # Last Modified: 5/06/2024
-# Modified by: Bridger Bertram for site specific DASH - QRF pipeline
+# Modified by: Bridger Bertram
 #
 #
 # clear environment
@@ -22,14 +22,17 @@ library(patchwork)
 library(ggforce)
 
 #-------------------------
-# set NAS prefix, depending on operating system
+# set data directory
 #-------------------------
+#
+# if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
+#
+# # Specify year and site
+# year = "2024"
+# watershed = "example"
 
-if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
-
-# Specify year and site
-year = "2024"
-watershed = "example"
+data_directory <- here("data/example_data")
+#data_directory <- here("data/project_data")
 
 #-------------------------
 # Read in Prepped DASH Data

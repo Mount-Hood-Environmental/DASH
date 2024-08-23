@@ -16,28 +16,31 @@ rm(list = ls())
 library(tidyverse)
 library(magrittr)
 library(DASH)
+library(here)
 
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
 #set nas prefix
-if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
+#if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
 # need additional statements if someone has an alternative OS.type
 
-# path to OTG data on the NAS
-otg_path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/")
+# path to example OTG data
+otg_path = here("data/example_data")
+
+# path to project OTG data
+# otg_path = here("data/project_data")
 
 #-------------------------
 # load OTG data
 #-------------------------
 
 
-year = "2024" # example year, Put in your year here
-watershed = "example" # example watershed, put your watershed here
+#year = "2024" # example year, Put in your year here
+#watershed = "example" # example watershed, put your watershed here
 
-# This will read in the OTG data for your year and watershed in the 3_prepped_otg folder.
-otg_data <- readRDS(file = paste0(otg_path,year,"/",watershed,
-            "/3_prepped_otg/otg_qcd_",year,"_",watershed,".rds"))
+# This will read in the OTG data for your project in the 3_prepped_otg folder.
+otg_data <- readRDS(file = paste0(otg_path,"/3_prepped_otg/otg_qcd.rds"))
 
 
 # remove the qc_results data frame from otg results
@@ -57,8 +60,7 @@ otg_data_cu = otg_to_cu(survey_df = otg_data$survey,
 
 # save non-imputed, prepped data
 write_rds(otg_data_cu,
-          paste0(otg_path,year,"/",watershed,
-          "/3_prepped_otg/dash_",year,"_",watershed,"_cu_no_impute.rds"))
+          paste0(otg_path,"/4_otg_rolled_cu/cu_no_impute.rds"))
 
 #-------------------------
 # roll up OTG data to CU scale, add primary data imputation
@@ -74,8 +76,7 @@ otg_data_cu_imp = otg_to_cu(survey_df = otg_data$survey,
 
 
 # save imputed, prepped data
-write_rds(otg_data_cu_imp,
-          paste0(otg_path,year,"/",watershed,
-                "/3_prepped_otg/dash_",year,"_",watershed,"_cu_imputed.rds"))
+write_rds(otg_data_cu,
+          paste0(otg_path,"/4_otg_rolled_cu/cu_imputed.rds"))
 
 # END SCRIPT

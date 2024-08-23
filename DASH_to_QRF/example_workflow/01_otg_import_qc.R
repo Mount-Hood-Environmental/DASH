@@ -19,28 +19,30 @@ library(tidyverse)
 library(beepr)
 library(janitor)
 library(DASH)
+library(here)
 
 #-----------------------------
 # set some arguments/parameters
 #-----------------------------
-# set NAS prefix
-if(.Platform$OS.type == "windows") { nas_prefix = "S:/" }
-# need additional statements if someone has an alternative OS.type
 
-# create a vector of directories containing the OTG data for year and site. For this template,
-# we will use 2024/example. replace this with the watershed and year your data was collected in
-# e.g. "2024/Lemhi"
-yr_wtsd = c("2024/example")
+# create a vector of directories containing the OTG data. For this template,
+# we will use the example_data directory. replace this with project_data directory
+
+# Example directory
+data_directory = here("data/example_data")
+
+# Project directory
+#data_directory = here("data/project_data")
 
 #-----------------------------
 # LOOP 1: import raw OTG data; loop over year_watershed combinations.
 #
 # NOTE: Save Raw csvs form DASH survey "0_raw_csvs" and save data with formatted csv names to "1_formatted_csvs".
-#       Folders should be saved within the year/watershed working directory you are in.
+#       Folders should be saved within the project_data directory.
 #       We will preform an initial QC on data saved in "1_formatted_csvs" and leave "0_raw_csvs"
 #       as raw data. The RDA file saved in 1_formatted_csvs will contain the initial QC flags.
 #
-# Folder Names from survey123 should be changed to..
+# Folder Names within project_data/1_formatted_csvs/
 #   surveyPoint_0
 #   CU_1
 #   Wood_2
@@ -48,10 +50,10 @@ yr_wtsd = c("2024/example")
 #   Undercut_4
 #   Discharge_5
 #-----------------------------
-for (yw in yr_wtsd) {
+for (data in data_directory) {
 
   # set path for yr_wtsd
-  path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/", yw, "/1_formatted_csvs/")
+  path = paste0(data_directory, "/1_formatted_csvs/")
   # import OTG data
   otg_raw = read_otg_csv_wrapper(path = path)
 
@@ -66,7 +68,7 @@ for (yw in yr_wtsd) {
 
   # save the otg_raw list of dfs, and the initial QC flags
   save(otg_raw,
-       file = paste0(nas_prefix, "main/data/habitat/DASH/OTG/", yw, "/1_formatted_csvs/otg_raw.rda"))
+       file = paste0(data_directory, "/1_formatted_csvs/otg_raw.rda"))
 
   #rm(otg_raw, path)
 
@@ -76,16 +78,16 @@ for (yw in yr_wtsd) {
 # LOOP 2: iterative loop: import "QC'd" .csvs, run QC, write QC results,
 #         fix problems in said "QC'd" .csvs, rinse and repeat...
 #
-# NOTE : For this loop, Make a copy of dash data from "1_formatted_csvs" and save
+# NOTE : For this loop, Make a copy of otg data from "1_formatted_csvs" and save
 #        it into a new folder called "2_qcd_csvs". Each iteration of this loop saves a
-#        csv file describing the qc flags. This is the stage where you can manually edit the
-#        csv files is needed.
+#        csv file describing the qc flags. This is the step where you can manually edit the
+#        csv files as needed.
 #-----------------------------
 
-for (yw in yr_wtsd) {
+for (data in data_directory) {
 
   # set path for yr_wtsd
-  path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/", yw, "/2_qcd_csvs/")
+  path = paste0(data_directory, "/2_qcd_csvs/")
 
   # import OTG data
   otg_interim = read_otg_csv_wrapper(path = path)
@@ -126,10 +128,10 @@ for (yw in yr_wtsd) {
 #
 # Note: This loop will pull the csvs from "2_qcd_csvs" folder, and preform final QC
 #-----------------------------
-for (yw in yr_wtsd) {
+for (data in data_directory) {
 
   # set path for yr_wtsd
-  path = paste0(nas_prefix, "main/data/habitat/DASH/OTG/", yw, "/2_qcd_csvs/")
+  path = paste0(data_directory, "/2_qcd_csvs/")
 
   # import OTG data
   otg_qcd = read_otg_csv_wrapper(path = path)
@@ -148,7 +150,7 @@ for (yw in yr_wtsd) {
 
 } # end import QC'd data, record final QC messages, and export prepped data. Make sure to create "3_prepped_otg" folder before saving.
 
-save_final_otg_to_this_path <- paste0("S:/main/data/habitat/DASH/OTG/",yw,"/3_prepped_otg/otg_qcd_",sub("/.*", "", yw),"_",sub("^[^/]*/", "", yw),".rds")
+save_final_otg_to_this_path <- paste0(data_directory,"/3_prepped_otg/otg_qcd.rds")
 saveRDS(otg_qcd, save_final_otg_to_this_path)
 
 # END SCRIPT
