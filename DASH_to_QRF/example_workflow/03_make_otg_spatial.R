@@ -4,9 +4,8 @@
 # information from the channel unit points.
 #
 # Initially created: December 8, 2020
-# Last Modified: April 24,2024 by Bridger Bertram
-#
-# Notes:
+# Last Modified: Bridger Bertram
+
 
 # clear environment
 rm(list = ls())

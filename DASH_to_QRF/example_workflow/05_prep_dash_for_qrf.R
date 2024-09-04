@@ -1,9 +1,7 @@
 # Author: Bryce Oldemeyer, Tulley Mackey
-# Purpose: Estimate habitat capacity for DASH surveyed sites at the Lemhi Hayden complex
+# Purpose: Summarise Dash Data to feed into QRF model
 # Created: 1/30/2024
-# Last Modified: 1/30/2024
 # Modified by: Bryce Oldemeyer, Mark Roes, and Mike Ackerman, Bridger Bertram
-
 
 # clear environment
 rm(list = ls())
@@ -184,7 +182,6 @@ QRF_chnl_unit <- QRF_chnl_unit %>%
 ##-------------------------
 #  Now add area Wetted area to both QRF_hab_reach and QRF_chnl_unit. This is going to allow us to
 #  calculate between per m and per m^2.
-#
 ##-------------------------
 
 example_cu_poly <- st_read(paste0(data_directory,"/spatial_files/channel_unit_polygons/cu_polygons.shp")) %>%

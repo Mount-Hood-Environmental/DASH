@@ -3,9 +3,7 @@
 # Purpose: rollup OTG data to channel unit scale
 #
 # Created: March 4, 2022
-# Last Modified: April 24, 2024 by Bridger Bertram
-#
-# Notes:
+# Last Modified: Bridger Bertram
 
 # clear environment
 rm(list = ls())

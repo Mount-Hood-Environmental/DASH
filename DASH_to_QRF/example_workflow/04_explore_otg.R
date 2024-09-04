@@ -4,7 +4,7 @@
 # to roll up measurements into habitat reach metrics
 #
 # Initially created: April 12, 2022
-# Last Modified: April 24, 2024 by Bridger Bertram
+# Last Modified: Bridger Bertram
 
 
 # clear environment
