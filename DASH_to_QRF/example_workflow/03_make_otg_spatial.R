@@ -1,4 +1,5 @@
-# Authors: Mike Ackerman and Kevin See
+# Authors: Bryce Oldemeyer, Bridger Bertram, Tulley Mackey
+# Co-authors: Mike Ackerman and Kevin See
 #
 # Purpose: A script to join all of the centerlines, while adding
 # information from the channel unit points.

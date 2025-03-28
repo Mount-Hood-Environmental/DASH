@@ -1,4 +1,5 @@
-# Authors: Mike Ackerman
+# Authors: Bryce Oldemeyer, Bridger Bertram, Tulley Mackey
+# Co-authors: Mike Ackerman
 #
 # Purpose: Start to explore the complete OTG dataset and begin
 # to roll up measurements into habitat reach metrics

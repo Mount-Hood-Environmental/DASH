@@ -1,4 +1,4 @@
-# Author: Bryce Oldemeyer, Tulley Mackey
+# Author: Bryce Oldemeyer, Bridger Bertram, Tulley Mackey
 # Purpose: Summarise Dash Data to feed into QRF model
 # Created: 1/30/2024
 # Modified by: Bryce Oldemeyer, Mark Roes, and Mike Ackerman, Bridger Bertram

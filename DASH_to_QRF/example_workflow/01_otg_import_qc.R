@@ -1,4 +1,5 @@
-# Authors: Mike Ackerman & Kevin See
+# Authors: Bryce Oldemeyer, Bridger Bertram, Tulley Mackey
+# Co-authors: Mike Ackerman & Kevin See
 #
 # Purpose: A script to import and QC on-the-ground (OTG) DASH data from
 # 2022 using Survey123. This script will NOT work on the 2019 &

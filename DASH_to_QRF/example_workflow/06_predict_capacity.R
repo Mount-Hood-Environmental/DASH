@@ -1,4 +1,4 @@
-# Author: Bryce Oldemeyer, Tulley Mackey
+# Author: Bryce Oldemeyer, Bridger Bertram, Tulley Mackey
 # Purpose: Estimate habitat capacity for DASH surveyed sites
 # Created: 1/30/2024
 # Last Modified: 5/06/2024

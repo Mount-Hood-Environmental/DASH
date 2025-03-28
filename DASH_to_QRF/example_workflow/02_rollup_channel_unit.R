@@ -1,4 +1,5 @@
-# Authors: Mike Ackerman
+# Authors: Bryce Oldemeyer, Bridger Bertram, Tulley Mackey
+# Co-author: Mike Ackerman
 #
 # Purpose: rollup OTG data to channel unit scale
 #
