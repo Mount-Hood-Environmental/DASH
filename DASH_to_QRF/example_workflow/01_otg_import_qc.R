@@ -19,8 +19,15 @@ rm(list = ls())
 library(tidyverse)
 library(beepr)
 library(janitor)
-library(DASH)
+#library(DASH)
 library(here)
+
+# If you haven't compiled the DASH repo into a R Package, run the three lines of code below
+# to load magrittr and manually import all the functions into your environment
+library(magrittr)
+
+files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
+invisible(lapply(files, source))
 
 #-----------------------------
 # set some arguments/parameters
